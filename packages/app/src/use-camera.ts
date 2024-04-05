@@ -2,24 +2,58 @@ import { useEffect, useMemo, useState } from 'react'
 import { BehaviorSubject, combineLatest } from 'rxjs'
 import { getScale } from './scale.js'
 import { Camera, Cursor, Viewport } from './types.js'
-import { Vec2 } from './vec2.js'
 
 export function useCamera(
   cursor$: BehaviorSubject<Cursor>,
   viewport$: BehaviorSubject<Viewport>,
 ): Camera {
-  const initial = useInitialCamera(
-    cursor$.value,
-    viewport$.value,
+  const target$ = useTarget$(cursor$, viewport$)
+  const [camera, setCamera] = useState(target$.value)
+
+  useEffect(() => {
+    let handle: number
+    function step() {
+      setCamera((prev) => {
+        if (target$.value === prev) {
+          return prev
+        }
+        return target$.value
+      })
+
+      handle = self.requestAnimationFrame(step)
+    }
+    handle = self.requestAnimationFrame(step)
+    return () => {
+      self.cancelAnimationFrame(handle)
+    }
+  }, [])
+
+  return camera
+}
+
+function useTarget$(
+  cursor$: BehaviorSubject<Cursor>,
+  viewport$: BehaviorSubject<Viewport>,
+): BehaviorSubject<Camera> {
+  const target$ = useMemo(
+    () =>
+      new BehaviorSubject({
+        position: cursor$.value.position,
+        scale: getScale(
+          cursor$.value.zoom,
+          viewport$.value.x,
+          viewport$.value.y,
+        ),
+      }),
+    [],
   )
-  const [camera, setCamera] = useState(initial)
 
   useEffect(() => {
     const sub = combineLatest([
       cursor$,
       viewport$,
     ]).subscribe(([cursor, viewport]) => {
-      setCamera({
+      target$.next({
         position: cursor.position,
         scale: getScale(
           cursor.zoom,
@@ -33,26 +67,5 @@ export function useCamera(
     }
   }, [])
 
-  useEffect(() => {
-    let handle: number
-    function step() {
-      handle = self.requestAnimationFrame(step)
-    }
-    handle = self.requestAnimationFrame(step)
-    return () => {
-      self.cancelAnimationFrame(handle)
-    }
-  }, [])
-
-  return camera
-}
-
-function useInitialCamera(cursor: Cursor, viewport: Vec2) {
-  return useMemo(
-    () => ({
-      position: cursor.position,
-      scale: getScale(cursor.zoom, viewport.x, viewport.y),
-    }),
-    [],
-  )
+  return target$
 }
