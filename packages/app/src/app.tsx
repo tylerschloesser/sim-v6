@@ -284,7 +284,7 @@ function RenderGrid({
           .sub(scale),
       )}
       strokeWidth={2}
-      stroke="hsl(0, 0%, 10%)"
+      stroke="hsl(0, 0%, 50%)"
     >
       {Array.from(iterateGridLines(viewport, scale)).map(
         ({ key, x1, y1, x2, y2 }) => (
