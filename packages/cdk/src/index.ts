@@ -12,9 +12,9 @@ new WebAppV1(app, {
     '../../app/dist',
   ),
   domain: {
-    app: 'sim-v5.slg.dev',
+    app: 'sim-v6.slg.dev',
     root: 'slg.dev',
   },
   region: Region.US_WEST_2,
-  stackIdPrefix: 'SimV5',
+  stackIdPrefix: 'SimV6',
 })

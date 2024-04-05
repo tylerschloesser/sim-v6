@@ -1,5 +1,5 @@
 {
-  "name": "@sim-v5/app",
+  "name": "@sim-v6/app",
   "type": "module",
   "scripts": {
     "start": "NODE_NO_WARNINGS=1 NODE_OPTIONS=\"--loader ts-node/esm\" webpack serve --mode=development",

@@ -1,5 +1,5 @@
 {
-  "name": "@sim-v5/cdk",
+  "name": "@sim-v6/cdk",
   "type": "module",
   "scripts": {
     "deploy": "cdk deploy --all"

@@ -1,5 +1,5 @@
 {
-  "name": "@sim-v5/root",
+  "name": "@sim-v6/root",
   "scripts": {
     "start": "npm start -w packages/app",
     "build": "npm run build -w packages/app",
