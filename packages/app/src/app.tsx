@@ -9,6 +9,7 @@ import { Updater, useImmer } from 'use-immer'
 import styles from './app.module.scss'
 import { getScale } from './const.js'
 import { RenderGrid } from './render-grid.js'
+import { RenderWorld } from './render-world.js'
 import { World } from './types.js'
 import { useCamera } from './use-camera.js'
 import { useCursor } from './use-cursor.js'
@@ -35,6 +36,11 @@ export function App() {
       {viewport && scale && (
         <>
           <RenderGrid
+            viewport={viewport}
+            camera={camera}
+            scale={scale}
+          />
+          <RenderWorld
             viewport={viewport}
             camera={camera}
             scale={scale}
