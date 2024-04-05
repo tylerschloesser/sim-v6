@@ -63,8 +63,21 @@ function useWorld(): [World, Updater<World>] {
   return [world, setWorld]
 }
 
-function useScale(viewport: Vec2 | null): number | null {
-  return useMemo(() => getScale(viewport), [viewport])
+function useScale(
+  viewport: Vec2 | null,
+): [number | null, React.MutableRefObject<number>] {
+  const scale = useMemo(
+    () => getScale(viewport),
+    [viewport],
+  )
+  const scaleRef = useRef(1)
+  useEffect(() => {
+    if (typeof scale === 'number') {
+      invariant(scale > 0)
+      scaleRef.current = scale
+    }
+  }, [scale])
+  return [scale, scaleRef]
 }
 
 function useViewport(
@@ -103,21 +116,13 @@ function useViewBox(
 export function App() {
   const svg = useRef<SVGSVGElement>(null)
   const viewport = useViewport(svg)
-  const scale = useScale(viewport)
+  const [scale, scaleRef] = useScale(viewport)
   const [world] = useWorld()
   const [drag] = useImmer<Drag | null>(null)
   const input = useInput(scale, drag)
   const [cursor, setCursor] = useCursor()
   const camera = useCamera(cursor)
   const viewBox = useViewBox(viewport)
-
-  const scaleRef = useRef(1)
-  useEffect(() => {
-    if (typeof scale === 'number') {
-      invariant(scale > 0)
-      scaleRef.current = scale
-    }
-  }, [scale])
 
   usePointerEvents(svg, setCursor, scaleRef)
   usePreventDefaults(svg)
