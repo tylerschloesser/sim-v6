@@ -1,21 +1,19 @@
 import React, { useMemo } from 'react'
 import invariant from 'tiny-invariant'
 import { NODE_BORDER_COLOR } from './const.js'
-import { NodeType, World } from './types.js'
+import { Camera, NodeType, World } from './types.js'
 import { svgTransform } from './util.js'
 import { Vec2 } from './vec2.js'
 
 export interface RenderWorldProps {
   viewport: Vec2
-  camera: Vec2
-  scale: number
+  camera: Camera
   world: World
 }
 
 export function RenderWorld({
   viewport,
   camera,
-  scale,
   world,
 }: RenderWorldProps) {
   const transform = useMemo(
@@ -24,11 +22,13 @@ export function RenderWorld({
         translate: viewport
           .div(2)
           .sub(
-            new Vec2(camera.x, camera.y * -1).mul(scale),
+            camera.position
+              .map(({ x, y }) => ({ x, y: -y }))
+              .mul(camera.scale),
           ),
         scale: new Vec2(1, -1),
       }),
-    [viewport, camera, scale],
+    [viewport, camera],
   )
 
   return (
@@ -37,7 +37,7 @@ export function RenderWorld({
         <RenderNodes
           nodes={world.nodes}
           rootNodeId={world.rootNodeId}
-          scale={scale}
+          scale={camera.scale}
         />
       </g>
     </g>

@@ -7,7 +7,6 @@ import React, {
 import invariant from 'tiny-invariant'
 import { Updater, useImmer } from 'use-immer'
 import styles from './app.module.scss'
-import { getScale } from './const.js'
 import { RenderGrid } from './render-grid.js'
 import { RenderWorld } from './render-world.js'
 import { World } from './types.js'
@@ -21,29 +20,23 @@ import { initWorld, loadWorld, saveWorld } from './world.js'
 export function App() {
   const svg = useRef<SVGSVGElement>(null)
   const viewport = useViewport(svg)
-  const scale = useScale(viewport)
   const [world, setWorld] = useWorld()
   const [cursor, setCursor] = useCursor()
-  const camera = useCamera(cursor)
+  const camera = useCamera(cursor, viewport)
   const viewBox = useViewBox(viewport)
 
   useTickWorld(setWorld)
-  usePointerEvents(svg, scale ?? 1, setCursor)
+  usePointerEvents(svg, camera.scale, setCursor)
   usePreventDefaults(svg)
 
   return (
     <svg ref={svg} viewBox={viewBox} className={styles.app}>
-      {viewport && scale && (
+      {viewport && (
         <>
-          <RenderGrid
-            viewport={viewport}
-            camera={camera}
-            scale={scale}
-          />
+          <RenderGrid viewport={viewport} camera={camera} />
           <RenderWorld
             viewport={viewport}
             camera={camera}
-            scale={scale}
             world={world}
           />
         </>
@@ -62,13 +55,6 @@ function useWorld(): [World, Updater<World>] {
     saveWorld(world)
   }, [world])
   return [world, setWorld]
-}
-
-function useScale(viewport: Vec2 | null): number | null {
-  return useMemo(
-    () => viewport && getScale(viewport),
-    [viewport],
-  )
 }
 
 function useViewport(

@@ -1,6 +1,15 @@
-import { Cursor } from './types.js'
+import { useMemo } from 'react'
+import { getScale } from './const.js'
+import { Camera, Cursor } from './types.js'
 import { Vec2 } from './vec2.js'
 
-export function useCamera(cursor: Cursor): Vec2 {
-  return cursor.position
+export function useCamera(
+  cursor: Cursor,
+  viewport: Vec2 | null,
+): Camera {
+  return useMemo(() => {
+    const position = cursor.position
+    const scale = viewport ? getScale(viewport) : 1
+    return { position, scale }
+  }, [cursor, viewport])
 }

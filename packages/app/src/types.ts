@@ -20,6 +20,11 @@ export const ZodCursor = z.strictObject({
 })
 export type ZodCursor = z.infer<typeof ZodCursor>
 
+export interface Camera {
+  position: Vec2
+  scale: number
+}
+
 const NodeRadius = z.number().positive()
 
 export const NodeType = z.enum(['Root', 'Branch', 'Leaf'])

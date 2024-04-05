@@ -1,19 +1,19 @@
 import React, { useMemo } from 'react'
 import { GRID_LINE_COLOR, SHOW_GRID } from './const.js'
+import { Camera } from './types.js'
 import { svgTranslate } from './util.js'
 import { Vec2 } from './vec2.js'
 
 export interface RenderGridProps {
   viewport: Vec2
-  camera: Vec2
-  scale: number
+  camera: Camera
 }
 
 export const RenderGrid = React.memo(function RenderGrid({
   viewport,
   camera,
-  scale,
 }: RenderGridProps) {
+  const { scale } = camera
   const gridLines = useMemo(
     () => Array.from(iterateGridLines(viewport, scale)),
     [viewport, scale],
@@ -21,7 +21,11 @@ export const RenderGrid = React.memo(function RenderGrid({
   const transform = svgTranslate(
     viewport
       .div(2)
-      .sub(new Vec2(camera.x, camera.y * -1).mul(scale))
+      .sub(
+        camera.position
+          .map(({ x, y }) => ({ x, y: -y }))
+          .mul(scale),
+      )
       .mod(scale)
       .sub(scale),
   )
