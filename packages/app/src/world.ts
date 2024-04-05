@@ -2,8 +2,7 @@ import { World } from './types.js'
 
 export function initWorld(): World {
   const tick = 1
-  const cells: World['cells'] = {}
-  return { tick, cells }
+  return { tick }
 }
 
 export function loadWorld(): World | null {
