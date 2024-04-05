@@ -6,47 +6,21 @@ import React, {
 } from 'react'
 import invariant from 'tiny-invariant'
 import { Updater, useImmer } from 'use-immer'
-import * as z from 'zod'
 import styles from './app.module.scss'
 import { SHOW_GRID, getScale } from './const.js'
 import {
   CellType,
-  Cursor,
   Drag,
   Input,
   InputType,
   World,
 } from './types.js'
 import { useCamera } from './use-camera.js'
+import { useCursor } from './use-cursor.js'
 import { useInput } from './use-input.js'
 import { usePointerEvents } from './use-pointer-events.js'
 import { Vec2 } from './vec2.js'
 import { initWorld } from './world.js'
-
-function useCursor(): [
-  Cursor,
-  React.Dispatch<React.SetStateAction<Cursor>>,
-] {
-  const initial = useMemo(() => {
-    const value = localStorage.getItem('cursor')
-    if (value) {
-      return new Vec2(
-        z
-          .strictObject({
-            x: z.number(),
-            y: z.number(),
-          })
-          .parse(JSON.parse(value)),
-      )
-    }
-    return new Vec2(0, 0)
-  }, [])
-  const [cursor, setCursor] = useState<Cursor>(initial)
-  useEffect(() => {
-    localStorage.setItem('cursor', JSON.stringify(cursor))
-  }, [cursor])
-  return [cursor, setCursor]
-}
 
 function useWorld(): [World, Updater<World>] {
   const initial = useMemo(() => {

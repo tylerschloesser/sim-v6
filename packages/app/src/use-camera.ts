@@ -1,15 +1,24 @@
 import { useEffect, useRef, useState } from 'react'
-import { smooth } from './const.js'
+import { ENABLE_SMOOTH_CAMERA, smooth } from './const.js'
 import { Cursor } from './types.js'
 import { Vec2 } from './vec2.js'
 
 export function useCamera(cursor: Cursor): Vec2 {
   const [camera, setCamera] = useState(cursor)
   const cursorRef = useRef(cursor)
+
   useEffect(() => {
-    cursorRef.current = cursor
+    if (ENABLE_SMOOTH_CAMERA) {
+      cursorRef.current = cursor
+    } else {
+      setCamera(cursor)
+    }
   }, [cursor])
+
   useEffect(() => {
+    if (!ENABLE_SMOOTH_CAMERA) {
+      return
+    }
     let handle: number
     let lastStep = self.performance.now()
     function step() {
@@ -35,5 +44,6 @@ export function useCamera(cursor: Cursor): Vec2 {
       self.cancelAnimationFrame(handle)
     }
   }, [])
+
   return camera
 }

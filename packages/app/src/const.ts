@@ -4,6 +4,8 @@ export const SHOW_GRID: boolean = true
 export const SHOW_PATH: boolean = true
 export const SHOW_CURSOR: boolean = true
 
+export const ENABLE_SMOOTH_CAMERA: boolean = false
+
 export const MAX_SPEED = Infinity
 
 // How far ahead (in seconds) to simulate the path.
