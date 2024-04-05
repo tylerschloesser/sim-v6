@@ -260,16 +260,21 @@ function RenderGrid({
   scale,
 }: RenderGridProps) {
   const gridLines = useGridLines(viewport, scale)
-  return (
-    <g
-      visibility={SHOW_GRID ? undefined : 'hidden'}
-      transform={svgTranslate(
+  const transform = useMemo(
+    () =>
+      svgTranslate(
         viewport
           .div(2)
           .sub(new Vec2(camera.x, camera.y * -1).mul(scale))
           .mod(scale)
           .sub(scale),
-      )}
+      ),
+    [viewport, scale, camera],
+  )
+  return (
+    <g
+      visibility={SHOW_GRID ? undefined : 'hidden'}
+      transform={transform}
       strokeWidth={2}
       stroke="hsl(0, 0%, 50%)"
     >
