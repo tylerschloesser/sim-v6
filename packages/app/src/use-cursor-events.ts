@@ -37,6 +37,8 @@ export function useCursorEvents(
       const listener = (ev: PointerEvent) => {
         handlePointerEvent(ev, cache, scaleRef, setCursor)
       }
+      root.current.addEventListener('pointerdown', listener, options)
+      root.current.addEventListener('pointerenter', listener, options)
       root.current.addEventListener('pointerout', listener, options)
       root.current.addEventListener('pointerleave', listener, options)
       root.current.addEventListener('pointercancel', listener, options)
@@ -70,13 +72,30 @@ function handlePointerEvent(
       cache.delete(ev.pointerId)
       break
     }
+    case 'pointerdown':
+    case 'pointerenter': {
+      cache.set(ev.pointerId, ev)
+      break
+    }
     case 'pointermove': {
       const prev = cache.get(ev.pointerId)
       cache.set(ev.pointerId, ev)
       if (!ev.buttons || !prev?.buttons) {
         break
       }
-      handleOneFingerDrag(prev, ev, scaleRef, setCursor)
+      switch (cache.size) {
+        case 1: {
+          handleOneFingerDrag(prev, ev, scaleRef, setCursor)
+          break
+        }
+        case 2: {
+          const other = Array.from(cache.values()).find(
+            ({ pointerId }) => ev.pointerId !== pointerId,
+          )
+          invariant(other)
+          break
+        }
+      }
       break
     }
   }
