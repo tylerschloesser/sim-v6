@@ -9,16 +9,9 @@ import { Updater, useImmer } from 'use-immer'
 import styles from './app.module.scss'
 import { getScale } from './const.js'
 import { RenderGrid } from './render-grid.js'
-import {
-  CellType,
-  Drag,
-  Input,
-  InputType,
-  World,
-} from './types.js'
+import { CellType, World } from './types.js'
 import { useCamera } from './use-camera.js'
 import { useCursor } from './use-cursor.js'
-import { useInput } from './use-input.js'
 import { usePointerEvents } from './use-pointer-events.js'
 import { svgTransform, svgTranslate } from './util.js'
 import { Vec2 } from './vec2.js'
@@ -94,8 +87,6 @@ export function App() {
   const viewport = useViewport(svg)
   const [scale, scaleRef] = useScale(viewport)
   const [world] = useWorld()
-  const [drag] = useImmer<Drag | null>(null)
-  const input = useInput(scale, drag)
   const [cursor, setCursor] = useCursor()
   const camera = useCamera(cursor)
   const viewBox = useViewBox(viewport)
@@ -131,9 +122,6 @@ export function App() {
           >
             <RenderCells scale={scale} world={world} />
           </g>
-
-          <RenderDrag drag={drag} viewport={viewport} />
-          <RenderInput input={input} scale={scale} />
         </>
       )}
     </svg>
@@ -288,80 +276,5 @@ function SmoothRect({
       width={width}
       height={height}
     />
-  )
-}
-
-interface RenderInputProps {
-  input: Input | null
-  scale: number
-}
-function RenderInput({ input, scale }: RenderInputProps) {
-  if (input === null) {
-    return null
-  }
-
-  const angle = input.v.angle()
-
-  return (
-    <>
-      {input.type === InputType.Move && (
-        <text
-          fontSize={16}
-          fontFamily="system-ui"
-          fill="white"
-          x="100%"
-          y="16"
-          textAnchor="end"
-        >
-          {`speed: ${input.v.len().toFixed(2)}`}
-        </text>
-      )}
-      <g
-        stroke="red"
-        fill="transparent"
-        transform={`translate(${scale} ${scale})`}
-      >
-        <circle cx={0} cy={0} r={scale / 2} />
-        <circle
-          cx={0}
-          cy={0}
-          transform={`rotate(${angle}) translate(${scale / 2 + (scale / 10) * 2} 0)`}
-          r={scale / 10}
-        />
-      </g>
-    </>
-  )
-}
-
-interface RenderDragProps {
-  drag: Drag | null
-  viewport: Vec2
-}
-function RenderDrag({ drag, viewport }: RenderDragProps) {
-  if (drag === null || drag.end === null) {
-    return null
-  }
-  const {
-    start: { position: start },
-    end: { position: end },
-  } = drag
-  const vmin = Math.min(viewport.x, viewport.y)
-  const r = vmin / 20
-  if (!start) return null
-  return (
-    <>
-      <g stroke="blue" fill="transparent">
-        {end && (
-          <line
-            x1={start.x}
-            y1={start.y}
-            x2={end.x}
-            y2={end.y}
-          />
-        )}
-        <circle cx={start.x} cy={start.y} r={r} />
-        {end && <circle cx={end.x} cy={end.y} r={r} />}
-      </g>
-    </>
   )
 }
