@@ -1,5 +1,4 @@
 import React, {
-  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -19,7 +18,6 @@ import {
   CellType,
   Cursor,
   Drag,
-  DragEvent,
   Input,
   InputType,
   Path,
@@ -134,20 +132,13 @@ export function App() {
   const viewport = useViewport(svg)
   const scale = useScale(viewport)
   const [world] = useWorld()
-  const [drag, setDrag] = useImmer<Drag | null>(null)
+  const [drag] = useImmer<Drag | null>(null)
   const input = useInput(scale, drag)
-  const [cursor, setCursor] = useCursor()
+  const [cursor] = useCursor()
   const path = usePath(cursor, input, world)
   const player = usePlayer(cursor, path)
   const camera = useCamera(cursor, path)
   const viewBox = useViewBox(viewport)
-  const onPointerDown = useOnPointerDown(setDrag)
-  const onPointerMove = useOnPointerMove(setDrag)
-  const onPointerUp = useOnPointerUp(
-    setDrag,
-    setCursor,
-    path,
-  )
 
   const action = useAction(path)
   useEffect(() => {
@@ -162,23 +153,6 @@ export function App() {
       viewBox={viewBox}
       className={styles.app}
       data-scale={scale}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerLeave={(ev) => {
-        setDrag((prev) => {
-          if (prev?.pointerId === ev.pointerId) {
-            return null
-          }
-        })
-      }}
-      onPointerCancel={(ev) => {
-        setDrag((prev) => {
-          if (prev?.pointerId === ev.pointerId) {
-            return null
-          }
-        })
-      }}
     >
       {viewport && scale && (
         <>
@@ -533,73 +507,6 @@ function RenderDrag({ drag, viewport }: RenderDragProps) {
         {end && <circle cx={end.x} cy={end.y} r={r} />}
       </g>
     </>
-  )
-}
-
-function useOnPointerDown(setDrag: Updater<Drag | null>) {
-  return useCallback<
-    Required<React.DOMAttributes<Element>>['onPointerDown']
-  >((ev) => {
-    setDrag((prev) => {
-      if (prev === null) {
-        const start: DragEvent = {
-          time: ev.timeStamp,
-          position: new Vec2(ev.clientX, ev.clientY),
-        }
-        const next: Drag = {
-          pointerId: ev.pointerId,
-          start,
-          end: null,
-          events: [start],
-        }
-        return next
-      }
-      invariant(prev.pointerId !== ev.pointerId)
-    })
-  }, [])
-}
-
-function useOnPointerMove(setDrag: Updater<Drag | null>) {
-  return useCallback<
-    Required<React.DOMAttributes<Element>>['onPointerMove']
-  >((ev) => {
-    setDrag((prev) => {
-      if (!prev || prev.pointerId !== ev.pointerId) {
-        return
-      }
-      const end: DragEvent = {
-        time: ev.timeStamp,
-        position: new Vec2(ev.clientX, ev.clientY),
-      }
-      prev.end = end
-      prev.events.push(end)
-    })
-  }, [])
-}
-
-function useOnPointerUp(
-  setDrag: Updater<Drag | null>,
-  setCursor: React.Dispatch<React.SetStateAction<Cursor>>,
-  path: Path,
-) {
-  return useCallback<
-    Required<React.DOMAttributes<Element>>['onPointerUp']
-  >(
-    (ev) => {
-      const last = path.at(-1)
-      if (last) {
-        setCursor(() => ({
-          position: last.b,
-          point: last.point,
-        }))
-      }
-      setDrag((prev) => {
-        if (prev?.pointerId === ev.pointerId) {
-          return null
-        }
-      })
-    },
-    [path],
   )
 }
 
