@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import invariant from 'tiny-invariant'
 
 export function usePreventDefaults(
-  svg: React.RefObject<SVGSVGElement>,
+  root: React.RefObject<Element>,
 ): void {
   useEffect(() => {
     const controller = new AbortController()
@@ -13,16 +13,16 @@ export function usePreventDefaults(
     function listener(ev: Event) {
       ev.preventDefault()
     }
-    invariant(svg.current)
+    invariant(root.current)
     // prettier-ignore
     {
       // disable the bounce on desktop
-      svg.current.addEventListener('wheel', listener, options)
+      root.current.addEventListener('wheel', listener, options)
 
       // disable the swipe back/forward navigation on mobile
-      svg.current.addEventListener('touchcancel', listener, options)
-      svg.current.addEventListener('touchend', listener, options)
-      svg.current.addEventListener('touchstart', listener, options)
+      root.current.addEventListener('touchcancel', listener, options)
+      root.current.addEventListener('touchend', listener, options)
+      root.current.addEventListener('touchstart', listener, options)
     }
     return () => {
       controller.abort()
