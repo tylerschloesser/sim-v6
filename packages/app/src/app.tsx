@@ -14,7 +14,6 @@ import { useCamera } from './use-camera.js'
 import { useCursor } from './use-cursor.js'
 import { usePointerEvents } from './use-pointer-events.js'
 import { usePreventDefaults } from './use-prevent-defaults.js'
-import { svgTranslate } from './util.js'
 import { Vec2 } from './vec2.js'
 import { initWorld, loadWorld, saveWorld } from './world.js'
 
@@ -123,86 +122,5 @@ export function App() {
       )}
       <text>{world.tick}</text>
     </svg>
-  )
-}
-
-interface SmoothRectProps {
-  scale: number
-  translate: Vec2
-  x: number
-  y: number
-  width: number
-  height: number
-}
-
-function useMemoizedTranslate(
-  props: Pick<SmoothRectProps, 'translate'>,
-): Vec2 {
-  const translate = useRef<Vec2>(props.translate)
-  if (!translate.current.equals(props.translate)) {
-    translate.current = props.translate
-  }
-  return translate.current
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function SmoothRect({
-  scale,
-  x,
-  y,
-  width,
-  height,
-  ...props
-}: SmoothRectProps) {
-  // memoize translate to simplify the effect below
-  const translate = useMemoizedTranslate(props)
-  const [current, setCurrent] = useState(translate)
-
-  const lastStep = useRef<number>(self.performance.now())
-  useEffect(() => {
-    let handle: number
-    function step() {
-      const now = self.performance.now()
-      const elapsed = (now - lastStep.current) / 1000
-      lastStep.current = now
-
-      setCurrent((prev) => {
-        if (prev === translate) {
-          return prev
-        }
-
-        const dir = translate.sub(prev)
-
-        const speed = Math.max(
-          (dir.len() * 0.25 + 1) ** 1.25 - 1,
-          // need some min speed threshold so that we eventually stop
-          1e-6,
-        )
-
-        const velocity = dir.norm().mul(scale * speed)
-        const delta = velocity.mul(elapsed)
-
-        if (delta.len() >= dir.len()) {
-          return translate
-        }
-
-        return prev.add(delta)
-      })
-      handle = self.requestAnimationFrame(step)
-    }
-    handle = self.requestAnimationFrame(step)
-    return () => {
-      self.cancelAnimationFrame(handle)
-    }
-  }, [translate, scale])
-
-  return (
-    <rect
-      transform={svgTranslate(current)}
-      x={x}
-      y={y}
-      width={width}
-      height={height}
-    />
   )
 }
