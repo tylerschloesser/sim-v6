@@ -28,9 +28,16 @@ export function getScale(
   invariant(zoom >= MIN_ZOOM)
   invariant(zoom <= MAX_ZOOM)
 
+  if (vx === 0 || vy === 0) {
+    return 1
+  }
+
   const minScale = getMinScale(vx, vy)
   const maxScale = getMaxScale(vx, vy)
-  return minScale + (maxScale - minScale) * zoom
+
+  const scale = minScale + (maxScale - minScale) * zoom
+  invariant(scale > 0)
+  return scale
 }
 
 export function clampScale(
@@ -55,5 +62,5 @@ export function scaleToZoom(
 }
 
 export function clampZoom(zoom: number): number {
-  return clamp(zoom, 0, 1)
+  return clamp(zoom, MIN_ZOOM, MAX_ZOOM)
 }
