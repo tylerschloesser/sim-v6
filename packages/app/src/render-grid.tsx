@@ -26,13 +26,15 @@ export const RenderGrid = React.memo(function RenderGrid({
       .sub(scale),
   )
   return (
-    <g
-      visibility={SHOW_GRID ? undefined : 'hidden'}
-      transform={transform}
-      strokeWidth={2}
-      stroke={GRID_LINE_COLOR}
-    >
-      <RenderGridLines gridLines={gridLines} />
+    <g data-inspect="grid">
+      <g
+        visibility={SHOW_GRID ? undefined : 'hidden'}
+        transform={transform}
+        strokeWidth={2}
+        stroke={GRID_LINE_COLOR}
+      >
+        <RenderGridLines gridLines={gridLines} />
+      </g>
     </g>
   )
 })

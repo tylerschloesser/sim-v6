@@ -31,12 +31,7 @@ export function App() {
   usePreventDefaults(svg)
 
   return (
-    <svg
-      ref={svg}
-      viewBox={viewBox}
-      className={styles.app}
-      data-scale={scale}
-    >
+    <svg ref={svg} viewBox={viewBox} className={styles.app}>
       {viewport && scale && (
         <>
           <RenderGrid
