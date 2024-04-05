@@ -4,6 +4,14 @@ import { Vec2 } from './vec2.js'
 export type PointerId = number
 export type Cursor = Vec2
 
+export const ZodVec2 = z.strictObject({
+  x: z.number(),
+  y: z.number(),
+})
+export type ZodVec2 = z.infer<typeof ZodVec2>
+
+const NodeRadius = z.number().positive()
+
 export const NodeType = z.enum(['Root', 'Branch', 'Leaf'])
 export type NodeType = z.infer<typeof NodeType>
 
@@ -22,6 +30,9 @@ export const BranchNode = z.strictObject({
   id: NodeId,
   parentId: NodeId,
   childIds: NodeId.array(),
+
+  position: ZodVec2,
+  radius: NodeRadius,
 })
 export type BranchNode = z.infer<typeof BranchNode>
 
