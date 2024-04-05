@@ -1,7 +1,8 @@
 import { clamp } from 'lodash-es'
 import React, { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
-import { getScale } from './const.js'
+import { MAX_ZOOM, MIN_ZOOM } from './const.js'
+import { getScale } from './scale.js'
 import { Cursor, PointerId, Viewport } from './types.js'
 import { Vec2 } from './vec2.js'
 
@@ -59,8 +60,11 @@ export function usePointerEvents(
     root.current.addEventListener('wheel', (ev) => {
       setCursor((cursor) => {
         const prevZoom = cursor.zoom
-        // prettier-ignore
-        const nextZoom = clamp(prevZoom + -ev.deltaY / 1000, 0, 1)
+        const nextZoom = clamp(
+          prevZoom + -ev.deltaY / 1000,
+          MIN_ZOOM,
+          MAX_ZOOM,
+        )
 
         if (prevZoom === nextZoom) {
           return cursor

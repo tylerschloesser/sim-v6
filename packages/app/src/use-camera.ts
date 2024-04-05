@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { getScale } from './const.js'
+import { getScale } from './scale.js'
 import { Camera, Cursor } from './types.js'
 import { Vec2 } from './vec2.js'
 
