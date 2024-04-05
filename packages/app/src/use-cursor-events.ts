@@ -32,18 +32,21 @@ export function useCursorEvents(
     }
     invariant(root.current)
 
-    root.current.addEventListener(
-      'pointermove',
-      (ev) => {
+    // prettier-ignore
+    {
+      const listener = (ev: PointerEvent) => {
         handlePointerEvent(ev, cache, scaleRef, setCursor)
-      },
-      options,
-    )
+      }
+      root.current.addEventListener('pointerout', listener, options)
+      root.current.addEventListener('pointerleave', listener, options)
+      root.current.addEventListener('pointercancel', listener, options)
+      root.current.addEventListener('pointermove', listener, options)
+    }
 
     root.current.addEventListener(
       'wheel',
       (ev) => {
-        handleWheel(ev, viewportRef, setCursor)
+        handleWheelEvent(ev, viewportRef, setCursor)
       },
       options,
     )
@@ -61,6 +64,12 @@ function handlePointerEvent(
   setCursor: React.Dispatch<React.SetStateAction<Cursor>>,
 ): void {
   switch (ev.type) {
+    case 'pointerout':
+    case 'pointerleave':
+    case 'pointercancel': {
+      cache.delete(ev.pointerId)
+      break
+    }
     case 'pointermove': {
       const prev = cache.get(ev.pointerId)
       cache.set(ev.pointerId, ev)
@@ -94,7 +103,7 @@ function handleOneFingerDrag(
   })
 }
 
-function handleWheel(
+function handleWheelEvent(
   ev: WheelEvent,
   viewportRef: React.MutableRefObject<Viewport>,
   setCursor: React.Dispatch<React.SetStateAction<Cursor>>,
