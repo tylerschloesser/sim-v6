@@ -4,13 +4,15 @@ import { smooth } from './const.js'
 import { getScale } from './scale.js'
 import { Camera, Cursor, Viewport } from './types.js'
 
+type Target = Camera & { wheel: boolean }
+
 export function useCamera(
   cursor$: BehaviorSubject<Cursor>,
   viewport$: BehaviorSubject<Viewport>,
 ): Camera {
   const target$ = useTarget$(cursor$, viewport$)
   const camera$ = useMemo(
-    () => new BehaviorSubject(target$.value),
+    () => new BehaviorSubject<Camera>(target$.value),
     [],
   )
   const [camera, setCamera] = useState(camera$.value)
@@ -28,7 +30,7 @@ export function useCamera(
 }
 
 function useTransition(
-  target$: BehaviorSubject<Camera>,
+  target$: BehaviorSubject<Target>,
   camera$: BehaviorSubject<Camera>,
 ): void {
   useEffect(() => {
@@ -48,7 +50,7 @@ function useTransition(
       }
 
       let position = target.position
-      {
+      if (!target.wheel) {
         const d = target.position.sub(camera.position)
         if (d.len() > 1e-3) {
           const speed = smooth(d.len(), 3)
@@ -59,7 +61,7 @@ function useTransition(
       }
 
       let scale = target.scale
-      {
+      if (!target.wheel) {
         const d = target.scale - camera.scale
         if (Math.abs(d) > 1e-3) {
           const speed =
@@ -87,7 +89,7 @@ function useTransition(
 function useTarget$(
   cursor$: BehaviorSubject<Cursor>,
   viewport$: BehaviorSubject<Viewport>,
-): BehaviorSubject<Camera> {
+): BehaviorSubject<Target> {
   const target$ = useMemo(
     () =>
       new BehaviorSubject({
@@ -97,6 +99,7 @@ function useTarget$(
           viewport$.value.x,
           viewport$.value.y,
         ),
+        wheel: cursor$.value.wheel,
       }),
     [],
   )
@@ -113,6 +116,7 @@ function useTarget$(
           viewport.x,
           viewport.y,
         ),
+        wheel: cursor.wheel,
       })
     })
     return () => {

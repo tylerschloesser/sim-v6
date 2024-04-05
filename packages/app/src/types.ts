@@ -14,6 +14,8 @@ export type ZodVec2 = z.infer<typeof ZodVec2>
 export interface Cursor {
   position: Vec2
   zoom: number
+  // we don't transition the position and zoom at the same rate
+  // so disable transition on wheel
   wheel: boolean
 }
 
