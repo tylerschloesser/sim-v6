@@ -14,7 +14,10 @@ export function RenderGrid({
   camera,
   scale,
 }: RenderGridProps) {
-  const gridLines = useGridLines(viewport, scale)
+  const gridLines = useMemo(
+    () => Array.from(iterateGridLines(viewport, scale)),
+    [viewport, scale],
+  )
   const transform = useMemo(
     () =>
       svgTranslate(
@@ -80,14 +83,4 @@ function* iterateGridLines(
     // prettier-ignore
     yield { key: `${key++}`, x1, y1, x2, y2 }
   }
-}
-
-function useGridLines(
-  viewport: Vec2,
-  scale: number,
-): GridLine[] {
-  return useMemo(
-    () => Array.from(iterateGridLines(viewport, scale)),
-    [viewport, scale],
-  )
 }
