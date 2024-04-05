@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import * as z from 'zod'
-import { Cursor } from './types.js'
+import { Cursor, ZodVec2 } from './types.js'
 import { Vec2 } from './vec2.js'
 
 export function useCursor(): [
@@ -10,14 +9,7 @@ export function useCursor(): [
   const initial = useMemo(() => {
     const value = localStorage.getItem('cursor')
     if (value) {
-      return new Vec2(
-        z
-          .strictObject({
-            x: z.number(),
-            y: z.number(),
-          })
-          .parse(JSON.parse(value)),
-      )
+      return new Vec2(ZodVec2.parse(JSON.parse(value)))
     }
     return new Vec2(0, 0)
   }, [])
