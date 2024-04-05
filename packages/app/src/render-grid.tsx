@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { SHOW_GRID } from './const.js'
+import { GRID_LINE_COLOR, SHOW_GRID } from './const.js'
 import { svgTranslate } from './util.js'
 import { Vec2 } from './vec2.js'
 
@@ -30,7 +30,7 @@ export const RenderGrid = React.memo(function RenderGrid({
       visibility={SHOW_GRID ? undefined : 'hidden'}
       transform={transform}
       strokeWidth={2}
-      stroke="hsl(0, 0%, 50%)"
+      stroke={GRID_LINE_COLOR}
     >
       <RenderGridLines gridLines={gridLines} />
     </g>

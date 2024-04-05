@@ -3,6 +3,8 @@ import { Vec2 } from './vec2.js'
 export const SHOW_GRID: boolean = true
 export const ENABLE_SMOOTH_CAMERA: boolean = false
 
+export const GRID_LINE_COLOR: string = 'hsl(0, 0%, 50%)'
+
 export function getScale(viewport: Vec2) {
   const vmin = Math.min(viewport.x, viewport.y)
   return vmin * (1 / 8)
