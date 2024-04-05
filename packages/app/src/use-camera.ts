@@ -9,7 +9,9 @@ export function useCamera(
 ): Camera {
   return useMemo(() => {
     const position = cursor.position
-    const scale = viewport ? getScale(viewport) : 1
+    const scale = viewport
+      ? getScale(cursor.zoom, viewport.x, viewport.y)
+      : 1
     return { position, scale }
   }, [cursor, viewport])
 }

@@ -26,7 +26,12 @@ export function App() {
   const viewBox = useViewBox(viewport)
 
   useTickWorld(setWorld)
-  usePointerEvents(svg, camera.scale, setCursor)
+  usePointerEvents(
+    svg,
+    camera.scale,
+    viewport ?? Vec2.ZERO,
+    setCursor,
+  )
   usePreventDefaults(svg)
 
   return (

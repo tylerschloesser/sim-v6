@@ -1,17 +1,25 @@
+import { clamp } from 'lodash-es'
 import React, { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
-import { Cursor, PointerId } from './types.js'
+import { getScale } from './const.js'
+import { Cursor, PointerId, Viewport } from './types.js'
 import { Vec2 } from './vec2.js'
 
 export function usePointerEvents(
   root: React.RefObject<SVGElement>,
   scale: number,
+  viewport: Viewport,
   setCursor: React.Dispatch<React.SetStateAction<Cursor>>,
 ): void {
   const scaleRef = useRef(scale)
   useEffect(() => {
     scaleRef.current = scale
   }, [scale])
+
+  const viewportRef = useRef(viewport)
+  useEffect(() => {
+    viewportRef.current = viewport
+  }, [viewport])
 
   useEffect(() => {
     const cache = new Map<PointerId, PointerEvent>()
@@ -47,6 +55,36 @@ export function usePointerEvents(
       },
       options,
     )
+
+    root.current.addEventListener('wheel', (ev) => {
+      setCursor((cursor) => {
+        const prevZoom = cursor.zoom
+        // prettier-ignore
+        const nextZoom = clamp(prevZoom + -ev.deltaY / 1000, 0, 1)
+
+        if (prevZoom === nextZoom) {
+          return cursor
+        }
+
+        const { x: vx, y: vy } = viewportRef.current
+        const prevScale = getScale(prevZoom, vx, vy)
+        const nextScale = getScale(nextZoom, vx, vy)
+
+        const rx = ev.clientX - vx / 2
+        const ry = ev.clientY - vy / 2
+
+        const dx = rx / prevScale - rx / nextScale
+        const dy = ry / prevScale - ry / nextScale
+
+        return {
+          position: new Vec2(
+            cursor.position.x + dx,
+            cursor.position.y + dy,
+          ),
+          zoom: nextZoom,
+        }
+      })
+    })
 
     return () => {
       controller.abort()

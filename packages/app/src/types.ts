@@ -3,6 +3,8 @@ import { Vec2 } from './vec2.js'
 
 export type PointerId = number
 
+export type Viewport = Vec2
+
 export const ZodVec2 = z.strictObject({
   x: z.number(),
   y: z.number(),
