@@ -9,11 +9,11 @@ import { Updater, useImmer } from 'use-immer'
 import styles from './app.module.scss'
 import { getScale } from './const.js'
 import { RenderGrid } from './render-grid.js'
-import { CellType, World } from './types.js'
+import { World } from './types.js'
 import { useCamera } from './use-camera.js'
 import { useCursor } from './use-cursor.js'
 import { usePointerEvents } from './use-pointer-events.js'
-import { svgTransform, svgTranslate } from './util.js'
+import { svgTranslate } from './util.js'
 import { Vec2 } from './vec2.js'
 import { initWorld } from './world.js'
 
@@ -108,42 +108,10 @@ export function App() {
             camera={camera}
             scale={scale}
           />
-          <g
-            transform={svgTransform({
-              translate: viewport
-                .div(2)
-                .sub(
-                  new Vec2(camera.x, camera.y * -1).mul(
-                    scale,
-                  ),
-                ),
-              scale: new Vec2(1, -1),
-            })}
-          >
-            <RenderCells scale={scale} world={world} />
-          </g>
         </>
       )}
     </svg>
   )
-}
-
-function* iterateCells(world: World): Generator<{
-  id: string
-  type: CellType
-  x: number
-  y: number
-  color: string
-}> {
-  for (const [key, value] of Object.entries(world.cells)) {
-    const match = key.match(/^(-?\d+)\.(-?\d+)$/)
-    invariant(match?.length === 3)
-    const x = parseInt(match.at(1)!)
-    const y = parseInt(match.at(2)!)
-    const { color, type } = value
-    const id = key
-    yield { id, type, x, y, color }
-  }
 }
 
 function usePreventDefaults(
@@ -173,29 +141,6 @@ function usePreventDefaults(
       controller.abort()
     }
   }, [])
-}
-
-interface RenderCellsProps {
-  scale: number
-  world: World
-}
-function RenderCells({ scale, world }: RenderCellsProps) {
-  return (
-    <g>
-      {Array.from(iterateCells(world)).map(
-        ({ id, x, y, color }) => (
-          <rect
-            key={id}
-            x={x * scale}
-            y={y * scale}
-            width={scale}
-            height={scale}
-            fill={color}
-          />
-        ),
-      )}
-    </g>
-  )
 }
 
 interface SmoothRectProps {
