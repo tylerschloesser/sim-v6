@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import invariant from 'tiny-invariant'
+import { NODE_BORDER_COLOR } from './const.js'
 import { NodeType, World } from './types.js'
 import { svgTransform } from './util.js'
 import { Vec2 } from './vec2.js'
@@ -75,6 +76,8 @@ const RenderNodes = React.memo(function RenderNodes({
           cy={node.position.y * scale}
           r={node.radius * scale}
           fill="red"
+          strokeWidth={2}
+          stroke={NODE_BORDER_COLOR}
         />
       ))}
     </g>
