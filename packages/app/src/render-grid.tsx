@@ -21,11 +21,7 @@ export const RenderGrid = React.memo(function RenderGrid({
   const transform = svgTranslate(
     viewport
       .div(2)
-      .sub(
-        camera.position
-          .map(({ x, y }) => ({ x, y: -y }))
-          .mul(scale),
-      )
+      .sub(camera.position.mul(scale))
       .mod(scale)
       .sub(scale),
   )

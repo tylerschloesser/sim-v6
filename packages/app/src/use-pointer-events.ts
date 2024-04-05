@@ -44,13 +44,13 @@ export function usePointerEvents(
 
         const scale = scaleRef.current
         invariant(scale > 0)
-        const dx = (next.clientX - prev.clientX) / scale
-        const dy = (next.clientY - prev.clientY) / scale
+        const dx = -(next.clientX - prev.clientX) / scale
+        const dy = -(next.clientY - prev.clientY) / scale
         if (dx === 0 && dy === 0) {
           return
         }
         setCursor(({ position, zoom }) => ({
-          position: position.add(new Vec2(-dx, dy)),
+          position: position.add(new Vec2(dx, dy)),
           zoom,
         }))
       },
