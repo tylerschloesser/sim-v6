@@ -6,7 +6,7 @@ import { getScale } from './scale.js'
 import { Cursor, PointerId, Viewport } from './types.js'
 import { Vec2 } from './vec2.js'
 
-export function usePointerEvents(
+export function useCursorEvents(
   root: React.RefObject<SVGElement>,
   scale: number,
   viewport: Viewport,

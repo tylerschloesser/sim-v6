@@ -11,8 +11,8 @@ import { RenderGrid } from './render-grid.js'
 import { RenderWorld } from './render-world.js'
 import { World } from './types.js'
 import { useCamera } from './use-camera.js'
+import { useCursorEvents } from './use-cursor-events.js'
 import { useCursor } from './use-cursor.js'
-import { usePointerEvents } from './use-pointer-events.js'
 import { usePreventDefaults } from './use-prevent-defaults.js'
 import { Vec2 } from './vec2.js'
 import { initWorld, loadWorld, saveWorld } from './world.js'
@@ -26,7 +26,7 @@ export function App() {
   const viewBox = useViewBox(viewport)
 
   useTickWorld(setWorld)
-  usePointerEvents(
+  useCursorEvents(
     svg,
     camera.scale,
     viewport ?? Vec2.ZERO,
