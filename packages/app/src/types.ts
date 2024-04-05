@@ -11,21 +11,23 @@ export const NodeId = z.string()
 export type NodeId = z.infer<typeof NodeId>
 
 export const LeafNode = z.strictObject({
-  id: NodeId,
   type: z.literal(NodeType.enum.Leaf),
+  id: NodeId,
+  parentId: NodeId,
 })
 export type LeafNode = z.infer<typeof LeafNode>
 
 export const BranchNode = z.strictObject({
-  id: NodeId,
   type: z.literal(NodeType.enum.Branch),
+  id: NodeId,
+  parentId: NodeId,
   childIds: NodeId.array(),
 })
 export type BranchNode = z.infer<typeof BranchNode>
 
 export const RootNode = z.strictObject({
-  id: NodeId,
   type: z.literal(NodeType.enum.Root),
+  id: NodeId,
   childIds: NodeId.array(),
 })
 export type RootNode = z.infer<typeof RootNode>

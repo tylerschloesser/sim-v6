@@ -13,6 +13,7 @@ import { World } from './types.js'
 import { useCamera } from './use-camera.js'
 import { useCursor } from './use-cursor.js'
 import { usePointerEvents } from './use-pointer-events.js'
+import { usePreventDefaults } from './use-prevent-defaults.js'
 import { svgTranslate } from './util.js'
 import { Vec2 } from './vec2.js'
 import { initWorld, loadWorld, saveWorld } from './world.js'
@@ -123,35 +124,6 @@ export function App() {
       <text>{world.tick}</text>
     </svg>
   )
-}
-
-function usePreventDefaults(
-  svg: React.RefObject<SVGSVGElement>,
-): void {
-  useEffect(() => {
-    const controller = new AbortController()
-    const options: AddEventListenerOptions = {
-      signal: controller.signal,
-      passive: false,
-    }
-    function listener(ev: Event) {
-      ev.preventDefault()
-    }
-    invariant(svg.current)
-    // prettier-ignore
-    {
-      // disable the bounce on desktop
-      svg.current.addEventListener('wheel', listener, options)
-
-      // disable the swipe back/forward navigation on mobile
-      svg.current.addEventListener('touchcancel', listener, options)
-      svg.current.addEventListener('touchend', listener, options)
-      svg.current.addEventListener('touchstart', listener, options)
-    }
-    return () => {
-      controller.abort()
-    }
-  }, [])
 }
 
 interface SmoothRectProps {

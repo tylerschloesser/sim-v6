@@ -7,8 +7,8 @@ export function initWorld(): World {
 
   const rootNodeId = `${nextNodeId++}`
   const rootNode: RootNode = {
-    id: rootNodeId,
     type: NodeType.enum.Root,
+    id: rootNodeId,
     childIds: [],
   }
 
