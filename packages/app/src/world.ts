@@ -1,6 +1,5 @@
 import Prando from 'prando'
 import { CellType, World } from './types.js'
-import { Vec2 } from './vec2.js'
 
 const rng = new Prando(0)
 
@@ -29,32 +28,5 @@ export function getCellColor(type: CellType): string {
 
 export function initWorld(): World {
   const cells: World['cells'] = {}
-
-  const center = new Vec2(0, 0)
-  for (let x = -20; x < 20; x++) {
-    for (let y = -20; y < 20; y++) {
-      const position = new Vec2(x, y)
-      const dist = Math.floor(center.sub(position).len())
-
-      let type: CellType | null = null
-      if (dist === 7) {
-        type = CellType.enum.Stone
-      } else if (dist < 7) {
-        if (dist > 3) {
-          type =
-            rng.next() < 0.33
-              ? CellType.enum.Tree
-              : CellType.enum.Grass
-        } else {
-          type = CellType.enum.Grass
-        }
-      }
-      if (type) {
-        const color = getCellColor(type)
-        cells[`${x}.${y}`] = { type, color }
-      }
-    }
-  }
-
   return { cells }
 }
