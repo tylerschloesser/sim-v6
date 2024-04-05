@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { SHOW_GRID } from './const.js'
 import { svgTranslate } from './util.js'
 import { Vec2 } from './vec2.js'
@@ -36,15 +36,7 @@ export function RenderGrid({
       strokeWidth={2}
       stroke="hsl(0, 0%, 50%)"
     >
-      {gridLines.map(({ key, x1, y1, x2, y2 }) => (
-        <line
-          key={key}
-          x1={x1.toFixed(2)}
-          y1={y1.toFixed(2)}
-          x2={x2.toFixed(2)}
-          y2={y2.toFixed(2)}
-        />
-      ))}
+      <RenderGridLines gridLines={gridLines} />
     </g>
   )
 }
@@ -56,6 +48,28 @@ interface GridLine {
   x2: number
   y2: number
 }
+
+interface RenderGridLinesProps {
+  gridLines: GridLine[]
+}
+
+/* eslint-disable react/prop-types */
+const RenderGridLines = React.memo(
+  function RenderGridLines({
+    gridLines,
+  }: RenderGridLinesProps) {
+    return gridLines.map(({ key, x1, y1, x2, y2 }) => (
+      <line
+        key={key}
+        x1={x1.toFixed(2)}
+        y1={y1.toFixed(2)}
+        x2={x2.toFixed(2)}
+        y2={y2.toFixed(2)}
+      />
+    ))
+  },
+)
+/* eslint-enable react/prop-types */
 
 function* iterateGridLines(
   viewport: Vec2,
