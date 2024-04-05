@@ -35,24 +35,7 @@ export function useCursorEvents(
     root.current.addEventListener(
       'pointermove',
       (ev) => {
-        const prev = cache.get(ev.pointerId)
-        cache.set(ev.pointerId, ev)
-        if (!ev.buttons || !prev?.buttons) {
-          return
-        }
-        const next = ev
-
-        const scale = scaleRef.current
-        invariant(scale > 0)
-        const dx = -(next.clientX - prev.clientX) / scale
-        const dy = -(next.clientY - prev.clientY) / scale
-        if (dx === 0 && dy === 0) {
-          return
-        }
-        setCursor(({ position, zoom }) => ({
-          position: position.add(new Vec2(dx, dy)),
-          zoom,
-        }))
+        handlePointerEvent(ev, cache, scaleRef, setCursor)
       },
       options,
     )
@@ -99,4 +82,42 @@ export function useCursorEvents(
       controller.abort()
     }
   }, [])
+}
+
+function handlePointerEvent(
+  ev: PointerEvent,
+  cache: Map<number, PointerEvent>,
+  scaleRef: React.MutableRefObject<number>,
+  setCursor: React.Dispatch<React.SetStateAction<Cursor>>,
+): void {
+  switch (ev.type) {
+    case 'pointermove': {
+      const prev = cache.get(ev.pointerId)
+      cache.set(ev.pointerId, ev)
+      if (!ev.buttons || !prev?.buttons) {
+        break
+      }
+      handleOneFingerDrag(prev, ev, scaleRef, setCursor)
+      break
+    }
+  }
+}
+
+function handleOneFingerDrag(
+  prev: PointerEvent,
+  next: PointerEvent,
+  scaleRef: React.MutableRefObject<number>,
+  setCursor: React.Dispatch<React.SetStateAction<Cursor>>,
+): void {
+  const scale = scaleRef.current
+  invariant(scale > 0)
+  const dx = -(next.clientX - prev.clientX) / scale
+  const dy = -(next.clientY - prev.clientY) / scale
+  if (dx === 0 && dy === 0) {
+    return
+  }
+  setCursor(({ position, zoom }) => ({
+    position: position.add(new Vec2(dx, dy)),
+    zoom,
+  }))
 }
