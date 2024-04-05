@@ -1,4 +1,5 @@
 import React from 'react'
+import { svgTransform } from './util.js'
 import { Vec2 } from './vec2.js'
 
 export interface RenderWorldProps {
@@ -12,5 +13,15 @@ export const RenderWorld = React.memo(function RenderWorld({
   camera,
   scale,
 }: RenderWorldProps) {
-  return <g data-inspect="world"></g>
+  const transform = svgTransform({
+    translate: viewport
+      .div(2)
+      .sub(new Vec2(camera.x, camera.y * -1).mul(scale)),
+    scale: new Vec2(1, -1),
+  })
+  return (
+    <g data-inspect="world">
+      <g transform={transform}></g>
+    </g>
+  )
 })
