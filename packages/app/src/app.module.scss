@@ -1,0 +1,15 @@
+.app {
+  display: block;
+  width: 100svw;
+  height: 100svh;
+
+  touch-action: none;
+  user-select: none;
+
+  * {
+    transition:
+      fill 125ms,
+      stroke 125ms,
+      opacity 125ms;
+  }
+}

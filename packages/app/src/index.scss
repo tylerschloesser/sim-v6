@@ -1,0 +1,23 @@
+body {
+  margin: 0;
+  font-family: system-ui;
+  font-size: 16px;
+
+  background: var(--white);
+  color: var(--black);
+}
+
+$black: hsl(0, 0%, 0%);
+$white: hsl(0, 0%, 100%);
+
+:root {
+  --black: #{$black};
+  --white: #{$white};
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --black: #{$white};
+    --white: #{$black};
+  }
+}
