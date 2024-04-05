@@ -2,13 +2,23 @@ import * as z from 'zod'
 import { Vec2 } from './vec2.js'
 
 export type PointerId = number
-export type Cursor = Vec2
 
 export const ZodVec2 = z.strictObject({
   x: z.number(),
   y: z.number(),
 })
 export type ZodVec2 = z.infer<typeof ZodVec2>
+
+export interface Cursor {
+  position: Vec2
+  zoom: number
+}
+
+export const ZodCursor = z.strictObject({
+  position: ZodVec2,
+  zoom: z.number().min(0).max(1),
+})
+export type ZodCursor = z.infer<typeof ZodCursor>
 
 const NodeRadius = z.number().positive()
 

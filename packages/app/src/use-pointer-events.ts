@@ -40,7 +40,10 @@ export function usePointerEvents(
         if (dx === 0 && dy === 0) {
           return
         }
-        setCursor((cursor) => cursor.add(new Vec2(-dx, dy)))
+        setCursor(({ position, zoom }) => ({
+          position: position.add(new Vec2(-dx, dy)),
+          zoom,
+        }))
       },
       options,
     )
