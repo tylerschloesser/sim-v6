@@ -21,14 +21,14 @@ import { initWorld, loadWorld, saveWorld } from './world.js'
 export function App() {
   const svg = useRef<SVGSVGElement>(null)
   const viewport = useViewport(svg)
-  const [scale, scaleRef] = useScale(viewport)
+  const scale = useScale(viewport)
   const [world, setWorld] = useWorld()
   const [cursor, setCursor] = useCursor()
   const camera = useCamera(cursor)
   const viewBox = useViewBox(viewport)
 
   useTickWorld(setWorld)
-  usePointerEvents(svg, setCursor, scaleRef)
+  usePointerEvents(svg, scale ?? 1, setCursor)
   usePreventDefaults(svg)
 
   return (
@@ -64,21 +64,11 @@ function useWorld(): [World, Updater<World>] {
   return [world, setWorld]
 }
 
-function useScale(
-  viewport: Vec2 | null,
-): [number | null, React.MutableRefObject<number>] {
-  const scale = useMemo(
+function useScale(viewport: Vec2 | null): number | null {
+  return useMemo(
     () => viewport && getScale(viewport),
     [viewport],
   )
-  const scaleRef = useRef(1)
-  useEffect(() => {
-    if (typeof scale === 'number') {
-      invariant(scale > 0)
-      scaleRef.current = scale
-    }
-  }, [scale])
-  return [scale, scaleRef]
 }
 
 function useViewport(

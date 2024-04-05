@@ -1,13 +1,18 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import { Cursor, PointerId } from './types.js'
 import { Vec2 } from './vec2.js'
 
 export function usePointerEvents(
-  svg: React.RefObject<SVGSVGElement>,
+  root: React.RefObject<SVGElement>,
+  scale: number,
   setCursor: React.Dispatch<React.SetStateAction<Cursor>>,
-  scaleRef: React.MutableRefObject<number>,
 ): void {
+  const scaleRef = useRef(scale)
+  useEffect(() => {
+    scaleRef.current = scale
+  }, [scale])
+
   useEffect(() => {
     const cache = new Map<PointerId, PointerEvent>()
 
@@ -16,9 +21,9 @@ export function usePointerEvents(
       signal: controller.signal,
       passive: false,
     }
-    invariant(svg.current)
+    invariant(root.current)
 
-    svg.current.addEventListener(
+    root.current.addEventListener(
       'pointermove',
       (ev) => {
         const prev = cache.get(ev.pointerId)
@@ -29,6 +34,7 @@ export function usePointerEvents(
         const next = ev
 
         const scale = scaleRef.current
+        invariant(scale > 0)
         const dx = (next.clientX - prev.clientX) / scale
         const dy = (next.clientY - prev.clientY) / scale
         if (dx === 0 && dy === 0) {
