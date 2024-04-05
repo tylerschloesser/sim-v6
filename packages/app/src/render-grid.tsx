@@ -9,7 +9,7 @@ export interface RenderGridProps {
   scale: number
 }
 
-export function RenderGrid({
+export const RenderGrid = React.memo(function RenderGrid({
   viewport,
   camera,
   scale,
@@ -18,16 +18,12 @@ export function RenderGrid({
     () => Array.from(iterateGridLines(viewport, scale)),
     [viewport, scale],
   )
-  const transform = useMemo(
-    () =>
-      svgTranslate(
-        viewport
-          .div(2)
-          .sub(new Vec2(camera.x, camera.y * -1).mul(scale))
-          .mod(scale)
-          .sub(scale),
-      ),
-    [viewport, scale, camera],
+  const transform = svgTranslate(
+    viewport
+      .div(2)
+      .sub(new Vec2(camera.x, camera.y * -1).mul(scale))
+      .mod(scale)
+      .sub(scale),
   )
   return (
     <g
@@ -39,7 +35,7 @@ export function RenderGrid({
       <RenderGridLines gridLines={gridLines} />
     </g>
   )
-}
+})
 
 interface GridLine {
   key: string
