@@ -19,6 +19,7 @@ import {
 } from './types.js'
 import { useCamera } from './use-camera.js'
 import { useInput } from './use-input.js'
+import { usePointerEvents } from './use-pointer-events.js'
 import { Vec2 } from './vec2.js'
 import { initWorld } from './world.js'
 
@@ -35,7 +36,7 @@ function useCursor(): [
             x: z.number(),
             y: z.number(),
           })
-          .parse(value),
+          .parse(JSON.parse(value)),
       )
     }
     return new Vec2(0, 0)
@@ -106,10 +107,19 @@ export function App() {
   const [world] = useWorld()
   const [drag] = useImmer<Drag | null>(null)
   const input = useInput(scale, drag)
-  const [cursor] = useCursor()
+  const [cursor, setCursor] = useCursor()
   const camera = useCamera(cursor)
   const viewBox = useViewBox(viewport)
 
+  const scaleRef = useRef(1)
+  useEffect(() => {
+    if (typeof scale === 'number') {
+      invariant(scale > 0)
+      scaleRef.current = scale
+    }
+  }, [scale])
+
+  usePointerEvents(svg, setCursor, scaleRef)
   usePreventDefaults(svg)
 
   return (
