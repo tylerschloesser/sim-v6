@@ -17,6 +17,40 @@ import { usePreventDefaults } from './use-prevent-defaults.js'
 import { Vec2 } from './vec2.js'
 import { initWorld, loadWorld, saveWorld } from './world.js'
 
+export function App() {
+  const svg = useRef<SVGSVGElement>(null)
+  const viewport = useViewport(svg)
+  const [scale, scaleRef] = useScale(viewport)
+  const [world, setWorld] = useWorld()
+  const [cursor, setCursor] = useCursor()
+  const camera = useCamera(cursor)
+  const viewBox = useViewBox(viewport)
+
+  useTickWorld(setWorld)
+  usePointerEvents(svg, setCursor, scaleRef)
+  usePreventDefaults(svg)
+
+  return (
+    <svg
+      ref={svg}
+      viewBox={viewBox}
+      className={styles.app}
+      data-scale={scale}
+    >
+      {viewport && scale && (
+        <>
+          <RenderGrid
+            viewport={viewport}
+            camera={camera}
+            scale={scale}
+          />
+        </>
+      )}
+      <text>{world.tick}</text>
+    </svg>
+  )
+}
+
 function useWorld(): [World, Updater<World>] {
   const initial = useMemo(() => {
     return loadWorld() ?? initWorld()
@@ -89,38 +123,4 @@ function useTickWorld(setWorld: Updater<World>): void {
       self.clearInterval(intervalId)
     }
   }, [])
-}
-
-export function App() {
-  const svg = useRef<SVGSVGElement>(null)
-  const viewport = useViewport(svg)
-  const [scale, scaleRef] = useScale(viewport)
-  const [world, setWorld] = useWorld()
-  const [cursor, setCursor] = useCursor()
-  const camera = useCamera(cursor)
-  const viewBox = useViewBox(viewport)
-
-  useTickWorld(setWorld)
-  usePointerEvents(svg, setCursor, scaleRef)
-  usePreventDefaults(svg)
-
-  return (
-    <svg
-      ref={svg}
-      viewBox={viewBox}
-      className={styles.app}
-      data-scale={scale}
-    >
-      {viewport && scale && (
-        <>
-          <RenderGrid
-            viewport={viewport}
-            camera={camera}
-            scale={scale}
-          />
-        </>
-      )}
-      <text>{world.tick}</text>
-    </svg>
-  )
 }
