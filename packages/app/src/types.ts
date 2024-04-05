@@ -17,27 +17,4 @@ export type World = z.infer<typeof World>
 
 export type PointerId = number
 
-export interface DragEvent {
-  time: number
-  position: Vec2
-}
-
-export interface Drag {
-  pointerId: PointerId
-  start: DragEvent
-  end: DragEvent | null
-  events: DragEvent[]
-}
-
-export type Point = Vec2
-
 export type Cursor = Vec2
-
-export type Path = Array<{
-  a: Vec2
-  b: Vec2
-  v: Vec2
-  t: number
-  point: Point
-  blockedBy?: Point
-}>
