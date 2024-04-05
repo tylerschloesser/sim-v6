@@ -7,10 +7,14 @@ import { Vec2 } from './vec2.js'
 export function useViewport(
   root: React.RefObject<Element>,
 ): [Viewport, BehaviorSubject<Viewport>] {
+  const initial = useInitialViewport()
   // prettier-ignore
-  const [viewport, setViewport] = useState<Viewport>(Vec2.ZERO)
+  const [viewport, setViewport] = useState<Viewport>(initial)
   // prettier-ignore
   const viewport$ = useMemo(() => new BehaviorSubject(viewport), [])
+
+  invariant(viewport.x > 0)
+  invariant(viewport.y > 0)
 
   useEffect(() => {
     invariant(root.current)
@@ -33,4 +37,10 @@ export function useViewport(
   }, [])
 
   return [viewport, viewport$]
+}
+
+function useInitialViewport(): Vec2 {
+  return useMemo(() => {
+    return new Vec2(window.innerWidth, window.innerHeight)
+  }, [])
 }

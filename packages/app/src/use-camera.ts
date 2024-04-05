@@ -58,8 +58,15 @@ function useTransition(
         }
       }
 
-      // const dScale = target$.value.scale - prev.scale
-      const scale = target$.value.scale
+      let scale = target.scale
+      {
+        const d = target.scale - camera.scale
+        if (Math.abs(d) > 1e-3) {
+          const speed =
+            smooth(Math.abs(d), 3) * Math.sign(d)
+          scale = camera.scale + speed * elapsed
+        }
+      }
 
       if (
         position === target.position &&

@@ -1,4 +1,4 @@
-export const RESET_LOCAL_STORAGE: boolean = false
+export const RESET_LOCAL_STORAGE: boolean = true
 export const SHOW_GRID: boolean = true
 
 export const GRID_LINE_COLOR: string = 'hsl(0, 0%, 50%)'
