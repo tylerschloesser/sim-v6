@@ -14,8 +14,9 @@ export function App() {
   const svg = useRef<SVGSVGElement>(null)
   const [viewport, viewport$] = useViewport(svg)
   const [world, setWorld] = useWorld()
-  const cursor = useCursor(svg, viewport$)
-  const camera = useCamera(cursor, viewport)
+  // eslint-disable-next-line
+  const [_cursor, cursor$] = useCursor(svg, viewport$)
+  const camera = useCamera(cursor$, viewport$)
 
   const viewBox = `0 0 ${viewport.x} ${viewport.y}`
 

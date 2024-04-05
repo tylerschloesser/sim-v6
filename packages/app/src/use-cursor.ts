@@ -17,7 +17,7 @@ import { Vec2 } from './vec2.js'
 export function useCursor(
   root: React.RefObject<SVGElement>,
   viewport$: BehaviorSubject<Viewport>,
-): Cursor {
+): [Cursor, BehaviorSubject<Cursor>] {
   const initial = useInitialCursor()
   const [cursor, setCursor] = useState<Cursor>(initial)
   const cursor$ = useMemo(
@@ -72,7 +72,7 @@ export function useCursor(
     }
   }, [])
 
-  return cursor
+  return [cursor, cursor$]
 }
 
 function useInitialCursor() {
