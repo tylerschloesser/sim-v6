@@ -44,6 +44,7 @@ export function App() {
             viewport={viewport}
             camera={camera}
             scale={scale}
+            world={world}
           />
         </>
       )}

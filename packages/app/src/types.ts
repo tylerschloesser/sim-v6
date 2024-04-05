@@ -22,6 +22,9 @@ export const LeafNode = z.strictObject({
   type: z.literal(NodeType.enum.Leaf),
   id: NodeId,
   parentId: NodeId,
+
+  position: ZodVec2,
+  radius: NodeRadius,
 })
 export type LeafNode = z.infer<typeof LeafNode>
 
