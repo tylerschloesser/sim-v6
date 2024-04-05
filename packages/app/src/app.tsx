@@ -66,7 +66,7 @@ function useScale(
   viewport: Vec2 | null,
 ): [number | null, React.MutableRefObject<number>] {
   const scale = useMemo(
-    () => getScale(viewport),
+    () => viewport && getScale(viewport),
     [viewport],
   )
   const scaleRef = useRef(1)
