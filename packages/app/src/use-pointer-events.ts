@@ -76,6 +76,7 @@ export function usePointerEvents(
           const prevScale = getScale(prevZoom, vx, vy)
           const nextScale = getScale(nextZoom, vx, vy)
 
+          // TODO does this work if canvas is not the full page?
           const rx = ev.clientX - vx / 2
           const ry = ev.clientY - vy / 2
 
