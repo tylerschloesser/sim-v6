@@ -14,11 +14,13 @@ export type ZodVec2 = z.infer<typeof ZodVec2>
 export interface Cursor {
   position: Vec2
   zoom: number
+  wheel: boolean
 }
 
 export const ZodCursor = z.strictObject({
   position: ZodVec2,
   zoom: z.number().min(0).max(1),
+  wheel: z.boolean(),
 })
 export type ZodCursor = z.infer<typeof ZodCursor>
 
