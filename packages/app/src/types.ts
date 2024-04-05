@@ -11,6 +11,7 @@ export const Cell = z.strictObject({
 export type Cell = z.infer<typeof Cell>
 
 export const World = z.strictObject({
+  tick: z.number().int().positive(),
   cells: z.record(z.string(), Cell),
 })
 export type World = z.infer<typeof World>

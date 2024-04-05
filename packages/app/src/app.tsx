@@ -15,19 +15,15 @@ import { useCursor } from './use-cursor.js'
 import { usePointerEvents } from './use-pointer-events.js'
 import { svgTranslate } from './util.js'
 import { Vec2 } from './vec2.js'
-import { initWorld } from './world.js'
+import { initWorld, loadWorld, saveWorld } from './world.js'
 
 function useWorld(): [World, Updater<World>] {
   const initial = useMemo(() => {
-    const value = localStorage.getItem('world')
-    if (value) {
-      return World.parse(JSON.parse(value))
-    }
-    return initWorld()
+    return loadWorld() ?? initWorld()
   }, [])
   const [world, setWorld] = useImmer(initial)
   useEffect(() => {
-    localStorage.setItem('world', JSON.stringify(world))
+    saveWorld(world)
   }, [world])
   return [world, setWorld]
 }
@@ -82,15 +78,29 @@ function useViewBox(
   )
 }
 
+function useTickWorld(setWorld: Updater<World>): void {
+  useEffect(() => {
+    const intervalId = self.setInterval(() => {
+      setWorld((world) => {
+        world.tick += 1
+      })
+    }, 100)
+    return () => {
+      self.clearInterval(intervalId)
+    }
+  }, [])
+}
+
 export function App() {
   const svg = useRef<SVGSVGElement>(null)
   const viewport = useViewport(svg)
   const [scale, scaleRef] = useScale(viewport)
-  const [world] = useWorld()
+  const [world, setWorld] = useWorld()
   const [cursor, setCursor] = useCursor()
   const camera = useCamera(cursor)
   const viewBox = useViewBox(viewport)
 
+  useTickWorld(setWorld)
   usePointerEvents(svg, setCursor, scaleRef)
   usePreventDefaults(svg)
 
@@ -110,6 +120,7 @@ export function App() {
           />
         </>
       )}
+      <text>{world.tick}</text>
     </svg>
   )
 }
