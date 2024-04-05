@@ -1,8 +1,22 @@
-import { World } from './types.js'
+import { NodeType, RootNode, World } from './types.js'
 
 export function initWorld(): World {
   const tick = 1
-  return { tick }
+
+  let nextNodeId = 0
+
+  const rootNodeId = `${nextNodeId++}`
+  const rootNode: RootNode = {
+    id: rootNodeId,
+    type: NodeType.enum.Root,
+    childIds: [],
+  }
+
+  const nodes: World['nodes'] = {
+    [rootNode.id]: rootNode,
+  }
+
+  return { tick, nodes, rootNodeId, nextNodeId }
 }
 
 export function loadWorld(): World | null {
