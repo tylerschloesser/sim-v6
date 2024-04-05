@@ -6,8 +6,8 @@
   },
   "dependencies": {
     "@tyle/cdk": "^1.0.6",
-    "aws-cdk": "^2.130.0",
-    "aws-cdk-lib": "^2.130.0",
+    "aws-cdk": "^2.135.0",
+    "aws-cdk-lib": "^2.135.0",
     "construct": "^1.0.0"
   }
 }
