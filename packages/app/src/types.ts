@@ -31,10 +31,7 @@ export interface Drag {
 
 export type Point = Vec2
 
-export interface Cursor {
-  position: Vec2
-  point: Vec2
-}
+export type Cursor = Vec2
 
 export type Path = Array<{
   a: Vec2

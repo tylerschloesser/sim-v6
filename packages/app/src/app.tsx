@@ -8,25 +8,17 @@ import invariant from 'tiny-invariant'
 import { Updater, useImmer } from 'use-immer'
 import * as z from 'zod'
 import styles from './app.module.scss'
-import {
-  SHOW_CURSOR,
-  SHOW_GRID,
-  SHOW_PATH,
-  getScale,
-} from './const.js'
+import { SHOW_GRID, getScale } from './const.js'
 import {
   CellType,
   Cursor,
   Drag,
   Input,
   InputType,
-  Path,
   World,
 } from './types.js'
 import { useCamera } from './use-camera.js'
 import { useInput } from './use-input.js'
-import { usePath } from './use-path.js'
-import { toCellId } from './util.js'
 import { Vec2 } from './vec2.js'
 import { initWorld } from './world.js'
 
@@ -37,27 +29,16 @@ function useCursor(): [
   const initial = useMemo(() => {
     const value = localStorage.getItem('cursor')
     if (value) {
-      const { position, point } = z
-        .strictObject({
-          position: z.strictObject({
+      return new Vec2(
+        z
+          .strictObject({
             x: z.number(),
             y: z.number(),
-          }),
-          point: z.strictObject({
-            x: z.number(),
-            y: z.number(),
-          }),
-        })
-        .parse(JSON.parse(value))
-      return {
-        position: new Vec2(position),
-        point: new Vec2(point),
-      }
+          })
+          .parse(value),
+      )
     }
-    return {
-      position: new Vec2(0, 0),
-      point: new Vec2(0, 0),
-    }
+    return new Vec2(0, 0)
   }, [])
   const [cursor, setCursor] = useState<Cursor>(initial)
   useEffect(() => {
@@ -118,14 +99,6 @@ function useViewBox(
   )
 }
 
-function useAction(path: Path): string | null {
-  const last = path.at(0)
-  if (last?.blockedBy && last.t > 0.25) {
-    return toCellId(last.blockedBy)
-  }
-  return null
-}
-
 export function App() {
   const svg = useRef<SVGSVGElement>(null)
   const viewport = useViewport(svg)
@@ -134,14 +107,8 @@ export function App() {
   const [drag] = useImmer<Drag | null>(null)
   const input = useInput(scale, drag)
   const [cursor] = useCursor()
-  const path = usePath(cursor, input, world)
-  const camera = useCamera(cursor, path)
+  const camera = useCamera(cursor)
   const viewBox = useViewBox(viewport)
-
-  const action = useAction(path)
-  useEffect(() => {
-    console.log('action', action)
-  }, [action])
 
   usePreventDefaults(svg)
 
@@ -172,12 +139,6 @@ export function App() {
             })}
           >
             <RenderCells scale={scale} world={world} />
-            <RenderPath scale={scale} path={path} />
-            <RenderCursor
-              scale={scale}
-              cursor={cursor}
-              path={path}
-            />
           </g>
 
           <RenderDrag drag={drag} viewport={viewport} />
@@ -367,6 +328,7 @@ function useMemoizedTranslate(
   return translate.current
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function SmoothRect({
   scale,
   x,
@@ -500,98 +462,5 @@ function RenderDrag({ drag, viewport }: RenderDragProps) {
         {end && <circle cx={end.x} cy={end.y} r={r} />}
       </g>
     </>
-  )
-}
-
-interface RenderPathProps {
-  scale: number
-  path: Path
-}
-
-function RenderPath({ scale, path }: RenderPathProps) {
-  return (
-    SHOW_PATH &&
-    path.length && (
-      <g fill="transparent">
-        {path.map(({ a, b }, i) => (
-          <line
-            stroke={i % 2 === 0 ? 'red' : 'cyan'}
-            key={i}
-            x1={a.x * scale}
-            y1={a.y * scale}
-            x2={b.x * scale}
-            y2={b.y * scale}
-          />
-        ))}
-        {path.map(({ point, blockedBy, t }, i) => (
-          <React.Fragment key={i}>
-            <rect
-              stroke={i % 2 === 0 ? 'red' : 'cyan'}
-              opacity={0.5}
-              x={point.x * scale + 1}
-              y={point.y * scale + 1}
-              width={scale - 2}
-              height={scale - 2}
-            />
-            {blockedBy && (
-              <g
-                transform={svgTranslate(
-                  blockedBy.mul(scale).add(1),
-                )}
-              >
-                <rect
-                  stroke={'purple'}
-                  width={scale - 2}
-                  height={scale - 2}
-                />
-                <text
-                  fontSize={16}
-                  fontFamily="system-ui"
-                  fill="white"
-                  transform="scale(1 -1)"
-                >
-                  {t.toFixed(2)}
-                </text>
-              </g>
-            )}
-          </React.Fragment>
-        ))}
-      </g>
-    )
-  )
-}
-
-interface RenderCursorProps {
-  scale: number
-  cursor: Cursor
-  path: Path
-}
-
-function RenderCursor({
-  scale,
-  cursor,
-  path,
-}: RenderCursorProps) {
-  const { target, stroke } = useMemo(() => {
-    const last = path.at(-1)
-    const target = last ? last.point : cursor.point
-    const opacity = last ? 1 : 0.5
-    const stroke = `hsla(0, 100%, 50%, ${opacity})`
-    return { target, stroke }
-  }, [cursor, path])
-
-  return (
-    SHOW_CURSOR && (
-      <g stroke={stroke} fill="transparent">
-        <SmoothRect
-          scale={scale}
-          translate={target.mul(scale)}
-          x={0}
-          y={0}
-          height={scale}
-          width={scale}
-        />
-      </g>
-    )
   )
 }

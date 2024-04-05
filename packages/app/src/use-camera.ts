@@ -1,29 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { smooth } from './const.js'
-import { Cursor, Path } from './types.js'
+import { Cursor } from './types.js'
 import { Vec2 } from './vec2.js'
 
-function useTarget(cursor: Cursor, path: Path) {
-  const next = useMemo(() => {
-    const last = path.at(-1)
-    if (last) {
-      return last.b
-    }
-    return cursor.position
-  }, [cursor, path])
-  const target = useRef(next)
+export function useCamera(cursor: Cursor): Vec2 {
+  const [camera, setCamera] = useState(cursor)
+  const cursorRef = useRef(cursor)
   useEffect(() => {
-    target.current = next
-  }, [next])
-  return target
-}
-
-export function useCamera(
-  cursor: Cursor,
-  path: Path,
-): Vec2 {
-  const target = useTarget(cursor, path)
-  const [camera, setCamera] = useState(target.current)
+    cursorRef.current = cursor
+  }, [cursor])
   useEffect(() => {
     let handle: number
     let lastStep = self.performance.now()
@@ -32,12 +17,12 @@ export function useCamera(
       const elapsed = (now - lastStep) / 1000
       lastStep = now
       setCamera((prev) => {
-        if (prev === target.current) {
+        if (prev === cursorRef.current) {
           return prev
         }
-        const d = target.current.sub(prev)
+        const d = cursorRef.current.sub(prev)
         if (d.len() < 1e-3) {
-          return target.current
+          return cursorRef.current
         }
         return prev.add(
           d.norm().mul(smooth(d.len()) * elapsed),
