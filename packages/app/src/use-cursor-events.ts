@@ -2,7 +2,12 @@ import { clamp } from 'lodash-es'
 import React, { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import { MAX_ZOOM, MIN_ZOOM } from './const.js'
-import { getScale } from './scale.js'
+import { dist } from './math.js'
+import {
+  clampScale,
+  getScale,
+  scaleToZoom,
+} from './scale.js'
 import { Cursor, PointerId, Viewport } from './types.js'
 import { Vec2 } from './vec2.js'
 
@@ -35,7 +40,7 @@ export function useCursorEvents(
     // prettier-ignore
     {
       const listener = (ev: PointerEvent) => {
-        handlePointerEvent(ev, cache, scaleRef, setCursor)
+        handlePointerEvent(ev, cache, scaleRef, viewportRef, setCursor)
       }
       root.current.addEventListener('pointerdown', listener, options)
       root.current.addEventListener('pointerenter', listener, options)
@@ -63,6 +68,7 @@ function handlePointerEvent(
   ev: PointerEvent,
   cache: Map<number, PointerEvent>,
   scaleRef: React.MutableRefObject<number>,
+  viewportRef: React.MutableRefObject<Viewport>,
   setCursor: React.Dispatch<React.SetStateAction<Cursor>>,
 ): void {
   switch (ev.type) {
@@ -92,7 +98,16 @@ function handlePointerEvent(
           const other = Array.from(cache.values()).find(
             ({ pointerId }) => ev.pointerId !== pointerId,
           )
-          invariant(other)
+          // we only expect this to happen on mobile
+          invariant(other?.buttons)
+          handleTwoFingerDrag(
+            prev,
+            ev,
+            other,
+            scaleRef,
+            viewportRef,
+            setCursor,
+          )
           break
         }
       }
@@ -118,6 +133,63 @@ function handleOneFingerDrag(
     return {
       position: cursor.position.add(new Vec2(dx, dy)),
       zoom: cursor.zoom,
+    }
+  })
+}
+
+function handleTwoFingerDrag(
+  prev: PointerEvent,
+  next: PointerEvent,
+  other: PointerEvent,
+  scaleRef: React.MutableRefObject<number>,
+  viewportRef: React.MutableRefObject<Viewport>,
+  setCursor: React.Dispatch<React.SetStateAction<Cursor>>,
+): void {
+  setCursor((cursor) => {
+    const ox = other.clientX
+    const oy = other.clientY
+    const px = prev.clientX
+    const py = prev.clientY
+    const nx = next.clientX
+    const ny = next.clientY
+
+    // center of the line between both pointers
+    const pcx = ox + (px - ox) / 2
+    const pcy = oy + (py - oy) / 2
+    const ncx = ox + (nx - ox) / 2
+    const ncy = oy + (ny - oy) / 2
+
+    // distance between both pointers
+    const pd = dist(px, py, ox, oy)
+    const nd = dist(nx, ny, ox, oy)
+
+    const { x: vx, y: vy } = viewportRef.current
+
+    const prevScale = scaleRef.current
+    // prettier-ignore
+    const nextScale = clampScale(prevScale * (nd / pd), vx, vy)
+
+    // how far did the center move, aka how much to move
+    // the camera in addition to the change in tile size
+    const dcx = ncx - pcx
+    const dcy = ncy - pcy
+
+    // the point, relative to the center of the screen,
+    // at which the change in position due to change
+    // in tile size
+    const rx = ncx - vx / 2
+    const ry = ncy - vy / 2
+
+    // final camera movement
+    const dx = rx / prevScale - (rx + dcx) / nextScale
+    const dy = ry / prevScale - (ry + dcy) / nextScale
+
+    return {
+      position: new Vec2({
+        x: cursor.position.x + dx,
+        y: cursor.position.y + dy,
+      }),
+      zoom: scaleToZoom(nextScale, vx, vy),
     }
   })
 }
