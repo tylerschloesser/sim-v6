@@ -3,11 +3,12 @@ import { createRoot } from 'react-dom/client'
 import invariant from 'tiny-invariant'
 import { ZodError } from 'zod'
 import { App } from './app.js'
+import { RESET_LOCAL_STORAGE } from './const.js'
 import './index.scss'
 import { loadWorld } from './world.js'
 
-if (localStorage.getItem('reset') === 'true') {
-  console.debug('reset')
+if (RESET_LOCAL_STORAGE) {
+  console.debug('RESET_LOCAL_STORAGE is set')
   localStorage.clear()
 }
 
