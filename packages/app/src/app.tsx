@@ -7,7 +7,8 @@ import React, {
 import invariant from 'tiny-invariant'
 import { Updater, useImmer } from 'use-immer'
 import styles from './app.module.scss'
-import { SHOW_GRID, getScale } from './const.js'
+import { getScale } from './const.js'
+import { RenderGrid } from './render-grid.js'
 import {
   CellType,
   Drag,
@@ -19,6 +20,7 @@ import { useCamera } from './use-camera.js'
 import { useCursor } from './use-cursor.js'
 import { useInput } from './use-input.js'
 import { usePointerEvents } from './use-pointer-events.js'
+import { svgTransform, svgTranslate } from './util.js'
 import { Vec2 } from './vec2.js'
 import { initWorld } from './world.js'
 
@@ -138,70 +140,6 @@ export function App() {
   )
 }
 
-interface GridLine {
-  key: string
-  x1: number
-  y1: number
-  x2: number
-  y2: number
-}
-
-function* iterateGridLines(
-  viewport: Vec2,
-  scale: number,
-): Generator<GridLine> {
-  const rows = Math.ceil(viewport.y / scale) + 1
-  const cols = Math.ceil(viewport.x / scale) + 1
-
-  let key = 0
-
-  for (let row = 0; row <= rows; row++) {
-    const x1 = 0
-    const y1 = row * scale
-    const x2 = cols * scale
-    const y2 = y1
-    // prettier-ignore
-    yield { key: `${key++}`, x1, y1, x2, y2 }
-  }
-
-  for (let col = 0; col <= cols; col++) {
-    const x1 = col * scale
-    const y1 = 0
-    const x2 = x1
-    const y2 = rows * scale
-    // prettier-ignore
-    yield { key: `${key++}`, x1, y1, x2, y2 }
-  }
-}
-
-function useGridLines(
-  viewport: Vec2,
-  scale: number,
-): GridLine[] {
-  return useMemo(
-    () => Array.from(iterateGridLines(viewport, scale)),
-    [viewport, scale],
-  )
-}
-
-function svgTranslate({ x, y }: Vec2): string {
-  return `translate(${x.toFixed(2)} ${y.toFixed(2)})`
-}
-
-function svgScale({ x, y }: Vec2): string {
-  return `scale(${x.toFixed(2)} ${y.toFixed(2)})`
-}
-
-function svgTransform({
-  translate,
-  scale,
-}: {
-  translate: Vec2
-  scale: Vec2
-}): string {
-  return `${svgTranslate(translate)} ${svgScale(scale)}`
-}
-
 function* iterateCells(world: World): Generator<{
   id: string
   type: CellType
@@ -247,48 +185,6 @@ function usePreventDefaults(
       controller.abort()
     }
   }, [])
-}
-
-interface RenderGridProps {
-  viewport: Vec2
-  camera: Vec2
-  scale: number
-}
-function RenderGrid({
-  viewport,
-  camera,
-  scale,
-}: RenderGridProps) {
-  const gridLines = useGridLines(viewport, scale)
-  const transform = useMemo(
-    () =>
-      svgTranslate(
-        viewport
-          .div(2)
-          .sub(new Vec2(camera.x, camera.y * -1).mul(scale))
-          .mod(scale)
-          .sub(scale),
-      ),
-    [viewport, scale, camera],
-  )
-  return (
-    <g
-      visibility={SHOW_GRID ? undefined : 'hidden'}
-      transform={transform}
-      strokeWidth={2}
-      stroke="hsl(0, 0%, 50%)"
-    >
-      {gridLines.map(({ key, x1, y1, x2, y2 }) => (
-        <line
-          key={key}
-          x1={x1.toFixed(2)}
-          y1={y1.toFixed(2)}
-          x2={x2.toFixed(2)}
-          y2={y2.toFixed(2)}
-        />
-      ))}
-    </g>
-  )
 }
 
 interface RenderCellsProps {
