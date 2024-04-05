@@ -138,16 +138,18 @@ export function App() {
   )
 }
 
-function* iterateGridLines(
-  viewport: Vec2,
-  scale: number,
-): Generator<{
+interface GridLine {
   key: string
   x1: number
   y1: number
   x2: number
   y2: number
-}> {
+}
+
+function* iterateGridLines(
+  viewport: Vec2,
+  scale: number,
+): Generator<GridLine> {
   const rows = Math.ceil(viewport.y / scale) + 1
   const cols = Math.ceil(viewport.x / scale) + 1
 
@@ -170,6 +172,16 @@ function* iterateGridLines(
     // prettier-ignore
     yield { key: `${key++}`, x1, y1, x2, y2 }
   }
+}
+
+function useGridLines(
+  viewport: Vec2,
+  scale: number,
+): GridLine[] {
+  return useMemo(
+    () => Array.from(iterateGridLines(viewport, scale)),
+    [viewport, scale],
+  )
 }
 
 function svgTranslate({ x, y }: Vec2): string {
@@ -247,6 +259,7 @@ function RenderGrid({
   camera,
   scale,
 }: RenderGridProps) {
+  const gridLines = useGridLines(viewport, scale)
   return (
     <g
       visibility={SHOW_GRID ? undefined : 'hidden'}
@@ -260,17 +273,15 @@ function RenderGrid({
       strokeWidth={2}
       stroke="hsl(0, 0%, 50%)"
     >
-      {Array.from(iterateGridLines(viewport, scale)).map(
-        ({ key, x1, y1, x2, y2 }) => (
-          <line
-            key={key}
-            x1={x1.toFixed(2)}
-            y1={y1.toFixed(2)}
-            x2={x2.toFixed(2)}
-            y2={y2.toFixed(2)}
-          />
-        ),
-      )}
+      {gridLines.map(({ key, x1, y1, x2, y2 }) => (
+        <line
+          key={key}
+          x1={x1.toFixed(2)}
+          y1={y1.toFixed(2)}
+          x2={x2.toFixed(2)}
+          y2={y2.toFixed(2)}
+        />
+      ))}
     </g>
   )
 }
