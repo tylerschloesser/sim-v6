@@ -26,7 +26,6 @@ import {
 import { useCamera } from './use-camera.js'
 import { useInput } from './use-input.js'
 import { usePath } from './use-path.js'
-import { usePlayer } from './use-player.js'
 import { toCellId } from './util.js'
 import { Vec2 } from './vec2.js'
 import { initWorld } from './world.js'
@@ -136,7 +135,6 @@ export function App() {
   const input = useInput(scale, drag)
   const [cursor] = useCursor()
   const path = usePath(cursor, input, world)
-  const player = usePlayer(cursor, path)
   const camera = useCamera(cursor, path)
   const viewBox = useViewBox(viewport)
 
@@ -179,11 +177,6 @@ export function App() {
               scale={scale}
               cursor={cursor}
               path={path}
-            />
-            <RenderPlayer
-              scale={scale}
-              player={player}
-              input={input}
             />
           </g>
 
@@ -507,48 +500,6 @@ function RenderDrag({ drag, viewport }: RenderDragProps) {
         {end && <circle cx={end.x} cy={end.y} r={r} />}
       </g>
     </>
-  )
-}
-
-interface RenderPlayerProps {
-  scale: number
-  player: Vec2
-  input: Input | null
-}
-function RenderPlayer({
-  scale,
-  player,
-  input,
-}: RenderPlayerProps) {
-  const playerR =
-    input?.type === InputType.Action
-      ? scale * 1
-      : scale * 0.5
-
-  const inputR = scale * 0.125
-  const inputAngle = input ? input.v.angle() * -1 : 0
-
-  return (
-    <g transform={svgTranslate(player.mul(scale))}>
-      <circle x={0} y={0} r={playerR} fill="blue" />
-      {input?.type === InputType.Action && (
-        <path
-          transform={`rotate(${Math.floor((inputAngle + 45) / 90) * 90 + 45 + 180})`}
-          fill="pink"
-          d={`M0,0 L-${playerR},0 a ${playerR},${playerR} 0 0,0 ${
-            Math.cos(0) * playerR
-          } ${Math.sin(Math.PI / 2) * playerR} z`}
-        />
-      )}
-      <circle
-        opacity={input?.type === InputType.Action ? 1 : 0}
-        fill="red"
-        cx={0}
-        cy={0}
-        transform={`rotate(${inputAngle}) translate(${playerR * (input ? input.v.len() : 0)} 0)`}
-        r={inputR}
-      />
-    </g>
   )
 }
 
