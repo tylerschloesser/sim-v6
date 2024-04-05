@@ -44,5 +44,9 @@ export function usePointerEvents(
       },
       options,
     )
+
+    return () => {
+      controller.abort()
+    }
   }, [])
 }
