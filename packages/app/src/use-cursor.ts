@@ -83,13 +83,11 @@ function useInitialCursor() {
       return {
         position: new Vec2(zodCursor.position),
         zoom: zodCursor.zoom,
-        wheel: zodCursor.wheel,
       }
     }
     return {
       position: new Vec2(0, 0),
       zoom: 0.5,
-      wheel: false,
     }
   }, [])
 }
@@ -162,7 +160,6 @@ function handleOneFingerDrag(
   cursor$.next({
     position: cursor.position.add(new Vec2(dx, dy)),
     zoom: cursor.zoom,
-    wheel: false,
   })
 }
 
@@ -216,7 +213,6 @@ function handleTwoFingerDrag(
       y: cursor$.value.position.y + dy,
     }),
     zoom: scaleToZoom(nextScale, vx, vy),
-    wheel: false,
   })
 }
 
@@ -253,6 +249,5 @@ function handleWheelEvent(
       cursor$.value.position.y + dy,
     ),
     zoom: nextZoom,
-    wheel: true,
   })
 }

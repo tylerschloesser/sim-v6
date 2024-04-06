@@ -3,24 +3,33 @@ import { BehaviorSubject, combineLatest } from 'rxjs'
 import { smooth } from './const.js'
 import { getScale } from './scale.js'
 import { Camera, Cursor, Viewport } from './types.js'
-
-type Target = Camera & { wheel: boolean }
+import { Vec2 } from './vec2.js'
+import { Vec3 } from './vec3.js'
 
 export function useCamera(
   cursor$: BehaviorSubject<Cursor>,
   viewport$: BehaviorSubject<Viewport>,
 ): Camera {
   const target$ = useTarget$(cursor$, viewport$)
-  const camera$ = useMemo(
-    () => new BehaviorSubject<Camera>(target$.value),
+
+  const source$ = useMemo(
+    () => new BehaviorSubject<Vec3>(target$.value),
     [],
   )
-  const [camera, setCamera] = useState(camera$.value)
+  const [camera, setCamera] = useState<Camera>({
+    position: new Vec2(source$.value.x, source$.value.y),
+    scale: source$.value.z,
+  })
 
-  useTransition(target$, camera$)
+  useTransition({ source$, target$ })
 
   useEffect(() => {
-    const sub = camera$.subscribe(setCamera)
+    const sub = source$.subscribe((value) => {
+      setCamera({
+        position: new Vec2(value.x, value.y),
+        scale: value.z,
+      })
+    })
     return () => {
       sub.unsubscribe()
     }
@@ -29,10 +38,13 @@ export function useCamera(
   return camera
 }
 
-function useTransition(
-  target$: BehaviorSubject<Target>,
-  camera$: BehaviorSubject<Camera>,
-): void {
+function useTransition({
+  source$,
+  target$,
+}: {
+  source$: BehaviorSubject<Vec3>
+  target$: BehaviorSubject<Vec3>
+}): void {
   useEffect(() => {
     let handle: number
     let lastStep = self.performance.now()
@@ -42,42 +54,23 @@ function useTransition(
       lastStep = now
       handle = self.requestAnimationFrame(step)
 
+      const source = source$.value
       const target = target$.value
-      const camera = camera$.value
 
-      if (target === camera) {
+      if (source === target) {
         return
       }
 
-      let position = target.position
-      if (!target.wheel) {
-        const d = target.position.sub(camera.position)
-        if (d.len() > 1e-3) {
-          const speed = smooth(d.len(), 3)
-          position = camera.position.add(
-            d.norm().mul(speed * elapsed),
-          )
-        }
+      const d = target.sub(source)
+      if (d.len() < 1e-3) {
+        source$.next(target)
+        return
       }
 
-      let scale = target.scale
-      if (!target.wheel) {
-        const d = target.scale - camera.scale
-        if (Math.abs(d) > 1e-3) {
-          const speed =
-            smooth(Math.abs(d), 3) * Math.sign(d)
-          scale = camera.scale + speed * elapsed
-        }
-      }
-
-      if (
-        position === target.position &&
-        scale === target.scale
-      ) {
-        camera$.next(target)
-      } else {
-        camera$.next({ position, scale })
-      }
+      const speed = smooth(d.len())
+      source$.next(
+        source.add(d.norm().mul(speed * elapsed)),
+      )
     }
     handle = self.requestAnimationFrame(step)
     return () => {
@@ -89,18 +82,20 @@ function useTransition(
 function useTarget$(
   cursor$: BehaviorSubject<Cursor>,
   viewport$: BehaviorSubject<Viewport>,
-): BehaviorSubject<Target> {
+): BehaviorSubject<Vec3> {
   const target$ = useMemo(
     () =>
-      new BehaviorSubject({
-        position: cursor$.value.position,
-        scale: getScale(
-          cursor$.value.zoom,
-          viewport$.value.x,
-          viewport$.value.y,
+      new BehaviorSubject<Vec3>(
+        new Vec3(
+          cursor$.value.position.x,
+          cursor$.value.position.y,
+          getScale(
+            cursor$.value.zoom,
+            viewport$.value.x,
+            viewport$.value.y,
+          ),
         ),
-        wheel: cursor$.value.wheel,
-      }),
+      ),
     [],
   )
 
@@ -109,15 +104,13 @@ function useTarget$(
       cursor$,
       viewport$,
     ]).subscribe(([cursor, viewport]) => {
-      target$.next({
-        position: cursor.position,
-        scale: getScale(
-          cursor.zoom,
-          viewport.x,
-          viewport.y,
+      target$.next(
+        new Vec3(
+          cursor.position.x,
+          cursor.position.y,
+          getScale(cursor.zoom, viewport.x, viewport.y),
         ),
-        wheel: cursor.wheel,
-      })
+      )
     })
     return () => {
       sub.unsubscribe()
