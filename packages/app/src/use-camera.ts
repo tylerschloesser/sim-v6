@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { BehaviorSubject, combineLatest } from 'rxjs'
-import { smooth } from './const.js'
+import { ENABLE_SMOOTH_CAMERA, smooth } from './const.js'
 import { getScale } from './scale.js'
 import { Camera, Cursor, Viewport } from './types.js'
 import { Vec2 } from './vec2.js'
@@ -24,7 +24,9 @@ export function useCamera(
   useTransition({ source$, target$ })
 
   useEffect(() => {
-    const sub = source$.subscribe((value) => {
+    const sub = (
+      ENABLE_SMOOTH_CAMERA ? source$ : target$
+    ).subscribe((value) => {
       setCamera({
         position: new Vec2(value.x, value.y),
         scale: value.z,
@@ -46,6 +48,9 @@ function useTransition({
   target$: BehaviorSubject<Vec3>
 }): void {
   useEffect(() => {
+    if (!ENABLE_SMOOTH_CAMERA) {
+      return
+    }
     let handle: number
     let lastStep = self.performance.now()
     function step() {

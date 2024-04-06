@@ -1,7 +1,7 @@
 import { clamp } from 'lodash-es'
 import { useEffect, useMemo, useState } from 'react'
 import React from 'react'
-import { BehaviorSubject } from 'rxjs'
+import { BehaviorSubject, tap } from 'rxjs'
 import invariant from 'tiny-invariant'
 import { MAX_ZOOM, MIN_ZOOM } from './const.js'
 import { dist } from './math.js'
@@ -26,7 +26,13 @@ export function useCursor(
   )
 
   useEffect(() => {
-    const sub = cursor$.subscribe(setCursor)
+    const sub = cursor$
+      .pipe(
+        tap((value) => {
+          console.log(value.position)
+        }),
+      )
+      .subscribe(setCursor)
     return () => {
       sub.unsubscribe()
     }
