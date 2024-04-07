@@ -1,5 +1,9 @@
 import { useEffect, useMemo } from 'react'
-import { createBrowserRouter } from 'react-router-dom'
+import {
+  BrowserRouter,
+  RouterProvider,
+  createBrowserRouter,
+} from 'react-router-dom'
 import { Updater, useImmer } from 'use-immer'
 import { AppContext, IAppContext } from './app-context.js'
 import { RenderRoot } from './render-root.js'
@@ -9,6 +13,7 @@ import { initWorld, loadWorld, saveWorld } from './world.js'
 const router = createBrowserRouter([
   {
     index: true,
+    Component: RenderRoot,
   },
 ])
 
@@ -23,7 +28,7 @@ export function App() {
 
   return (
     <AppContext.Provider value={context}>
-      <RenderRoot />
+      <RouterProvider router={router} />
     </AppContext.Provider>
   )
 }
