@@ -84,6 +84,10 @@ export const TownEntity = z.strictObject({
     food: z.number(),
     wood: z.number(),
   }),
+  priority: z.strictObject({
+    food: z.number().min(0).max(1),
+    wood: z.number().min(0).max(1),
+  }),
 })
 export type TownEntity = z.infer<typeof TownEntity>
 
