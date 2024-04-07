@@ -7,6 +7,7 @@ import { Updater, useImmer } from 'use-immer'
 import { AppContext, IAppContext } from './app-context.js'
 import { Home } from './home.js'
 import { RenderRoot } from './render-root.js'
+import { tickWorld } from './tick-world.js'
 import { World } from './types.js'
 import { initWorld, loadWorld, saveWorld } from './world.js'
 
@@ -54,9 +55,7 @@ function useWorld(): [World, Updater<World>] {
 function useTickWorld(setWorld: Updater<World>): void {
   useEffect(() => {
     const intervalId = self.setInterval(() => {
-      setWorld((world) => {
-        world.tick += 1
-      })
+      setWorld(tickWorld)
     }, 100)
     return () => {
       self.clearInterval(intervalId)
