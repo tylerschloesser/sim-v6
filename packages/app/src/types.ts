@@ -82,6 +82,7 @@ export const TownEntity = z.strictObject({
   population: z.number().nonnegative(),
   storage: z.strictObject({
     food: z.number(),
+    wood: z.number(),
   }),
 })
 export type TownEntity = z.infer<typeof TownEntity>

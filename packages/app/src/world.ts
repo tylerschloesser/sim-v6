@@ -44,6 +44,7 @@ export function initWorld(): World {
       population: 10,
       storage: {
         food: 100,
+        wood: 10,
       },
     }
     entities[entity.id] = entity
