@@ -111,6 +111,25 @@ export function Home() {
                   </>
                 )
               }
+              case EntityType.enum.FoodSource: {
+                return (
+                  <>
+                    <div>FoodSource</div>
+                    <div className={styles.indent}>
+                      <div>Connections</div>
+                      <div className={styles.indent}>
+                        {Object.keys(entity.connections)
+                          .length === 0 && <>None</>}
+                        {Object.keys(
+                          entity.connections,
+                        ).map((id) => (
+                          <div key={id}>ID: {id}</div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )
+              }
             }
           })()}
         </Fragment>
