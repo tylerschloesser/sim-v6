@@ -1,11 +1,11 @@
 import { useEffect, useMemo } from 'react'
 import {
-  BrowserRouter,
   RouterProvider,
   createBrowserRouter,
 } from 'react-router-dom'
 import { Updater, useImmer } from 'use-immer'
 import { AppContext, IAppContext } from './app-context.js'
+import { Home } from './home.js'
 import { RenderRoot } from './render-root.js'
 import { World } from './types.js'
 import { initWorld, loadWorld, saveWorld } from './world.js'
@@ -13,6 +13,10 @@ import { initWorld, loadWorld, saveWorld } from './world.js'
 const router = createBrowserRouter([
   {
     index: true,
+    Component: Home,
+  },
+  {
+    path: 'render-root',
     Component: RenderRoot,
   },
 ])
