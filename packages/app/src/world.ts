@@ -1,7 +1,10 @@
 import {
   BranchNode,
+  EntityType,
+  FoodSourceEntity,
   NodeType,
   RootNode,
+  TownEntity,
   World,
 } from './types.js'
 
@@ -31,13 +34,33 @@ export function initWorld(): World {
     [initialBranchNode.id]: initialBranchNode,
   }
 
+  let nextEntityId: number = 0
+  const entities: World['entities'] = {}
+
+  {
+    const entity: TownEntity = {
+      id: `${nextEntityId++}`,
+      type: EntityType.enum.Town,
+      population: 10,
+    }
+    entities[entity.id] = entity
+  }
+
+  {
+    const entity: FoodSourceEntity = {
+      id: `${nextEntityId++}`,
+      type: EntityType.enum.FoodSource,
+    }
+    entities[entity.id] = entity
+  }
+
   return {
     tick,
     nodes,
     rootNodeId: rootNode.id,
     nextNodeId,
-    entities: {},
-    nextEntityId: 0,
+    entities,
+    nextEntityId,
   }
 }
 
