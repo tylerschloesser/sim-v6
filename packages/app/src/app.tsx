@@ -27,8 +27,8 @@ export function App() {
   useTickWorld(setWorld)
 
   const context: IAppContext = useMemo(
-    () => ({ world }),
-    [world],
+    () => ({ world, setWorld }),
+    [world, setWorld],
   )
 
   return (
