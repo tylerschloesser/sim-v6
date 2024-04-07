@@ -1,13 +1,31 @@
 import { useEffect, useMemo } from 'react'
+import { createBrowserRouter } from 'react-router-dom'
 import { Updater, useImmer } from 'use-immer'
+import { AppContext, IAppContext } from './app-context.js'
 import { RenderRoot } from './render-root.js'
 import { World } from './types.js'
 import { initWorld, loadWorld, saveWorld } from './world.js'
 
+const router = createBrowserRouter([
+  {
+    index: true,
+  },
+])
+
 export function App() {
   const [world, setWorld] = useWorld()
   useTickWorld(setWorld)
-  return <RenderRoot world={world} />
+
+  const context: IAppContext = useMemo(
+    () => ({ world }),
+    [world],
+  )
+
+  return (
+    <AppContext.Provider value={context}>
+      <RenderRoot />
+    </AppContext.Provider>
+  )
 }
 
 function useWorld(): [World, Updater<World>] {

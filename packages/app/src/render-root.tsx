@@ -1,4 +1,5 @@
-import { useRef } from 'react'
+import { useContext, useRef } from 'react'
+import { AppContext } from './app-context.js'
 import styles from './app.module.scss'
 import { RenderGrid } from './render-grid.js'
 import { RenderWorld } from './render-world.js'
@@ -8,11 +9,8 @@ import { useCursor } from './use-cursor.js'
 import { usePreventDefaults } from './use-prevent-defaults.js'
 import { useViewport } from './use-viewport.js'
 
-export interface RenderRootProps {
-  world: World
-}
-
-export function RenderRoot({ world }: RenderRootProps) {
+export function RenderRoot() {
+  const { world } = useContext(AppContext)
   const svg = useRef<SVGSVGElement>(null)
   const [viewport, viewport$] = useViewport(svg)
   // eslint-disable-next-line
