@@ -79,6 +79,7 @@ export type EntityType = z.infer<typeof EntityType>
 export const TownEntity = z.strictObject({
   id: EntityId,
   type: z.literal(EntityType.enum.Town),
+  connections: z.record(EntityId, z.literal(true)),
   population: z.number().nonnegative(),
   storage: z.strictObject({
     food: z.number(),
@@ -93,6 +94,7 @@ export type TownEntity = z.infer<typeof TownEntity>
 
 export const FoodSourceEntity = z.strictObject({
   id: EntityId,
+  connections: z.record(EntityId, z.literal(true)),
   type: z.literal(EntityType.enum.FoodSource),
 })
 export type FoodSourceEntity = z.infer<

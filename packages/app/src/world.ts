@@ -41,6 +41,7 @@ export function initWorld(): World {
     const entity: TownEntity = {
       id: `${nextEntityId++}`,
       type: EntityType.enum.Town,
+      connections: {},
       population: 10,
       storage: {
         food: 100,
@@ -58,6 +59,7 @@ export function initWorld(): World {
     const entity: FoodSourceEntity = {
       id: `${nextEntityId++}`,
       type: EntityType.enum.FoodSource,
+      connections: {},
     }
     entities[entity.id] = entity
   }
