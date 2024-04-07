@@ -23,7 +23,8 @@ export function Home() {
                       <div>Storage</div>
                       <div className={styles.indent}>
                         <div>
-                          Food: {entity.storage.food}
+                          Food:{' '}
+                          {entity.storage.food.toFixed(2)}
                         </div>
                       </div>
                     </div>
