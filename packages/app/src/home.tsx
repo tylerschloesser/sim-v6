@@ -6,6 +6,7 @@ export function Home() {
   const { world } = useContext(AppContext)
   return (
     <div>
+      <div>Tick: {world.tick}</div>
       {Object.values(world.entities).map((entity) => (
         <Fragment key={entity.id}>
           {(() => {
