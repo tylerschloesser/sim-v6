@@ -29,6 +29,21 @@ export function Home() {
                           {`Wood: ${entity.storage.wood.toFixed(2)}`}
                         </div>
                       </div>
+                      <div>Priority</div>
+                      <div className={styles.indent}>
+                        <div>
+                          <label>
+                            Food
+                            <input type="range"></input>
+                          </label>
+                        </div>
+                        <div>
+                          <label>
+                            Wood
+                            <input type="range"></input>
+                          </label>
+                        </div>
+                      </div>
                     </div>
                   </>
                 )
