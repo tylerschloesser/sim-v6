@@ -42,6 +42,9 @@ export function initWorld(): World {
       id: `${nextEntityId++}`,
       type: EntityType.enum.Town,
       population: 10,
+      storage: {
+        food: 100,
+      },
     }
     entities[entity.id] = entity
   }
