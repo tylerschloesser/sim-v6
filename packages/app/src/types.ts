@@ -70,10 +70,40 @@ export const Node = z.discriminatedUnion('type', [
 ])
 export type Node = z.infer<typeof Node>
 
+export const EntityId = z.string()
+export type EntityId = z.infer<typeof EntityId>
+
+export const EntityType = z.enum(['Town', 'FoodSource'])
+export type EntityType = z.infer<typeof EntityType>
+
+export const TownEntity = z.strictObject({
+  id: EntityId,
+  type: z.literal(EntityType.enum.Town),
+  population: z.number().nonnegative(),
+})
+export type TownEntity = z.infer<typeof TownEntity>
+
+export const FoodSourceEntity = z.strictObject({
+  id: EntityId,
+  type: z.literal(EntityType.enum.FoodSource),
+})
+export type FoodSourceEntity = z.infer<
+  typeof FoodSourceEntity
+>
+
+export const Entity = z.discriminatedUnion('type', [
+  TownEntity,
+  FoodSourceEntity,
+])
+export type Entity = z.infer<typeof Entity>
+
 export const World = z.strictObject({
   tick: z.number().int().positive(),
   nodes: z.record(NodeId, Node),
   rootNodeId: NodeId,
   nextNodeId: z.number(),
+
+  entities: z.record(EntityId, Entity),
+  nextEntityId: z.number(),
 })
 export type World = z.infer<typeof World>

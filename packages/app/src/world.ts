@@ -36,6 +36,8 @@ export function initWorld(): World {
     nodes,
     rootNodeId: rootNode.id,
     nextNodeId,
+    entities: {},
+    nextEntityId: 0,
   }
 }
 
