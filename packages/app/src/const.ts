@@ -1,6 +1,6 @@
 export const RESET_LOCAL_STORAGE: boolean = true
 export const SHOW_GRID: boolean = true
-export const ENABLE_SMOOTH_CAMERA: boolean = false
+export const ENABLE_SMOOTH_CAMERA: boolean = true
 
 export const GRID_LINE_COLOR: string = 'hsl(0, 0%, 50%)'
 export const NODE_BORDER_COLOR = GRID_LINE_COLOR
