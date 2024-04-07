@@ -1,10 +1,33 @@
-import { Fragment, useContext } from 'react'
+import { Fragment, useCallback, useContext } from 'react'
+import invariant from 'tiny-invariant'
 import { AppContext } from './app-context.js'
 import styles from './home.module.scss'
-import { EntityType } from './types.js'
+import {
+  EntityId,
+  EntityType,
+  TownEntity,
+} from './types.js'
 
 export function Home() {
-  const { world } = useContext(AppContext)
+  const { world, setWorld } = useContext(AppContext)
+
+  const setPriority = useCallback(
+    (
+      entityId: EntityId,
+      key: keyof TownEntity['priority'],
+      value: number,
+    ) => {
+      invariant(value >= 0)
+      invariant(value <= 1)
+      setWorld((draft) => {
+        const entity = draft.entities[entityId]
+        invariant(entity?.type === EntityType.enum.Town)
+        entity.priority[key] = value
+      })
+    },
+    [setWorld],
+  )
+
   return (
     <div>
       <div>Tick: {world.tick}</div>
@@ -34,13 +57,43 @@ export function Home() {
                         <div>
                           <label>
                             Food
-                            <input type="range"></input>
+                            <input
+                              type="range"
+                              min={0}
+                              max={1}
+                              step={0.01}
+                              value={entity.priority.food}
+                              onChange={(ev) => {
+                                setPriority(
+                                  entity.id,
+                                  'food',
+                                  parseFloat(
+                                    ev.target.value,
+                                  ),
+                                )
+                              }}
+                            ></input>
                           </label>
                         </div>
                         <div>
                           <label>
                             Wood
-                            <input type="range"></input>
+                            <input
+                              type="range"
+                              min={0}
+                              max={1}
+                              step={0.01}
+                              value={entity.priority.wood}
+                              onChange={(ev) => {
+                                setPriority(
+                                  entity.id,
+                                  'wood',
+                                  parseFloat(
+                                    ev.target.value,
+                                  ),
+                                )
+                              }}
+                            ></input>
                           </label>
                         </div>
                       </div>
