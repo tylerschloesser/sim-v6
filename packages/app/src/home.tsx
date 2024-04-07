@@ -1,5 +1,6 @@
 import { Fragment, useContext } from 'react'
 import { AppContext } from './app-context.js'
+import styles from './home.module.scss'
 import { EntityType } from './types.js'
 
 export function Home() {
@@ -15,8 +16,16 @@ export function Home() {
                 return (
                   <>
                     <div>Town</div>
-                    <div>
-                      Population: {entity.population}
+                    <div className={styles.indent}>
+                      <div>
+                        Population: {entity.population}
+                      </div>
+                      <div>Storage</div>
+                      <div className={styles.indent}>
+                        <div>
+                          Food: {entity.storage.food}
+                        </div>
+                      </div>
                     </div>
                   </>
                 )
