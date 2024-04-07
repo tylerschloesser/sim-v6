@@ -7,7 +7,6 @@ import { initWorld, loadWorld, saveWorld } from './world.js'
 export function App() {
   const [world, setWorld] = useWorld()
   useTickWorld(setWorld)
-
   return <RenderRoot world={world} />
 }
 
@@ -15,10 +14,13 @@ function useWorld(): [World, Updater<World>] {
   const initial = useMemo(() => {
     return loadWorld() ?? initWorld()
   }, [])
+
   const [world, setWorld] = useImmer(initial)
+
   useEffect(() => {
     saveWorld(world)
   }, [world])
+
   return [world, setWorld]
 }
 
