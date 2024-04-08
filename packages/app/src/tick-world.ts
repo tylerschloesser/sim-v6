@@ -1,5 +1,6 @@
 import invariant from 'tiny-invariant'
 import {
+  BuildType,
   EntityType,
   FoodSourceEntity,
   TownEntity,
@@ -57,6 +58,12 @@ const INDIVIDUAL_FOOD_PRODUCTION_PER_TICK = convert(
   Unit.Tick,
 )
 
+const INDIVIDUAL_BUILD_PRODUCTION_PER_TICK = convert(
+  0.1,
+  Unit.Minute,
+  Unit.Tick,
+)
+
 function tickTown(entity: TownEntity, world: World): void {
   entity.storage.food.delta = 0
   entity.storage.wood.delta = 0
@@ -100,6 +107,39 @@ function tickTown(entity: TownEntity, world: World): void {
     entity.storage.food.delta += foodProduction
   } else if (foodSource) {
     foodSource.tick = Math.max(foodSource.tick - 1, 0)
+  }
+
+  //
+  // Build
+  //
+
+  const buildPriority = getFinalPriority('build', entity)
+  if (buildPriority > 0 && entity.builds.length > 0) {
+    const build = entity.builds.at(0)
+    invariant(build)
+
+    invariant(build.type === BuildType.enum.Connection)
+
+    invariant(build.progress < 1)
+
+    build.progress +=
+      entity.population *
+      buildPriority *
+      INDIVIDUAL_BUILD_PRODUCTION_PER_TICK
+
+    if (build.progress >= 1) {
+      entity.builds.shift()
+
+      invariant(build.sourceId === entity.id)
+      const target = world.entities[build.targetId]
+      invariant(target)
+
+      invariant(!entity.connections[target.id])
+      invariant(!target.connections[entity.id])
+
+      entity.connections[target.id] = true
+      target.connections[entity.id] = true
+    }
   }
 }
 
