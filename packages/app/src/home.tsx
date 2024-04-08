@@ -110,8 +110,12 @@ export function Home() {
                           .length === 0 && <>None</>}
                         {Object.keys(
                           entity.connections,
-                        ).map((id) => (
-                          <div key={id}>ID: {id}</div>
+                        ).map((targetId) => (
+                          <ShowConnection
+                            key={targetId}
+                            sourceId={entity.id}
+                            targetId={targetId}
+                          />
                         ))}
                         <div>
                           <AddConnectionButton
@@ -134,8 +138,12 @@ export function Home() {
                           .length === 0 && <>None</>}
                         {Object.keys(
                           entity.connections,
-                        ).map((id) => (
-                          <div key={id}>ID: {id}</div>
+                        ).map((targetId) => (
+                          <ShowConnection
+                            key={targetId}
+                            sourceId={entity.id}
+                            targetId={targetId}
+                          />
                         ))}
                         <div>
                           <AddConnectionButton
@@ -227,4 +235,27 @@ function AddConnectionButton({
       </dialog>
     </>
   )
+}
+
+interface ShowConnectionProps {
+  sourceId: EntityId
+  targetId: EntityId
+}
+
+function ShowConnection({
+  sourceId,
+  targetId,
+}: ShowConnectionProps) {
+  const { world } = useContext(AppContext)
+
+  const source = world.entities[sourceId]
+  invariant(source)
+
+  const target = world.entities[targetId]
+  invariant(target)
+
+  invariant(source.connections[targetId])
+  invariant(target.connections[sourceId])
+
+  return <>ID: {targetId}</>
 }
