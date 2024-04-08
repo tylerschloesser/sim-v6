@@ -1,10 +1,5 @@
 import invariant from 'tiny-invariant'
-import {
-  EntityType,
-  StorageValue,
-  TownEntity,
-  World,
-} from './types.js'
+import { EntityType, TownEntity, World } from './types.js'
 import { getFoodPriority } from './world.js'
 
 export function tickWorld(world: World): void {
@@ -54,17 +49,10 @@ const INDIVIDUAL_FOOD_PRODUCTION_PER_TICK = convert(
   Unit.Tick,
 )
 
-function incrementStorageValue(
-  value: StorageValue,
-  by: number,
-): void {
-  value.delta = by
-
-  value.count += by
-  invariant(value.count >= 0)
-}
-
 function tickTown(entity: TownEntity, world: World): void {
+  entity.storage.food.delta = 0
+  entity.storage.wood.delta = 0
+
   //
   // Food Consumption
   //
@@ -72,10 +60,10 @@ function tickTown(entity: TownEntity, world: World): void {
   const foodConsumption =
     entity.population * INDIVIDUAL_FOOD_CONSUMPTION_PER_TICK
 
-  incrementStorageValue(
-    entity.storage.food,
-    -foodConsumption,
-  )
+  entity.storage.food.count -= foodConsumption
+  invariant(entity.storage.food.count >= 0)
+
+  entity.storage.food.delta += -foodConsumption
 
   //
   // Food Production
@@ -90,10 +78,8 @@ function tickTown(entity: TownEntity, world: World): void {
       INDIVIDUAL_FOOD_PRODUCTION_PER_TICK *
       foodPriority
 
-    incrementStorageValue(
-      entity.storage.food,
-      foodProduction,
-    )
+    entity.storage.food.count += foodProduction
+    entity.storage.food.delta += foodProduction
   }
 }
 

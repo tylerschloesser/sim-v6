@@ -14,6 +14,10 @@ import {
   TownEntity,
   World,
 } from './types.js'
+import {
+  getFoodPriority,
+  getWoodPriority,
+} from './world.js'
 
 export function Home() {
   const { world, setWorld } = useContext(AppContext)
@@ -53,7 +57,7 @@ export function Home() {
                       <div>Storage</div>
                       <div className={styles.indent}>
                         <div>
-                          {`Food: ${entity.storage.food.count.toFixed(2)}`}
+                          {`Food: ${entity.storage.food.count.toFixed(2)} (${(entity.storage.food.delta * 10).toFixed(2)}/s)`}
                         </div>
                         <div>
                           {`Wood: ${entity.storage.wood.count.toFixed(2)}`}
@@ -80,6 +84,9 @@ export function Home() {
                                 )
                               }}
                             ></input>
+                            {getFoodPriority(
+                              entity,
+                            ).toFixed(2)}
                           </label>
                         </div>
                         <div>
@@ -101,6 +108,9 @@ export function Home() {
                                 )
                               }}
                             ></input>
+                            {getWoodPriority(
+                              entity,
+                            ).toFixed(2)}
                           </label>
                         </div>
                       </div>
