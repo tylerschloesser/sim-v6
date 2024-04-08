@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import { capitalize } from 'lodash-es'
 import {
   Fragment,
@@ -87,13 +88,13 @@ function BuildHouseButton({
 function Diff({ diff }: { diff: number }) {
   const fixed = Math.abs(diff).toFixed(2)
   if (fixed === '0.00') {
-    return null
+    return <span></span>
   }
   return (
-    <>
+    <span>
       {diff > 0 ? '+' : '-'}
       {fixed}/s
-    </>
+    </span>
   )
 }
 
@@ -127,7 +128,7 @@ function DynamicValue({ value }: DynamicValueProps) {
 
   return (
     <>
-      {value.toFixed(2)} <Diff diff={diff} />
+      <span>{value.toFixed(2)}</span> <Diff diff={diff} />
     </>
   )
 }
@@ -174,19 +175,20 @@ export function Home() {
                         />
                       </div>
                       <div>Storage</div>
-                      <div className={styles.indent}>
-                        <div>
-                          Food:{' '}
-                          <DynamicValue
-                            value={entity.storage.food}
-                          />
-                        </div>
-                        <div>
-                          Wood:{' '}
-                          <DynamicValue
-                            value={entity.storage.wood}
-                          />
-                        </div>
+                      <div
+                        className={classNames(
+                          styles.indent,
+                          styles.storage,
+                        )}
+                      >
+                        <span>Food</span>
+                        <DynamicValue
+                          value={entity.storage.food}
+                        />
+                        <span>Wood</span>
+                        <DynamicValue
+                          value={entity.storage.wood}
+                        />
                       </div>
                       <div>Priority</div>
                       <div className={styles.indent}>
