@@ -106,6 +106,9 @@ export function Home() {
                         ).map((id) => (
                           <div key={id}>ID: {id}</div>
                         ))}
+                        <div>
+                          <AddConnectionButton />
+                        </div>
                       </div>
                     </div>
                   </>
@@ -125,6 +128,9 @@ export function Home() {
                         ).map((id) => (
                           <div key={id}>ID: {id}</div>
                         ))}
+                        <div>
+                          <AddConnectionButton />
+                        </div>
                       </div>
                     </div>
                   </>
@@ -136,4 +142,8 @@ export function Home() {
       ))}
     </div>
   )
+}
+
+function AddConnectionButton() {
+  return <button>Add Connection</button>
 }
