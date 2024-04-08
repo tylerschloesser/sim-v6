@@ -246,10 +246,11 @@ export function Home() {
                   </>
                 )
               }
-              case EntityType.enum.FoodSource: {
+              case EntityType.enum.FoodSource:
+              case EntityType.enum.WoodSource: {
                 return (
                   <>
-                    <div>FoodSource</div>
+                    <div>{entity.type}</div>
                     <div className={styles.indent}>
                       <div>Connections</div>
                       <div className={styles.indent}>

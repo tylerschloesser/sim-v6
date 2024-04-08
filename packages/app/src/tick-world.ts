@@ -1,5 +1,6 @@
 import invariant from 'tiny-invariant'
 import {
+  Build,
   BuildType,
   EntityType,
   FoodSourceEntity,
@@ -139,6 +140,18 @@ function tickTown(entity: TownEntity, world: World): void {
 
           entity.connections[target.id] = true
           target.connections[entity.id] = true
+        }
+        break
+      }
+      case BuildType.enum.House: {
+        build.progress +=
+          entity.population *
+          buildPriority *
+          INDIVIDUAL_BUILD_PRODUCTION_PER_TICK
+
+        if (build.progress >= 1) {
+          entity.builds.shift()
+          entity.houses += 1
         }
         break
       }

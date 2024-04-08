@@ -7,6 +7,7 @@ import {
   NodeType,
   RootNode,
   TownEntity,
+  WoodSourceEntity,
   World,
 } from './types.js'
 
@@ -79,6 +80,19 @@ export function initWorld(): World {
     }
     entities[entity.id] = entity
   }
+  {
+    const entity: WoodSourceEntity = {
+      id: `${nextEntityId++}`,
+      type: EntityType.enum.WoodSource,
+      connections: {},
+
+      minYield: 0.5,
+      maxYield: 1,
+      maxYieldTicks: 10 * 60,
+      tick: 0,
+    }
+    entities[entity.id] = entity
+  }
 
   return {
     tick,
@@ -121,7 +135,7 @@ export function getFinalPriority(
 }
 
 export function getCurrentYield(
-  entity: FoodSourceEntity,
+  entity: FoodSourceEntity | WoodSourceEntity,
 ): number {
   invariant(entity.tick <= entity.maxYieldTicks)
   const progress = entity.tick
