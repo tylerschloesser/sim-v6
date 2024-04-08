@@ -5,6 +5,7 @@ import {
   useRef,
 } from 'react'
 import invariant from 'tiny-invariant'
+import { sources } from 'webpack'
 import { AppContext } from './app-context.js'
 import styles from './home.module.scss'
 import {
@@ -251,6 +252,32 @@ function AddConnectionButton({
       }
       if (peer.connections[entity.id]) {
         return false
+      }
+      if (peer.type === EntityType.enum.Town) {
+        if (
+          peer.builds.find(
+            (build) =>
+              (build.sourceId === peer.id &&
+                build.targetId === entity.id) ||
+              (build.sourceId === entity.id &&
+                build.targetId === peer.id),
+          )
+        ) {
+          return false
+        }
+      }
+      if (entity.type === EntityType.enum.Town) {
+        if (
+          entity.builds.find(
+            (build) =>
+              (build.sourceId === peer.id &&
+                build.targetId === entity.id) ||
+              (build.sourceId === entity.id &&
+                build.targetId === peer.id),
+          )
+        ) {
+          return false
+        }
       }
       return true
     },
