@@ -1,4 +1,9 @@
-import { Fragment, useCallback, useContext } from 'react'
+import {
+  Fragment,
+  useCallback,
+  useContext,
+  useRef,
+} from 'react'
 import invariant from 'tiny-invariant'
 import { AppContext } from './app-context.js'
 import styles from './home.module.scss'
@@ -145,5 +150,16 @@ export function Home() {
 }
 
 function AddConnectionButton() {
-  return <button>Add Connection</button>
+  const { world } = useContext(AppContext)
+  const dialog = useRef<HTMLDialogElement>(null)
+  const onClick = useCallback(() => {
+    invariant(dialog.current)
+    dialog.current.showModal()
+  }, [])
+  return (
+    <>
+      <button onClick={onClick}>Add Connection</button>
+      <dialog ref={dialog}>Test</dialog>
+    </>
+  )
 }
