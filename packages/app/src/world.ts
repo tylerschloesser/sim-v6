@@ -1,3 +1,4 @@
+import { sum } from 'lodash-es'
 import invariant from 'tiny-invariant'
 import {
   BranchNode,
@@ -57,6 +58,7 @@ export function initWorld(): World {
       priority: {
         food: 1,
         wood: 1,
+        build: 1,
       },
       builds: [],
     }
@@ -99,36 +101,22 @@ export function saveWorld(world: World): void {
   localStorage.setItem('world', JSON.stringify(world))
 }
 
-export function getFoodPriority(
+export function getFinalPriority(
+  key: keyof TownEntity['priority'],
   entity: TownEntity,
 ): number {
-  const totalPriority =
-    entity.priority.food + entity.priority.wood
+  const totalPriority = sum(Object.values(entity.priority))
 
-  const foodPriority = totalPriority
-    ? entity.priority.food / totalPriority
-    : 0
+  if (totalPriority === 0) {
+    return 0
+  }
 
-  invariant(foodPriority >= 0)
-  invariant(foodPriority <= 1)
+  const finalPriority = entity.priority[key] / totalPriority
 
-  return foodPriority
-}
+  invariant(finalPriority >= 0)
+  invariant(finalPriority <= 1)
 
-export function getWoodPriority(
-  entity: TownEntity,
-): number {
-  const totalPriority =
-    entity.priority.food + entity.priority.wood
-
-  const woodPriority = totalPriority
-    ? entity.priority.wood / totalPriority
-    : 0
-
-  invariant(woodPriority >= 0)
-  invariant(woodPriority <= 1)
-
-  return woodPriority
+  return finalPriority
 }
 
 export function getCurrentYield(

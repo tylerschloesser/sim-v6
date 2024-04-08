@@ -1,3 +1,4 @@
+import { capitalize } from 'lodash-es'
 import {
   Fragment,
   useCallback,
@@ -14,12 +15,24 @@ import {
   TownEntity,
   World,
 } from './types.js'
-import { useViewport } from './use-viewport.js'
 import {
   getCurrentYield,
-  getFoodPriority,
-  getWoodPriority,
+  getFinalPriority,
 } from './world.js'
+
+function* iteratePriorities(entity: TownEntity): Generator<{
+  key: keyof TownEntity['priority']
+  value: number
+}> {
+  for (const [key, value] of Object.entries(
+    entity.priority,
+  )) {
+    yield {
+      key: key as keyof TownEntity['priority'],
+      value,
+    }
+  }
+}
 
 export function Home() {
   const { world, setWorld } = useContext(AppContext)
@@ -67,54 +80,35 @@ export function Home() {
                       </div>
                       <div>Priority</div>
                       <div className={styles.indent}>
-                        <div>
-                          <label>
-                            Food
-                            <input
-                              type="range"
-                              min={0}
-                              max={1}
-                              step={0.01}
-                              value={entity.priority.food}
-                              onChange={(ev) => {
-                                setPriority(
-                                  entity.id,
-                                  'food',
-                                  parseFloat(
-                                    ev.target.value,
-                                  ),
-                                )
-                              }}
-                            ></input>
-                            {getFoodPriority(
-                              entity,
-                            ).toFixed(2)}
-                          </label>
-                        </div>
-                        <div>
-                          <label>
-                            Wood
-                            <input
-                              type="range"
-                              min={0}
-                              max={1}
-                              step={0.01}
-                              value={entity.priority.wood}
-                              onChange={(ev) => {
-                                setPriority(
-                                  entity.id,
-                                  'wood',
-                                  parseFloat(
-                                    ev.target.value,
-                                  ),
-                                )
-                              }}
-                            ></input>
-                            {getWoodPriority(
-                              entity,
-                            ).toFixed(2)}
-                          </label>
-                        </div>
+                        {Array.from(
+                          iteratePriorities(entity),
+                        ).map(({ key, value }) => (
+                          <div key={key}>
+                            <label>
+                              {capitalize(key)}
+                              <input
+                                type="range"
+                                min={0}
+                                max={1}
+                                step={0.01}
+                                value={value}
+                                onChange={(ev) => {
+                                  setPriority(
+                                    entity.id,
+                                    key,
+                                    parseFloat(
+                                      ev.target.value,
+                                    ),
+                                  )
+                                }}
+                              ></input>
+                              {getFinalPriority(
+                                key,
+                                entity,
+                              ).toFixed(2)}
+                            </label>
+                          </div>
+                        ))}
                       </div>
                       <div>Connections</div>
                       <div className={styles.indent}>

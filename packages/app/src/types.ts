@@ -112,6 +112,7 @@ export const TownEntity = z.strictObject({
   priority: z.strictObject({
     food: z.number().min(0).max(1),
     wood: z.number().min(0).max(1),
+    build: z.number().min(0).max(1),
   }),
   builds: Build.array(),
 })

@@ -7,7 +7,7 @@ import {
 } from './types.js'
 import {
   getCurrentYield,
-  getFoodPriority,
+  getFinalPriority,
 } from './world.js'
 
 export function tickWorld(world: World): void {
@@ -77,7 +77,7 @@ function tickTown(entity: TownEntity, world: World): void {
   // Food Production
   //
 
-  const foodPriority = getFoodPriority(entity)
+  const foodPriority = getFinalPriority('food', entity)
   // const woodPriority = getWoodPriority(entity)
 
   const foodSource = getFoodSource(entity, world)
