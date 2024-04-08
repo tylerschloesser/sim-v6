@@ -165,6 +165,18 @@ function addConnection(
   targetId: EntityId,
 ): void {
   invariant(sourceId !== targetId)
+
+  const source = world.entities[sourceId]
+  invariant(source)
+
+  const target = world.entities[targetId]
+  invariant(target)
+
+  invariant(!source.connections[targetId])
+  invariant(!target.connections[sourceId])
+
+  source.connections[targetId] = true
+  target.connections[sourceId] = true
 }
 
 function AddConnectionButton({
@@ -187,9 +199,13 @@ function AddConnectionButton({
       peer.id !== entity.id && !peer.connections[entity.id],
   )
 
+  const disabled = options.length === 0
+
   return (
     <>
-      <button onClick={onClick}>Add Connection</button>
+      <button onClick={onClick} disabled={disabled}>
+        Add Connection
+      </button>
       <dialog ref={dialog}>
         {options.map((peer) => (
           <div key={peer.id}>
