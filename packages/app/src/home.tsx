@@ -134,6 +134,35 @@ export function Home() {
                           />
                         </div>
                       </div>
+                      <div>Builds</div>
+                      <div className={styles.indent}>
+                        {Object.values(entity.builds)
+                          .length === 0 && <div>None</div>}
+                        {Object.values(entity.builds).map(
+                          (build, i) => (
+                            <Fragment key={i}>
+                              <div>{build.type}</div>
+                              <div
+                                key={i}
+                                className={styles.indent}
+                              >
+                                <div>
+                                  Source: {build.sourceId}
+                                </div>
+                                <div>
+                                  Target: {build.targetId}
+                                </div>
+                                <div>
+                                  Progress:{' '}
+                                  {build.progress.toFixed(
+                                    2,
+                                  )}
+                                </div>
+                              </div>
+                            </Fragment>
+                          ),
+                        )}
+                      </div>
                     </div>
                   </>
                 )
