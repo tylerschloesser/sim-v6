@@ -1,10 +1,10 @@
 import invariant from 'tiny-invariant'
 import {
-  Build,
   BuildType,
   EntityType,
   FoodSourceEntity,
   TownEntity,
+  WoodSourceEntity,
   World,
 } from './types.js'
 import {
@@ -59,6 +59,12 @@ const INDIVIDUAL_FOOD_PRODUCTION_PER_TICK = convert(
   Unit.Tick,
 )
 
+const INDIVIDUAL_WOOD_PRODUCTION_PER_TICK = convert(
+  2,
+  Unit.Minute,
+  Unit.Tick,
+)
+
 const INDIVIDUAL_BUILD_PRODUCTION_PER_TICK = convert(
   0.1,
   Unit.Minute,
@@ -86,10 +92,7 @@ function tickTown(entity: TownEntity, world: World): void {
   //
 
   const foodPriority = getFinalPriority('food', entity)
-  // const woodPriority = getWoodPriority(entity)
-
   const foodSource = getFoodSource(entity, world)
-
   if (foodPriority > 0 && foodSource) {
     const currentYield = getCurrentYield(foodSource)
 
@@ -108,6 +111,32 @@ function tickTown(entity: TownEntity, world: World): void {
     entity.storage.food.delta += foodProduction
   } else if (foodSource) {
     foodSource.tick = Math.max(foodSource.tick - 1, 0)
+  }
+
+  //
+  // Wood Production
+  //
+
+  const woodPriority = getFinalPriority('wood', entity)
+  const woodSource = getWoodSource(entity, world)
+  if (woodPriority > 0 && woodSource) {
+    const currentYield = getCurrentYield(woodSource)
+
+    const woodProduction =
+      entity.population *
+      INDIVIDUAL_WOOD_PRODUCTION_PER_TICK *
+      woodPriority *
+      currentYield
+
+    woodSource.tick = Math.min(
+      woodSource.tick + 1,
+      woodSource.maxYieldTicks,
+    )
+
+    entity.storage.wood.count += woodProduction
+    entity.storage.wood.delta += woodProduction
+  } else if (woodSource) {
+    woodSource.tick = Math.max(woodSource.tick - 1, 0)
   }
 
   //
@@ -169,6 +198,25 @@ function getFoodSource(
     const peer = world.entities[peerId]
     invariant(peer)
     if (peer.type === EntityType.enum.FoodSource) {
+      matches.push(peer)
+    }
+  }
+
+  invariant(matches.length <= 1)
+
+  return matches.at(0) ?? null
+}
+
+function getWoodSource(
+  entity: TownEntity,
+  world: World,
+): WoodSourceEntity | null {
+  const matches: WoodSourceEntity[] = []
+
+  for (const peerId of Object.keys(entity.connections)) {
+    const peer = world.entities[peerId]
+    invariant(peer)
+    if (peer.type === EntityType.enum.WoodSource) {
       matches.push(peer)
     }
   }
