@@ -5,11 +5,10 @@ import {
   useRef,
 } from 'react'
 import invariant from 'tiny-invariant'
-import { sources } from 'webpack'
 import { AppContext } from './app-context.js'
 import styles from './home.module.scss'
 import {
-  Entity,
+  BuildType,
   EntityId,
   EntityType,
   TownEntity,
@@ -142,7 +141,13 @@ export function Home() {
                         {Object.values(entity.builds).map(
                           (build, i) => (
                             <Fragment key={i}>
-                              <div>{build.type}</div>
+                              <div>
+                                {build.type}{' '}
+                                <CancelBuildButton
+                                  entityId={entity.id}
+                                  index={i}
+                                />
+                              </div>
                               <div
                                 key={i}
                                 className={styles.indent}
@@ -186,11 +191,6 @@ export function Home() {
                             targetId={targetId}
                           />
                         ))}
-                        <div>
-                          <AddConnectionButton
-                            entity={entity}
-                          />
-                        </div>
                       </div>
                       Yield:{' '}
                       {getCurrentYield(entity).toFixed(2)}
@@ -206,6 +206,18 @@ export function Home() {
   )
 }
 
+interface CancelBuildButtonProps {
+  entityId: EntityId
+  index: number
+}
+
+function CancelBuildButton({
+  entityId,
+  index,
+}: CancelBuildButtonProps) {
+  return <button>Cancel</button>
+}
+
 function addConnection(
   world: World,
   sourceId: EntityId,
@@ -214,7 +226,7 @@ function addConnection(
   invariant(sourceId !== targetId)
 
   const source = world.entities[sourceId]
-  invariant(source)
+  invariant(source?.type === EntityType.enum.Town)
 
   const target = world.entities[targetId]
   invariant(target)
@@ -222,12 +234,24 @@ function addConnection(
   invariant(!source.connections[targetId])
   invariant(!target.connections[sourceId])
 
-  source.connections[targetId] = true
-  target.connections[sourceId] = true
+  invariant(
+    !source.builds.find(
+      (build) =>
+        build.sourceId === sourceId &&
+        build.targetId === targetId,
+    ),
+  )
+
+  source.builds.push({
+    type: BuildType.enum.Connection,
+    sourceId,
+    targetId,
+    progress: 0,
+  })
 }
 
 interface AddConnectionButtonProps {
-  entity: Entity
+  entity: TownEntity
 }
 
 function AddConnectionButton({
@@ -253,31 +277,16 @@ function AddConnectionButton({
       if (peer.connections[entity.id]) {
         return false
       }
-      if (peer.type === EntityType.enum.Town) {
-        if (
-          peer.builds.find(
-            (build) =>
-              (build.sourceId === peer.id &&
-                build.targetId === entity.id) ||
-              (build.sourceId === entity.id &&
-                build.targetId === peer.id),
-          )
-        ) {
-          return false
-        }
-      }
-      if (entity.type === EntityType.enum.Town) {
-        if (
-          entity.builds.find(
-            (build) =>
-              (build.sourceId === peer.id &&
-                build.targetId === entity.id) ||
-              (build.sourceId === entity.id &&
-                build.targetId === peer.id),
-          )
-        ) {
-          return false
-        }
+      if (
+        entity.builds.find(
+          (build) =>
+            (build.sourceId === peer.id &&
+              build.targetId === entity.id) ||
+            (build.sourceId === entity.id &&
+              build.targetId === peer.id),
+        )
+      ) {
+        return false
       }
       return true
     },
