@@ -469,8 +469,8 @@ function ShowConnection({
   invariant(target.connections[sourceId])
 
   return (
-    <>
-      ID: {targetId}
+    <div>
+      ID: {targetId}{' '}
       <button
         onClick={() =>
           setWorld((draft) =>
@@ -480,6 +480,6 @@ function ShowConnection({
       >
         Delete
       </button>
-    </>
+    </div>
   )
 }
