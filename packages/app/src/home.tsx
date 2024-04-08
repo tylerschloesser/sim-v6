@@ -14,6 +14,7 @@ import {
   TownEntity,
   World,
 } from './types.js'
+import { useViewport } from './use-viewport.js'
 import {
   getCurrentYield,
   getFoodPriority,
@@ -215,7 +216,24 @@ function CancelBuildButton({
   entityId,
   index,
 }: CancelBuildButtonProps) {
-  return <button>Cancel</button>
+  const { setWorld } = useContext(AppContext)
+  return (
+    <button
+      onClick={() => {
+        setWorld((draft) => {
+          const entity = draft.entities[entityId]
+          invariant(entity?.type === EntityType.enum.Town)
+
+          const build = entity.builds.at(index)
+          invariant(build)
+
+          entity.builds.splice(index, 1)
+        })
+      }}
+    >
+      Cancel
+    </button>
+  )
 }
 
 function addConnection(
