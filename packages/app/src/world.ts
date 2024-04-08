@@ -1,3 +1,4 @@
+import invariant from 'tiny-invariant'
 import {
   BranchNode,
   EntityType,
@@ -84,4 +85,36 @@ export function loadWorld(): World | null {
 
 export function saveWorld(world: World): void {
   localStorage.setItem('world', JSON.stringify(world))
+}
+
+export function getFoodPriority(
+  entity: TownEntity,
+): number {
+  const totalPriority =
+    entity.priority.food + entity.priority.wood
+
+  const foodPriority = totalPriority
+    ? entity.priority.food / totalPriority
+    : 0
+
+  invariant(foodPriority >= 0)
+  invariant(foodPriority <= 1)
+
+  return foodPriority
+}
+
+export function getWoodPriority(
+  entity: TownEntity,
+): number {
+  const totalPriority =
+    entity.priority.food + entity.priority.wood
+
+  const woodPriority = totalPriority
+    ? entity.priority.wood / totalPriority
+    : 0
+
+  invariant(woodPriority >= 0)
+  invariant(woodPriority <= 1)
+
+  return woodPriority
 }
