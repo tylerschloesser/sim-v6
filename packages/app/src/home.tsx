@@ -3,7 +3,9 @@ import {
   Fragment,
   useCallback,
   useContext,
+  useEffect,
   useRef,
+  useState,
 } from 'react'
 import invariant from 'tiny-invariant'
 import { AppContext } from './app-context.js'
@@ -82,12 +84,52 @@ function BuildHouseButton({
   )
 }
 
+function Diff({ diff }: { diff: number }) {
+  const fixed = Math.abs(diff).toFixed(2)
+  if (fixed === '0.00') {
+    return null
+  }
+  return (
+    <>
+      {diff > 0 ? '+' : '-'}
+      {fixed}/s
+    </>
+  )
+}
+
 interface DynamicValueProps {
   value: number
 }
 
 function DynamicValue({ value }: DynamicValueProps) {
-  return <>{value.toFixed(2)}</>
+  const [diff, setDiff] = useState(0)
+  const cache = useRef([value])
+
+  useEffect(() => {
+    cache.current.push(value)
+  }, [value])
+
+  useEffect(() => {
+    const intervalId = self.setInterval(() => {
+      invariant(cache.current.length > 0)
+      const head = cache.current.at(0)
+      invariant(head !== undefined)
+      const tail = cache.current.at(-1)
+      invariant(tail !== undefined)
+
+      setDiff(tail - head)
+      cache.current = [tail]
+    }, 1000)
+    return () => {
+      self.clearInterval(intervalId)
+    }
+  }, [])
+
+  return (
+    <>
+      {value.toFixed(2)} <Diff diff={diff} />
+    </>
+  )
 }
 
 export function Home() {
