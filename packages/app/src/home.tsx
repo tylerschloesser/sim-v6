@@ -205,10 +205,6 @@ export function Home() {
   )
 }
 
-interface AddConnectionButtonProps {
-  entity: Entity
-}
-
 function addConnection(
   world: World,
   sourceId: EntityId,
@@ -229,6 +225,10 @@ function addConnection(
   target.connections[sourceId] = true
 }
 
+interface AddConnectionButtonProps {
+  entity: Entity
+}
+
 function AddConnectionButton({
   entity,
 }: AddConnectionButtonProps) {
@@ -245,8 +245,15 @@ function AddConnectionButton({
   }, [])
 
   const options = Object.values(world.entities).filter(
-    (peer) =>
-      peer.id !== entity.id && !peer.connections[entity.id],
+    (peer) => {
+      if (peer.id === entity.id) {
+        return false
+      }
+      if (peer.connections[entity.id]) {
+        return false
+      }
+      return true
+    },
   )
 
   const disabled = options.length === 0
