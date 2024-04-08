@@ -12,6 +12,7 @@ import {
   EntityId,
   EntityType,
   TownEntity,
+  World,
 } from './types.js'
 
 export function Home() {
@@ -158,17 +159,25 @@ interface AddConnectionButtonProps {
   entity: Entity
 }
 
+function addConnection(
+  world: World,
+  sourceId: EntityId,
+  targetId: EntityId,
+): void {
+  invariant(sourceId !== targetId)
+}
+
 function AddConnectionButton({
   entity,
 }: AddConnectionButtonProps) {
-  const { world } = useContext(AppContext)
+  const { world, setWorld } = useContext(AppContext)
   const dialog = useRef<HTMLDialogElement>(null)
   const onClick = useCallback(() => {
     invariant(dialog.current)
     dialog.current.showModal()
   }, [])
 
-  const onClickClose = useCallback(() => {
+  const close = useCallback(() => {
     invariant(dialog.current)
     dialog.current.close()
   }, [])
@@ -184,13 +193,20 @@ function AddConnectionButton({
       <dialog ref={dialog}>
         {options.map((peer) => (
           <div key={peer.id}>
-            <button>
+            <button
+              onClick={() => {
+                setWorld((draft) =>
+                  addConnection(draft, entity.id, peer.id),
+                )
+                close()
+              }}
+            >
               {peer.id} ({peer.type})
             </button>
           </div>
         ))}
         <div>
-          <button onClick={onClickClose}>Close</button>
+          <button onClick={close}>Close</button>
         </div>
       </dialog>
     </>
