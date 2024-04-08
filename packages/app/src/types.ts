@@ -82,6 +82,24 @@ export const StorageValue = z.strictObject({
 })
 export type StorageValue = z.infer<typeof StorageValue>
 
+export const BuildType = z.enum(['Connection'])
+export type BuildType = z.infer<typeof BuildType>
+
+export const ConnectionBuild = z.strictObject({
+  type: z.literal(BuildType.enum.Connection),
+  sourceId: EntityId,
+  targetId: EntityId,
+  progress: z.number().gte(0).lt(1),
+})
+export type ConnectionBuild = z.infer<
+  typeof ConnectionBuild
+>
+
+export const Build = z.discriminatedUnion('type', [
+  ConnectionBuild,
+])
+export type Build = z.infer<typeof Build>
+
 export const TownEntity = z.strictObject({
   id: EntityId,
   type: z.literal(EntityType.enum.Town),
@@ -95,6 +113,7 @@ export const TownEntity = z.strictObject({
     food: z.number().min(0).max(1),
     wood: z.number().min(0).max(1),
   }),
+  builds: Build.array(),
 })
 export type TownEntity = z.infer<typeof TownEntity>
 
