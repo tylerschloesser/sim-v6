@@ -49,8 +49,8 @@ function buildHouse(
   const entity = world.entities[entityId]
   invariant(entity?.type === EntityType.enum.Town)
 
-  invariant(entity.storage.wood.count >= HOUSE_BUILD_WOOD)
-  entity.storage.wood.count -= HOUSE_BUILD_WOOD
+  invariant(entity.storage.wood >= HOUSE_BUILD_WOOD)
+  entity.storage.wood -= HOUSE_BUILD_WOOD
 
   const build: HouseBuild = {
     type: BuildType.enum.House,
@@ -126,10 +126,10 @@ export function Home() {
                       <div>Storage</div>
                       <div className={styles.indent}>
                         <div>
-                          {`Food: ${entity.storage.food.count.toFixed(2)} (${(entity.storage.food.delta * 10).toFixed(2)}/s)`}
+                          {`Food: ${entity.storage.food.toFixed(2)}`}
                         </div>
                         <div>
-                          {`Wood: ${entity.storage.wood.count.toFixed(2)}`}
+                          {`Wood: ${entity.storage.wood.toFixed(2)}`}
                         </div>
                       </div>
                       <div>Priority</div>
@@ -302,7 +302,7 @@ function CancelBuildButton({
 
           switch (build.type) {
             case BuildType.enum.House: {
-              entity.storage.wood.count += HOUSE_BUILD_WOOD
+              entity.storage.wood += HOUSE_BUILD_WOOD
               break
             }
           }

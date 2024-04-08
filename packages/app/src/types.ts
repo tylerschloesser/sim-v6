@@ -80,12 +80,6 @@ export const EntityType = z.enum([
 ])
 export type EntityType = z.infer<typeof EntityType>
 
-export const StorageValue = z.strictObject({
-  count: z.number().nonnegative(),
-  delta: z.number(),
-})
-export type StorageValue = z.infer<typeof StorageValue>
-
 export const BuildType = z.enum(['Connection', 'House'])
 export type BuildType = z.infer<typeof BuildType>
 
@@ -119,8 +113,8 @@ export const TownEntity = z.strictObject({
   population: z.number().nonnegative(),
   houses: z.number().int().nonnegative(),
   storage: z.strictObject({
-    food: StorageValue,
-    wood: StorageValue,
+    food: z.number().nonnegative(),
+    wood: z.number().nonnegative(),
   }),
   priority: z.strictObject({
     food: z.number().min(0).max(1),

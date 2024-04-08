@@ -72,9 +72,6 @@ const INDIVIDUAL_BUILD_PRODUCTION_PER_TICK = convert(
 )
 
 function tickTown(entity: TownEntity, world: World): void {
-  entity.storage.food.delta = 0
-  entity.storage.wood.delta = 0
-
   //
   // Food Consumption
   //
@@ -82,10 +79,8 @@ function tickTown(entity: TownEntity, world: World): void {
   const foodConsumption =
     entity.population * INDIVIDUAL_FOOD_CONSUMPTION_PER_TICK
 
-  entity.storage.food.count -= foodConsumption
-  invariant(entity.storage.food.count >= 0)
-
-  entity.storage.food.delta += -foodConsumption
+  entity.storage.food -= foodConsumption
+  invariant(entity.storage.food >= 0)
 
   //
   // Food Production
@@ -107,8 +102,7 @@ function tickTown(entity: TownEntity, world: World): void {
       foodSource.maxYieldTicks,
     )
 
-    entity.storage.food.count += foodProduction
-    entity.storage.food.delta += foodProduction
+    entity.storage.food += foodProduction
   } else if (foodSource) {
     foodSource.tick = Math.max(foodSource.tick - 1, 0)
   }
@@ -133,8 +127,7 @@ function tickTown(entity: TownEntity, world: World): void {
       woodSource.maxYieldTicks,
     )
 
-    entity.storage.wood.count += woodProduction
-    entity.storage.wood.delta += woodProduction
+    entity.storage.wood += woodProduction
   } else if (woodSource) {
     woodSource.tick = Math.max(woodSource.tick - 1, 0)
   }

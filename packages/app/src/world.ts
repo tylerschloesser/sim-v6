@@ -48,14 +48,8 @@ export function initWorld(): World {
       population: 10,
       houses: 0,
       storage: {
-        food: {
-          count: 100,
-          delta: 0,
-        },
-        wood: {
-          count: 10,
-          delta: 0,
-        },
+        food: 100,
+        wood: 10,
       },
       priority: {
         food: 1,
@@ -156,5 +150,5 @@ export function getCurrentYield(
 export const HOUSE_BUILD_WOOD = 8
 
 export function canBuildHouse(entity: TownEntity): boolean {
-  return entity.storage.wood.count >= HOUSE_BUILD_WOOD
+  return entity.storage.wood >= HOUSE_BUILD_WOOD
 }
