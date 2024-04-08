@@ -67,6 +67,11 @@ export function initWorld(): World {
       id: `${nextEntityId++}`,
       type: EntityType.enum.FoodSource,
       connections: {},
+
+      minYield: 0.5,
+      maxYield: 1,
+      maxYieldTicks: 10 * 60,
+      tick: 0,
     }
     entities[entity.id] = entity
   }

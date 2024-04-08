@@ -102,6 +102,12 @@ export const FoodSourceEntity = z.strictObject({
   id: EntityId,
   connections: z.record(EntityId, z.literal(true)),
   type: z.literal(EntityType.enum.FoodSource),
+
+  minYield: z.number().min(0).max(1),
+  maxYield: z.number().min(0).max(1),
+
+  maxYieldTicks: z.number().nonnegative(),
+  tick: z.number().nonnegative(),
 })
 export type FoodSourceEntity = z.infer<
   typeof FoodSourceEntity
