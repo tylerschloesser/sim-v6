@@ -118,27 +118,30 @@ function tickTown(entity: TownEntity, world: World): void {
     const build = entity.builds.at(0)
     invariant(build)
 
-    invariant(build.type === BuildType.enum.Connection)
-
     invariant(build.progress < 1)
 
-    build.progress +=
-      entity.population *
-      buildPriority *
-      INDIVIDUAL_BUILD_PRODUCTION_PER_TICK
+    switch (build.type) {
+      case BuildType.enum.Connection: {
+        build.progress +=
+          entity.population *
+          buildPriority *
+          INDIVIDUAL_BUILD_PRODUCTION_PER_TICK
 
-    if (build.progress >= 1) {
-      entity.builds.shift()
+        if (build.progress >= 1) {
+          entity.builds.shift()
 
-      invariant(build.sourceId === entity.id)
-      const target = world.entities[build.targetId]
-      invariant(target)
+          invariant(build.sourceId === entity.id)
+          const target = world.entities[build.targetId]
+          invariant(target)
 
-      invariant(!entity.connections[target.id])
-      invariant(!target.connections[entity.id])
+          invariant(!entity.connections[target.id])
+          invariant(!target.connections[entity.id])
 
-      entity.connections[target.id] = true
-      target.connections[entity.id] = true
+          entity.connections[target.id] = true
+          target.connections[entity.id] = true
+        }
+        break
+      }
     }
   }
 }

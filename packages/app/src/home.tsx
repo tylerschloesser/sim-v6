@@ -13,10 +13,12 @@ import {
   ConnectionBuild,
   EntityId,
   EntityType,
+  HouseBuild,
   TownEntity,
   World,
 } from './types.js'
 import {
+  HOUSE_BUILD_WOOD,
   canBuildHouse,
   getCurrentYield,
   getFinalPriority,
@@ -40,6 +42,25 @@ interface BuildHouseButtonProps {
   entityId: EntityId
 }
 
+function buildHouse(
+  world: World,
+  entityId: EntityId,
+): void {
+  const entity = world.entities[entityId]
+  invariant(entity?.type === EntityType.enum.Town)
+
+  invariant(entity.storage.wood.count >= HOUSE_BUILD_WOOD)
+  entity.storage.wood.count -= HOUSE_BUILD_WOOD
+
+  const build: HouseBuild = {
+    type: BuildType.enum.House,
+    entityId,
+    progress: 0,
+  }
+
+  entity.builds.push(build)
+}
+
 function BuildHouseButton({
   entityId,
 }: BuildHouseButtonProps) {
@@ -49,7 +70,16 @@ function BuildHouseButton({
 
   const disabled = !canBuildHouse(entity)
 
-  return <button disabled={disabled}>Build House</button>
+  return (
+    <button
+      disabled={disabled}
+      onClick={() => {
+        setWorld((draft) => buildHouse(draft, entityId))
+      }}
+    >
+      Build House
+    </button>
+  )
 }
 
 export function Home() {
@@ -268,6 +298,13 @@ function CancelBuildButton({
 
           const build = entity.builds.at(index)
           invariant(build)
+
+          switch (build.type) {
+            case BuildType.enum.House: {
+              entity.storage.wood.count += HOUSE_BUILD_WOOD
+              break
+            }
+          }
 
           entity.builds.splice(index, 1)
         })

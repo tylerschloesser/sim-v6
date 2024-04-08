@@ -139,6 +139,8 @@ export function getCurrentYield(
   return currentYield
 }
 
+export const HOUSE_BUILD_WOOD = 8
+
 export function canBuildHouse(entity: TownEntity): boolean {
-  return entity.storage.wood.count >= 8
+  return entity.storage.wood.count >= HOUSE_BUILD_WOOD
 }
