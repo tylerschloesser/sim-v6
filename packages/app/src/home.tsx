@@ -242,11 +242,29 @@ interface ShowConnectionProps {
   targetId: EntityId
 }
 
+function deleteConnection(
+  world: World,
+  sourceId: EntityId,
+  targetId: EntityId,
+): void {
+  const source = world.entities[sourceId]
+  invariant(source)
+
+  const target = world.entities[targetId]
+  invariant(target)
+
+  invariant(source.connections[targetId])
+  invariant(target.connections[sourceId])
+
+  delete source.connections[targetId]
+  delete target.connections[sourceId]
+}
+
 function ShowConnection({
   sourceId,
   targetId,
 }: ShowConnectionProps) {
-  const { world } = useContext(AppContext)
+  const { world, setWorld } = useContext(AppContext)
 
   const source = world.entities[sourceId]
   invariant(source)
@@ -257,5 +275,18 @@ function ShowConnection({
   invariant(source.connections[targetId])
   invariant(target.connections[sourceId])
 
-  return <>ID: {targetId}</>
+  return (
+    <>
+      ID: {targetId}
+      <button
+        onClick={() =>
+          setWorld((draft) =>
+            deleteConnection(draft, sourceId, targetId),
+          )
+        }
+      >
+        Delete
+      </button>
+    </>
+  )
 }
