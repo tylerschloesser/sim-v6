@@ -53,10 +53,10 @@ export function Home() {
                       <div>Storage</div>
                       <div className={styles.indent}>
                         <div>
-                          {`Food: ${entity.storage.food.toFixed(2)}`}
+                          {`Food: ${entity.storage.food.count.toFixed(2)}`}
                         </div>
                         <div>
-                          {`Wood: ${entity.storage.wood.toFixed(2)}`}
+                          {`Wood: ${entity.storage.wood.count.toFixed(2)}`}
                         </div>
                       </div>
                       <div>Priority</div>

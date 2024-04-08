@@ -45,8 +45,14 @@ export function initWorld(): World {
       connections: {},
       population: 10,
       storage: {
-        food: 100,
-        wood: 10,
+        food: {
+          count: 100,
+          delta: 0,
+        },
+        wood: {
+          count: 10,
+          delta: 0,
+        },
       },
       priority: {
         food: 1,
