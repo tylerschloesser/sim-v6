@@ -8,6 +8,7 @@ import invariant from 'tiny-invariant'
 import { AppContext } from './app-context.js'
 import styles from './home.module.scss'
 import {
+  Entity,
   EntityId,
   EntityType,
   TownEntity,
@@ -112,7 +113,9 @@ export function Home() {
                           <div key={id}>ID: {id}</div>
                         ))}
                         <div>
-                          <AddConnectionButton />
+                          <AddConnectionButton
+                            entity={entity}
+                          />
                         </div>
                       </div>
                     </div>
@@ -134,7 +137,9 @@ export function Home() {
                           <div key={id}>ID: {id}</div>
                         ))}
                         <div>
-                          <AddConnectionButton />
+                          <AddConnectionButton
+                            entity={entity}
+                          />
                         </div>
                       </div>
                     </div>
@@ -149,17 +154,45 @@ export function Home() {
   )
 }
 
-function AddConnectionButton() {
+interface AddConnectionButtonProps {
+  entity: Entity
+}
+
+function AddConnectionButton({
+  entity,
+}: AddConnectionButtonProps) {
   const { world } = useContext(AppContext)
   const dialog = useRef<HTMLDialogElement>(null)
   const onClick = useCallback(() => {
     invariant(dialog.current)
     dialog.current.showModal()
   }, [])
+
+  const onClickClose = useCallback(() => {
+    invariant(dialog.current)
+    dialog.current.close()
+  }, [])
+
+  const options = Object.values(world.entities).filter(
+    (peer) =>
+      peer.id !== entity.id && !peer.connections[entity.id],
+  )
+
   return (
     <>
       <button onClick={onClick}>Add Connection</button>
-      <dialog ref={dialog}>Test</dialog>
+      <dialog ref={dialog}>
+        {options.map((peer) => (
+          <div key={peer.id}>
+            <button>
+              {peer.id} ({peer.type})
+            </button>
+          </div>
+        ))}
+        <div>
+          <button onClick={onClickClose}>Close</button>
+        </div>
+      </dialog>
     </>
   )
 }
