@@ -138,3 +138,7 @@ export function getCurrentYield(
 
   return currentYield
 }
+
+export function canBuildHouse(entity: TownEntity): boolean {
+  return entity.storage.wood.count >= 8
+}

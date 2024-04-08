@@ -10,12 +10,14 @@ import { AppContext } from './app-context.js'
 import styles from './home.module.scss'
 import {
   BuildType,
+  ConnectionBuild,
   EntityId,
   EntityType,
   TownEntity,
   World,
 } from './types.js'
 import {
+  canBuildHouse,
   getCurrentYield,
   getFinalPriority,
 } from './world.js'
@@ -32,6 +34,22 @@ function* iteratePriorities(entity: TownEntity): Generator<{
       value,
     }
   }
+}
+
+interface BuildHouseButtonProps {
+  entityId: EntityId
+}
+
+function BuildHouseButton({
+  entityId,
+}: BuildHouseButtonProps) {
+  const { world, setWorld } = useContext(AppContext)
+  const entity = world.entities[entityId]
+  invariant(entity?.type === EntityType.enum.Town)
+
+  const disabled = !canBuildHouse(entity)
+
+  return <button disabled={disabled}>Build House</button>
 }
 
 export function Home() {
@@ -69,7 +87,12 @@ export function Home() {
                       <div>
                         Population: {entity.population}
                       </div>
-                      <div>Houses: {entity.houses}</div>
+                      <div>
+                        Houses: {entity.houses}{' '}
+                        <BuildHouseButton
+                          entityId={entity.id}
+                        />
+                      </div>
                       <div>Storage</div>
                       <div className={styles.indent}>
                         <div>
@@ -148,18 +171,42 @@ export function Home() {
                                 key={i}
                                 className={styles.indent}
                               >
-                                <div>
-                                  Source: {build.sourceId}
-                                </div>
-                                <div>
-                                  Target: {build.targetId}
-                                </div>
-                                <div>
-                                  Progress:{' '}
-                                  {build.progress.toFixed(
-                                    2,
-                                  )}
-                                </div>
+                                {(() => {
+                                  switch (build.type) {
+                                    case BuildType.enum
+                                      .Connection: {
+                                      return (
+                                        <>
+                                          <div>
+                                            Source:{' '}
+                                            {build.sourceId}
+                                          </div>
+                                          <div>
+                                            Target:{' '}
+                                            {build.targetId}
+                                          </div>
+                                          <div>
+                                            Progress:{' '}
+                                            {build.progress.toFixed(
+                                              2,
+                                            )}
+                                          </div>
+                                        </>
+                                      )
+                                    }
+                                    case BuildType.enum
+                                      .House: {
+                                      return (
+                                        <div>
+                                          Progress:{' '}
+                                          {build.progress.toFixed(
+                                            2,
+                                          )}
+                                        </div>
+                                      )
+                                    }
+                                  }
+                                })()}
                               </div>
                             </Fragment>
                           ),
@@ -248,11 +295,16 @@ function addConnection(
   invariant(!target.connections[sourceId])
 
   invariant(
-    !source.builds.find(
-      (build) =>
-        build.sourceId === sourceId &&
-        build.targetId === targetId,
-    ),
+    !source.builds
+      .filter(
+        (build): build is ConnectionBuild =>
+          build.type === BuildType.enum.Connection,
+      )
+      .find(
+        (build) =>
+          build.sourceId === sourceId &&
+          build.targetId === targetId,
+      ),
   )
 
   source.builds.push({
@@ -291,13 +343,18 @@ function AddConnectionButton({
         return false
       }
       if (
-        entity.builds.find(
-          (build) =>
-            (build.sourceId === peer.id &&
-              build.targetId === entity.id) ||
-            (build.sourceId === entity.id &&
-              build.targetId === peer.id),
-        )
+        entity.builds
+          .filter(
+            (build): build is ConnectionBuild =>
+              build.type === BuildType.enum.Connection,
+          )
+          .find(
+            (build) =>
+              (build.sourceId === peer.id &&
+                build.targetId === entity.id) ||
+              (build.sourceId === entity.id &&
+                build.targetId === peer.id),
+          )
       ) {
         return false
       }
