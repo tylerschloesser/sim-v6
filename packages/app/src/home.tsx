@@ -90,8 +90,10 @@ function Diff({ diff }: { diff: number }) {
   if (fixed === '0.00') {
     return <span></span>
   }
+
+  const color = `var(--${diff < 0 ? 'red' : 'green'})`
   return (
-    <span>
+    <span style={{ color }}>
       {diff > 0 ? '+' : '-'}
       {fixed}/s
     </span>
