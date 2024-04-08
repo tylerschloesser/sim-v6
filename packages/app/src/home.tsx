@@ -69,6 +69,7 @@ export function Home() {
                       <div>
                         Population: {entity.population}
                       </div>
+                      <div>Houses: {entity.houses}</div>
                       <div>Storage</div>
                       <div className={styles.indent}>
                         <div>
