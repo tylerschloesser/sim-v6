@@ -15,6 +15,7 @@ import {
   World,
 } from './types.js'
 import {
+  getCurrentYield,
   getFoodPriority,
   getWoodPriority,
 } from './world.js'
@@ -161,6 +162,8 @@ export function Home() {
                           />
                         </div>
                       </div>
+                      Yield:{' '}
+                      {getCurrentYield(entity).toFixed(2)}
                     </div>
                   </>
                 )

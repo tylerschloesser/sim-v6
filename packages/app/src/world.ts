@@ -129,3 +129,22 @@ export function getWoodPriority(
 
   return woodPriority
 }
+
+export function getCurrentYield(
+  entity: FoodSourceEntity,
+): number {
+  invariant(entity.tick <= entity.maxYieldTicks)
+  const progress = entity.tick
+    ? entity.tick / entity.maxYieldTicks
+    : 0
+
+  invariant(entity.minYield <= entity.maxYield)
+  const currentYield =
+    entity.minYield +
+    (entity.maxYield - entity.minYield) * progress
+
+  invariant(currentYield >= 0)
+  invariant(currentYield <= 1)
+
+  return currentYield
+}

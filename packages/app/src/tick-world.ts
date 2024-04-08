@@ -1,6 +1,14 @@
 import invariant from 'tiny-invariant'
-import { EntityType, TownEntity, World } from './types.js'
-import { getFoodPriority } from './world.js'
+import {
+  EntityType,
+  FoodSourceEntity,
+  TownEntity,
+  World,
+} from './types.js'
+import {
+  getCurrentYield,
+  getFoodPriority,
+} from './world.js'
 
 export function tickWorld(world: World): void {
   world.tick += 1
@@ -72,26 +80,44 @@ function tickTown(entity: TownEntity, world: World): void {
   const foodPriority = getFoodPriority(entity)
   // const woodPriority = getWoodPriority(entity)
 
-  if (foodPriority > 0 && hasFoodSource(entity, world)) {
+  const foodSource = getFoodSource(entity, world)
+
+  if (foodPriority > 0 && foodSource) {
+    const currentYield = getCurrentYield(foodSource)
+
     const foodProduction =
       entity.population *
       INDIVIDUAL_FOOD_PRODUCTION_PER_TICK *
-      foodPriority
+      foodPriority *
+      currentYield
+
+    foodSource.tick = Math.min(
+      foodSource.tick + 1,
+      foodSource.maxYieldTicks,
+    )
 
     entity.storage.food.count += foodProduction
     entity.storage.food.delta += foodProduction
+  } else if (foodSource) {
+    foodSource.tick = Math.max(foodSource.tick - 1, 0)
   }
 }
 
-function hasFoodSource(
+function getFoodSource(
   entity: TownEntity,
   world: World,
-): boolean {
-  return !!Object.keys(entity.connections).find(
-    (peerId) => {
-      const peer = world.entities[peerId]
-      invariant(peer)
-      return peer.type === EntityType.enum.FoodSource
-    },
-  )
+): FoodSourceEntity | null {
+  const matches: FoodSourceEntity[] = []
+
+  for (const peerId of Object.keys(entity.connections)) {
+    const peer = world.entities[peerId]
+    invariant(peer)
+    if (peer.type === EntityType.enum.FoodSource) {
+      matches.push(peer)
+    }
+  }
+
+  invariant(matches.length <= 1)
+
+  return matches.at(0) ?? null
 }
