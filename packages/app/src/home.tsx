@@ -82,6 +82,14 @@ function BuildHouseButton({
   )
 }
 
+interface DynamicValueProps {
+  value: number
+}
+
+function DynamicValue({ value }: DynamicValueProps) {
+  return <>{value.toFixed(2)}</>
+}
+
 export function Home() {
   const { world, setWorld } = useContext(AppContext)
 
@@ -126,10 +134,16 @@ export function Home() {
                       <div>Storage</div>
                       <div className={styles.indent}>
                         <div>
-                          {`Food: ${entity.storage.food.toFixed(2)}`}
+                          Food:{' '}
+                          <DynamicValue
+                            value={entity.storage.food}
+                          />
                         </div>
                         <div>
-                          {`Wood: ${entity.storage.wood.toFixed(2)}`}
+                          Wood:{' '}
+                          <DynamicValue
+                            value={entity.storage.wood}
+                          />
                         </div>
                       </div>
                       <div>Priority</div>
