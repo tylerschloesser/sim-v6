@@ -343,6 +343,11 @@ function ShowTownEntity({ entity }: ShowTownEntityProps) {
         <div className={styles.indent}>
           {Object.keys(entity.technologies).length ===
             0 && <>None</>}
+          {Object.keys(entity.technologies).map(
+            (technology) => (
+              <div key={technology}>{technology}</div>
+            ),
+          )}
         </div>
       </div>
     </>
