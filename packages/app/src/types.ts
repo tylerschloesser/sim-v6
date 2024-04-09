@@ -83,18 +83,8 @@ export type ResourceType = z.infer<typeof ResourceType>
 export const EntityType = z.enum(['Town', 'Resource'])
 export type EntityType = z.infer<typeof EntityType>
 
-export const BuildType = z.enum(['Connection', 'House'])
+export const BuildType = z.enum(['House'])
 export type BuildType = z.infer<typeof BuildType>
-
-export const ConnectionBuild = z.strictObject({
-  type: z.literal(BuildType.enum.Connection),
-  sourceId: EntityId,
-  targetId: EntityId,
-  progress: z.number().gte(0).lt(1),
-})
-export type ConnectionBuild = z.infer<
-  typeof ConnectionBuild
->
 
 export const HouseBuild = z.strictObject({
   type: z.literal(BuildType.enum.House),
@@ -104,7 +94,6 @@ export const HouseBuild = z.strictObject({
 export type HouseBuild = z.infer<typeof HouseBuild>
 
 export const Build = z.discriminatedUnion('type', [
-  ConnectionBuild,
   HouseBuild,
 ])
 export type Build = z.infer<typeof Build>

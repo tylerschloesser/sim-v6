@@ -159,27 +159,6 @@ function tickTown(entity: TownEntity, world: World): void {
     invariant(build.progress < 1)
 
     switch (build.type) {
-      case BuildType.enum.Connection: {
-        build.progress +=
-          entity.population *
-          priority.build *
-          INDIVIDUAL_BUILD_PRODUCTION_PER_TICK
-
-        if (build.progress >= 1) {
-          entity.builds.shift()
-
-          invariant(build.sourceId === entity.id)
-          const target = world.entities[build.targetId]
-          invariant(target)
-
-          invariant(!entity.connections[target.id])
-          invariant(!target.connections[entity.id])
-
-          entity.connections[target.id] = true
-          target.connections[entity.id] = true
-        }
-        break
-      }
       case BuildType.enum.House: {
         build.progress +=
           entity.population *

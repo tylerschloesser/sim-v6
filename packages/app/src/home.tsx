@@ -14,11 +14,11 @@ import { AppContext } from './app-context.js'
 import styles from './home.module.scss'
 import {
   BuildType,
-  ConnectionBuild,
   Entity,
   EntityId,
   EntityType,
   HouseBuild,
+  ResourceEntity,
   Technology,
   TownEntity,
   World,
@@ -293,24 +293,6 @@ function ShowTownEntity({ entity }: ShowTownEntityProps) {
               <div key={i} className={styles.indent}>
                 {(() => {
                   switch (build.type) {
-                    case BuildType.enum.Connection: {
-                      return (
-                        <>
-                          <div>
-                            Source: {build.sourceId}
-                          </div>
-                          <div>
-                            Target: {build.targetId}
-                          </div>
-                          <div>
-                            Progress:{' '}
-                            <BuildProgress
-                              progress={build.progress}
-                            />
-                          </div>
-                        </>
-                      )
-                    }
                     case BuildType.enum.House: {
                       return (
                         <div>
@@ -567,30 +549,13 @@ function addConnection(
   invariant(source?.type === EntityType.enum.Town)
 
   const target = world.entities[targetId]
-  invariant(target)
+  invariant(target?.type === EntityType.enum.Resource)
 
   invariant(!source.connections[targetId])
   invariant(!target.connections[sourceId])
 
-  invariant(
-    !source.builds
-      .filter(
-        (build): build is ConnectionBuild =>
-          build.type === BuildType.enum.Connection,
-      )
-      .find(
-        (build) =>
-          build.sourceId === sourceId &&
-          build.targetId === targetId,
-      ),
-  )
-
-  source.builds.push({
-    type: BuildType.enum.Connection,
-    sourceId,
-    targetId,
-    progress: 0,
-  })
+  source.connections[targetId] = true
+  target.connections[sourceId] = true
 }
 
 interface AddConnectionButtonProps {
@@ -612,33 +577,20 @@ function AddConnectionButton({
     dialog.current.close()
   }, [])
 
-  const options = Object.values(world.entities).filter(
-    (peer) => {
+  const options = Object.values(world.entities)
+    .filter(
+      (peer): peer is ResourceEntity =>
+        peer.type === EntityType.enum.Resource,
+    )
+    .filter((peer) => {
       if (peer.id === entity.id) {
         return false
       }
       if (peer.connections[entity.id]) {
         return false
       }
-      if (
-        entity.builds
-          .filter(
-            (build): build is ConnectionBuild =>
-              build.type === BuildType.enum.Connection,
-          )
-          .find(
-            (build) =>
-              (build.sourceId === peer.id &&
-                build.targetId === entity.id) ||
-              (build.sourceId === entity.id &&
-                build.targetId === peer.id),
-          )
-      ) {
-        return false
-      }
       return true
-    },
-  )
+    })
 
   const disabled = options.length === 0
 
@@ -658,7 +610,7 @@ function AddConnectionButton({
                 close()
               }}
             >
-              {peer.id} ({peer.type})
+              {peer.id}: {peer.resourceType}
             </button>
           </div>
         ))}
