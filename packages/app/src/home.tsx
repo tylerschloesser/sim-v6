@@ -9,6 +9,7 @@ import {
   useState,
 } from 'react'
 import invariant from 'tiny-invariant'
+import { Updater } from 'use-immer'
 import { AppContext } from './app-context.js'
 import styles from './home.module.scss'
 import {
@@ -135,10 +136,8 @@ function DynamicValue({ value }: DynamicValueProps) {
   )
 }
 
-export function Home() {
-  const { world, setWorld } = useContext(AppContext)
-
-  const setPriority = useCallback(
+function useSetPriority(setWorld: Updater<World>) {
+  return useCallback(
     (
       entityId: EntityId,
       key: keyof TownEntity['priority'],
@@ -154,6 +153,11 @@ export function Home() {
     },
     [setWorld],
   )
+}
+
+export function Home() {
+  const { world, setWorld } = useContext(AppContext)
+  const setPriority = useSetPriority(setWorld)
 
   return (
     <div>
