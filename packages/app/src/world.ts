@@ -114,22 +114,23 @@ export function saveWorld(world: World): void {
   localStorage.setItem('world', JSON.stringify(world))
 }
 
-export function getFinalPriority(
-  key: keyof TownEntity['priority'],
-  entity: TownEntity,
-): number {
-  const totalPriority = sum(Object.values(entity.priority))
-
-  if (totalPriority === 0) {
-    return 0
+export function getNormalizedPriority(
+  priority: TownEntity['priority'],
+): TownEntity['priority'] {
+  const total = sum(Object.values(priority))
+  if (total === 0) {
+    return priority
   }
-
-  const finalPriority = entity.priority[key] / totalPriority
-
-  invariant(finalPriority >= 0)
-  invariant(finalPriority <= 1)
-
-  return finalPriority
+  invariant(total > 0)
+  const normalized: TownEntity['priority'] = { ...priority }
+  for (const key of Object.keys(
+    normalized,
+  ) as (keyof TownEntity['priority'])[]) {
+    normalized[key] /= total
+    invariant(normalized[key] >= 0)
+    invariant(normalized[key] <= 1)
+  }
+  return normalized
 }
 
 export function getCurrentYield(

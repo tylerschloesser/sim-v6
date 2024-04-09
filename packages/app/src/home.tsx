@@ -27,16 +27,16 @@ import {
   HOUSE_BUILD_WOOD,
   canBuildHouse,
   getCurrentYield,
-  getFinalPriority,
+  getNormalizedPriority,
 } from './world.js'
 
-function* iteratePriorities(entity: TownEntity): Generator<{
+function* iteratePriorities(
+  priority: TownEntity['priority'],
+): Generator<{
   key: keyof TownEntity['priority']
   value: number
 }> {
-  for (const [key, value] of Object.entries(
-    entity.priority,
-  )) {
+  for (const [key, value] of Object.entries(priority)) {
     yield {
       key: key as keyof TownEntity['priority'],
       value,
@@ -191,6 +191,7 @@ interface ShowTownEntityProps {
 function ShowTownEntity({ entity }: ShowTownEntityProps) {
   const { setWorld } = useContext(AppContext)
   const setPriority = useSetPriority(setWorld)
+  const priority = getNormalizedPriority(entity.priority)
   return (
     <>
       <div>Town</div>
@@ -234,8 +235,8 @@ function ShowTownEntity({ entity }: ShowTownEntityProps) {
             styles.priority,
           )}
         >
-          {Array.from(iteratePriorities(entity)).map(
-            ({ key, value }) => (
+          {Array.from(iteratePriorities(priority)).map(
+            ({ key, value: normalized }) => (
               <Fragment key={key}>
                 <div>{capitalize(key)}</div>
                 <input
@@ -243,7 +244,7 @@ function ShowTownEntity({ entity }: ShowTownEntityProps) {
                   min={0}
                   max={1}
                   step={0.01}
-                  value={value}
+                  value={entity.priority[key]}
                   onChange={(ev) => {
                     setPriority(
                       entity.id,
@@ -252,9 +253,7 @@ function ShowTownEntity({ entity }: ShowTownEntityProps) {
                     )
                   }}
                 ></input>
-                <div>
-                  {getFinalPriority(key, entity).toFixed(2)}
-                </div>
+                <div>{normalized.toFixed(2)}</div>
               </Fragment>
             ),
           )}

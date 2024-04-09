@@ -9,7 +9,7 @@ import {
 } from './types.js'
 import {
   getCurrentYield,
-  getFinalPriority,
+  getNormalizedPriority,
 } from './world.js'
 
 export function tickWorld(world: World): void {
@@ -71,6 +71,12 @@ const INDIVIDUAL_BUILD_PRODUCTION_PER_TICK = convert(
   Unit.Tick,
 )
 
+const INDIVIDUAL_RESEARCH_PRODUCTION_PER_TICK = convert(
+  0.1,
+  Unit.Minute,
+  Unit.Tick,
+)
+
 function tickTown(entity: TownEntity, world: World): void {
   entity.averageAge += 1 / 3000
 
@@ -84,19 +90,20 @@ function tickTown(entity: TownEntity, world: World): void {
   entity.storage.food -= foodConsumption
   invariant(entity.storage.food >= 0)
 
+  const priority = getNormalizedPriority(entity.priority)
+
   //
   // Food Production
   //
 
-  const foodPriority = getFinalPriority('food', entity)
   const foodSource = getFoodSource(entity, world)
-  if (foodPriority > 0 && foodSource) {
+  if (priority.food > 0 && foodSource) {
     const currentYield = getCurrentYield(foodSource)
 
     const foodProduction =
       entity.population *
       INDIVIDUAL_FOOD_PRODUCTION_PER_TICK *
-      foodPriority *
+      priority.food *
       currentYield
 
     foodSource.tick = Math.min(
@@ -113,15 +120,14 @@ function tickTown(entity: TownEntity, world: World): void {
   // Wood Production
   //
 
-  const woodPriority = getFinalPriority('wood', entity)
   const woodSource = getWoodSource(entity, world)
-  if (woodPriority > 0 && woodSource) {
+  if (priority.wood > 0 && woodSource) {
     const currentYield = getCurrentYield(woodSource)
 
     const woodProduction =
       entity.population *
       INDIVIDUAL_WOOD_PRODUCTION_PER_TICK *
-      woodPriority *
+      priority.wood *
       currentYield
 
     woodSource.tick = Math.min(
@@ -138,8 +144,7 @@ function tickTown(entity: TownEntity, world: World): void {
   // Build
   //
 
-  const buildPriority = getFinalPriority('build', entity)
-  if (buildPriority > 0 && entity.builds.length > 0) {
+  if (priority.build > 0 && entity.builds.length > 0) {
     const build = entity.builds.at(0)
     invariant(build)
 
@@ -149,7 +154,7 @@ function tickTown(entity: TownEntity, world: World): void {
       case BuildType.enum.Connection: {
         build.progress +=
           entity.population *
-          buildPriority *
+          priority.build *
           INDIVIDUAL_BUILD_PRODUCTION_PER_TICK
 
         if (build.progress >= 1) {
@@ -170,7 +175,7 @@ function tickTown(entity: TownEntity, world: World): void {
       case BuildType.enum.House: {
         build.progress +=
           entity.population *
-          buildPriority *
+          priority.build *
           INDIVIDUAL_BUILD_PRODUCTION_PER_TICK
 
         if (build.progress >= 1) {
