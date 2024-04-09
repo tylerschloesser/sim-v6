@@ -158,6 +158,8 @@ export function Home() {
   return (
     <div>
       <div>Tick: {world.tick}</div>
+      <div>Year: {Math.floor(world.tick / 3000)}</div>
+      <div>Day: {Math.floor((world.tick % 3000) / 50)}</div>
       {Object.values(world.entities).map((entity) => (
         <Fragment key={entity.id}>
           {(() => {
@@ -169,6 +171,10 @@ export function Home() {
                     <div className={styles.indent}>
                       <div>
                         Population: {entity.population}
+                        <div className={styles.indent}>
+                          Average Age:{' '}
+                          {entity.averageAge.toFixed(1)}
+                        </div>
                       </div>
                       <div>
                         <div>

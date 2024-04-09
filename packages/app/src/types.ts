@@ -111,6 +111,7 @@ export const TownEntity = z.strictObject({
   type: z.literal(EntityType.enum.Town),
   connections: z.record(EntityId, z.literal(true)),
   population: z.number().nonnegative(),
+  averageAge: z.number().nonnegative(),
   houses: z.number().int().nonnegative(),
   storage: z.strictObject({
     food: z.number().nonnegative(),

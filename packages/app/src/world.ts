@@ -46,6 +46,7 @@ export function initWorld(): World {
       type: EntityType.enum.Town,
       connections: {},
       population: 10,
+      averageAge: 20,
       houses: 0,
       storage: {
         food: 100,
