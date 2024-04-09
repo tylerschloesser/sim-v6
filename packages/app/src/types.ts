@@ -122,6 +122,8 @@ export const TownEntity = z.strictObject({
   id: EntityId,
   type: z.literal(EntityType.enum.Town),
   connections: z.record(EntityId, z.literal(true)),
+  position: ZodVec2,
+
   population: z.number().nonnegative(),
   averageAge: z.number().nonnegative(),
   houses: z.number().int().nonnegative(),
@@ -143,8 +145,9 @@ export type TownEntity = z.infer<typeof TownEntity>
 
 export const ResourceEntity = z.strictObject({
   id: EntityId,
-  connections: z.record(EntityId, z.literal(true)),
   type: z.literal(EntityType.enum.Resource),
+  connections: z.record(EntityId, z.literal(true)),
+  position: ZodVec2,
 
   resourceType: ResourceType,
 

@@ -45,6 +45,8 @@ export function initWorld(): World {
       id: `${nextEntityId++}`,
       type: EntityType.enum.Town,
       connections: {},
+      position: { x: 0, y: 0 },
+
       population: 10,
       averageAge: 20,
       houses: 0,
@@ -70,6 +72,7 @@ export function initWorld(): World {
       id: `${nextEntityId++}`,
       type: EntityType.enum.Resource,
       connections: {},
+      position: { x: 1, y: 0 },
 
       resourceType: ResourceType.enum.Food,
 
@@ -86,6 +89,7 @@ export function initWorld(): World {
       id: `${nextEntityId++}`,
       type: EntityType.enum.Resource,
       connections: {},
+      position: { x: 1, y: 1 },
 
       resourceType: ResourceType.enum.Wood,
 
