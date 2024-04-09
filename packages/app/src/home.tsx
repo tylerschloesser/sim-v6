@@ -171,10 +171,21 @@ export function Home() {
                         Population: {entity.population}
                       </div>
                       <div>
-                        Houses: {entity.houses}{' '}
-                        <BuildHouseButton
-                          entityId={entity.id}
-                        />
+                        <div>
+                          Houses: {entity.houses}{' '}
+                          <BuildHouseButton
+                            entityId={entity.id}
+                          />
+                        </div>
+                        <div className={styles.indent}>
+                          People/House (avg):{' '}
+                          {entity.houses === 0
+                            ? 'n/a'
+                            : (
+                                entity.population /
+                                entity.houses
+                              ).toFixed(1)}
+                        </div>
                       </div>
                       <div>Storage</div>
                       <div
@@ -589,7 +600,7 @@ function BuildProgress({ progress }: BuildProgressProps) {
 
   return (
     <span>
-      {progress.toFixed(2)} (ETA: {formatEta(eta)})
+      {formatProgress(progress)} (ETA: {formatEta(eta)})
     </span>
   )
 }
@@ -605,4 +616,11 @@ function formatEta(eta: null | number) {
   }
   const minutes = seconds / 60
   return <span>{Math.round(minutes)}m</span>
+}
+
+function formatProgress(progress: number) {
+  invariant(progress >= 0)
+  invariant(progress <= 1)
+
+  return <>{Math.round(progress * 100)}%</>
 }
