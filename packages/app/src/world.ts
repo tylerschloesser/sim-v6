@@ -59,6 +59,8 @@ export function initWorld(): World {
         research: 0,
       },
       builds: [],
+      researchQueue: [],
+      technologies: {},
     }
     entities[entity.id] = entity
   }

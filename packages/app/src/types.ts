@@ -106,6 +106,15 @@ export const Build = z.discriminatedUnion('type', [
 ])
 export type Build = z.infer<typeof Build>
 
+export const Technology = z.enum(['StoneTools'])
+export type Technology = z.infer<typeof Technology>
+
+export const Research = z.strictObject({
+  technology: Technology,
+  progress: z.number().gte(0).lt(1),
+})
+export type Research = z.infer<typeof Research>
+
 export const TownEntity = z.strictObject({
   id: EntityId,
   type: z.literal(EntityType.enum.Town),
@@ -124,6 +133,8 @@ export const TownEntity = z.strictObject({
     research: z.number().min(0).max(1),
   }),
   builds: Build.array(),
+  researchQueue: Research.array(),
+  technologies: z.record(Technology, z.literal(true)),
 })
 export type TownEntity = z.infer<typeof TownEntity>
 
