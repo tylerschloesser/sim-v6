@@ -123,7 +123,7 @@ function Diff({ value, diff }: DiffProps) {
 function formatStorageEta(eta: number) {
   eta = Math.abs(eta)
   if (eta > 60) {
-    return `${Math.floor(eta / 60)}m`
+    return `${Math.ceil(eta / 60)}m`
   }
   return `${Math.floor(eta)}s`
 }
