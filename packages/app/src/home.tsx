@@ -335,17 +335,46 @@ function ShowEntity({ entity }: ShowEntityProps) {
   }
 }
 
+function EditTickRate() {
+  const { tickRate, setTickRate } = useContext(AppContext)
+  const options = [100, 10]
+  invariant(options.find((value) => value === tickRate))
+  return (
+    <div>
+      Tick Rate:
+      {[
+        options.map((value) => (
+          <label key={value}>
+            <input
+              type="radio"
+              value={value}
+              checked={value === tickRate}
+              onChange={() => setTickRate(value)}
+            />
+            {value}
+          </label>
+        )),
+      ]}
+    </div>
+  )
+}
+
 export function Home() {
   const { world } = useContext(AppContext)
   return (
-    <div>
-      <div>Tick: {world.tick}</div>
-      <div>Year: {Math.floor(world.tick / 3000)}</div>
-      <div>Day: {Math.floor((world.tick % 3000) / 50)}</div>
-      {Object.values(world.entities).map((entity) => (
-        <ShowEntity key={entity.id} entity={entity} />
-      ))}
-    </div>
+    <>
+      <EditTickRate />
+      <div>
+        <div>Tick: {world.tick}</div>
+        <div>Year: {Math.floor(world.tick / 3000)}</div>
+        <div>
+          Day: {Math.floor((world.tick % 3000) / 50)}
+        </div>
+        {Object.values(world.entities).map((entity) => (
+          <ShowEntity key={entity.id} entity={entity} />
+        ))}
+      </div>
+    </>
   )
 }
 
