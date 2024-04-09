@@ -430,33 +430,8 @@ function ShowEntity({ entity }: ShowEntityProps) {
     case EntityType.enum.Town: {
       return <ShowTownEntity entity={entity} />
     }
-    case EntityType.enum.Resource: {
-      return (
-        <>
-          <div>
-            {entity.type}-{entity.resourceType}
-          </div>
-          <div className={styles.indent}>
-            <div>Connections</div>
-            <div className={styles.indent}>
-              {Object.keys(entity.connections).length ===
-                0 && <>None</>}
-              {Object.keys(entity.connections).map(
-                (targetId) => (
-                  <ShowConnection
-                    key={targetId}
-                    sourceId={entity.id}
-                    targetId={targetId}
-                  />
-                ),
-              )}
-            </div>
-            Yield: {getCurrentYield(entity).toFixed(2)}
-          </div>
-        </>
-      )
-    }
   }
+  return null
 }
 
 function EditTickRate() {
@@ -652,10 +627,10 @@ function ShowConnection({
   const { world, setWorld } = useContext(AppContext)
 
   const source = world.entities[sourceId]
-  invariant(source)
+  invariant(source?.type === EntityType.enum.Town)
 
   const target = world.entities[targetId]
-  invariant(target)
+  invariant(target?.type === EntityType.enum.Resource)
 
   invariant(source.connections[targetId])
   invariant(target.connections[sourceId])
