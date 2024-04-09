@@ -53,9 +53,9 @@ export function initWorld(): World {
         wood: 10,
       },
       priority: {
-        food: 1,
-        wood: 1,
-        build: 1,
+        food: 0,
+        wood: 0,
+        build: 0,
         research: 0,
       },
       builds: [],
