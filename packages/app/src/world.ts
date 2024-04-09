@@ -56,6 +56,7 @@ export function initWorld(): World {
         food: 1,
         wood: 1,
         build: 1,
+        research: 0,
       },
       builds: [],
     }

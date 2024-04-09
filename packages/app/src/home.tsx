@@ -123,9 +123,9 @@ function Diff({ value, diff }: DiffProps) {
 function formatStorageEta(eta: number) {
   eta = Math.abs(eta)
   if (eta > 60) {
-    return `${(eta / 60).toFixed(1)}m`
+    return `${Math.floor(eta / 60)}m`
   }
-  return `${eta.toFixed(0)}s`
+  return `${Math.floor(eta)}s`
 }
 
 interface StorageValueProps {
