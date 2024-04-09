@@ -87,7 +87,12 @@ function BuildHouseButton({
   )
 }
 
-function Diff({ diff }: { diff: number }) {
+interface DiffProps {
+  value: number
+  diff: number
+}
+
+function Diff({ diff }: DiffProps) {
   const fixed = Math.abs(diff).toFixed(2)
   if (fixed === '0.00') {
     return <span></span>
@@ -132,7 +137,8 @@ function StorageValue({ value }: StorageValueProps) {
 
   return (
     <>
-      <span>{value.toFixed(2)}</span> <Diff diff={diff} />
+      <span>{value.toFixed(2)}</span>{' '}
+      <Diff value={value} diff={diff} />
     </>
   )
 }
