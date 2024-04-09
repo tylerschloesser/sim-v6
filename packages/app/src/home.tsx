@@ -448,11 +448,12 @@ function ShowEntity({ entity }: ShowEntityProps) {
     case EntityType.enum.Town: {
       return <ShowTownEntity entity={entity} />
     }
-    case EntityType.enum.FoodSource:
-    case EntityType.enum.WoodSource: {
+    case EntityType.enum.Resource: {
       return (
         <>
-          <div>{entity.type}</div>
+          <div>
+            {entity.type}-{entity.resourceType}
+          </div>
           <div className={styles.indent}>
             <div>Connections</div>
             <div className={styles.indent}>

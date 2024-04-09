@@ -2,9 +2,9 @@ import invariant from 'tiny-invariant'
 import {
   BuildType,
   EntityType,
-  FoodSourceEntity,
+  ResourceEntity,
+  ResourceType,
   TownEntity,
-  WoodSourceEntity,
   World,
 } from './types.js'
 import {
@@ -96,7 +96,11 @@ function tickTown(entity: TownEntity, world: World): void {
   // Food Production
   //
 
-  const foodSource = getFoodSource(entity, world)
+  const foodSource = getConnectedResource(
+    entity,
+    world,
+    ResourceType.enum.Food,
+  )
   if (priority.food > 0 && foodSource) {
     const currentYield = getCurrentYield(foodSource)
 
@@ -120,7 +124,11 @@ function tickTown(entity: TownEntity, world: World): void {
   // Wood Production
   //
 
-  const woodSource = getWoodSource(entity, world)
+  const woodSource = getConnectedResource(
+    entity,
+    world,
+    ResourceType.enum.Wood,
+  )
   if (priority.wood > 0 && woodSource) {
     const currentYield = getCurrentYield(woodSource)
 
@@ -211,38 +219,22 @@ function tickTown(entity: TownEntity, world: World): void {
   }
 }
 
-function getFoodSource(
+function getConnectedResource(
   entity: TownEntity,
   world: World,
-): FoodSourceEntity | null {
-  const matches: FoodSourceEntity[] = []
-
-  for (const peerId of Object.keys(entity.connections)) {
-    const peer = world.entities[peerId]
-    invariant(peer)
-    if (peer.type === EntityType.enum.FoodSource) {
-      matches.push(peer)
-    }
-  }
-
-  invariant(matches.length <= 1)
-
-  return matches.at(0) ?? null
-}
-
-function getWoodSource(
-  entity: TownEntity,
-  world: World,
-): WoodSourceEntity | null {
-  const matches: WoodSourceEntity[] = []
-
-  for (const peerId of Object.keys(entity.connections)) {
-    const peer = world.entities[peerId]
-    invariant(peer)
-    if (peer.type === EntityType.enum.WoodSource) {
-      matches.push(peer)
-    }
-  }
+  resourceType: ResourceType,
+): ResourceEntity | null {
+  const matches = Object.keys(entity.connections)
+    .map((peerId) => {
+      const peer = world.entities[peerId]
+      invariant(peer)
+      return peer
+    })
+    .filter(
+      (peer): peer is ResourceEntity =>
+        peer.type === EntityType.enum.Resource,
+    )
+    .filter((peer) => peer.resourceType === resourceType)
 
   invariant(matches.length <= 1)
 

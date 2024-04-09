@@ -3,11 +3,11 @@ import invariant from 'tiny-invariant'
 import {
   BranchNode,
   EntityType,
-  FoodSourceEntity,
   NodeType,
+  ResourceEntity,
+  ResourceType,
   RootNode,
   TownEntity,
-  WoodSourceEntity,
   World,
 } from './types.js'
 
@@ -66,10 +66,12 @@ export function initWorld(): World {
   }
 
   {
-    const entity: FoodSourceEntity = {
+    const entity: ResourceEntity = {
       id: `${nextEntityId++}`,
-      type: EntityType.enum.FoodSource,
+      type: EntityType.enum.Resource,
       connections: {},
+
+      resourceType: ResourceType.enum.Food,
 
       minYield: 0.5,
       maxYield: 1,
@@ -78,11 +80,14 @@ export function initWorld(): World {
     }
     entities[entity.id] = entity
   }
+
   {
-    const entity: WoodSourceEntity = {
+    const entity: ResourceEntity = {
       id: `${nextEntityId++}`,
-      type: EntityType.enum.WoodSource,
+      type: EntityType.enum.Resource,
       connections: {},
+
+      resourceType: ResourceType.enum.Wood,
 
       minYield: 0.5,
       maxYield: 1,
@@ -134,7 +139,7 @@ export function getNormalizedPriority(
 }
 
 export function getCurrentYield(
-  entity: FoodSourceEntity | WoodSourceEntity,
+  entity: ResourceEntity,
 ): number {
   invariant(entity.tick <= entity.maxYieldTicks)
   const progress = entity.tick

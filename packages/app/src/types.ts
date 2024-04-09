@@ -73,11 +73,14 @@ export type Node = z.infer<typeof Node>
 export const EntityId = z.string()
 export type EntityId = z.infer<typeof EntityId>
 
-export const EntityType = z.enum([
-  'Town',
-  'FoodSource',
-  'WoodSource',
+export const ResourceType = z.enum([
+  'Food',
+  'Wood',
+  'Stone',
 ])
+export type ResourceType = z.infer<typeof ResourceType>
+
+export const EntityType = z.enum(['Town', 'Resource'])
 export type EntityType = z.infer<typeof EntityType>
 
 export const BuildType = z.enum(['Connection', 'House'])
@@ -138,10 +141,12 @@ export const TownEntity = z.strictObject({
 })
 export type TownEntity = z.infer<typeof TownEntity>
 
-export const FoodSourceEntity = z.strictObject({
+export const ResourceEntity = z.strictObject({
   id: EntityId,
   connections: z.record(EntityId, z.literal(true)),
-  type: z.literal(EntityType.enum.FoodSource),
+  type: z.literal(EntityType.enum.Resource),
+
+  resourceType: ResourceType,
 
   minYield: z.number().min(0).max(1),
   maxYield: z.number().min(0).max(1),
@@ -149,29 +154,11 @@ export const FoodSourceEntity = z.strictObject({
   maxYieldTicks: z.number().nonnegative(),
   tick: z.number().nonnegative(),
 })
-export type FoodSourceEntity = z.infer<
-  typeof FoodSourceEntity
->
-
-export const WoodSourceEntity = z.strictObject({
-  id: EntityId,
-  connections: z.record(EntityId, z.literal(true)),
-  type: z.literal(EntityType.enum.WoodSource),
-
-  minYield: z.number().min(0).max(1),
-  maxYield: z.number().min(0).max(1),
-
-  maxYieldTicks: z.number().nonnegative(),
-  tick: z.number().nonnegative(),
-})
-export type WoodSourceEntity = z.infer<
-  typeof WoodSourceEntity
->
+export type ResourceEntity = z.infer<typeof ResourceEntity>
 
 export const Entity = z.discriminatedUnion('type', [
   TownEntity,
-  FoodSourceEntity,
-  WoodSourceEntity,
+  ResourceEntity,
 ])
 export type Entity = z.infer<typeof Entity>
 
