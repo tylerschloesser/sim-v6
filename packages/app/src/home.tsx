@@ -227,29 +227,34 @@ function ShowTownEntity({ entity }: ShowTownEntityProps) {
           <StorageValue value={entity.storage.wood} />
         </div>
         <div>Priority</div>
-        <div className={styles.indent}>
+        <div
+          className={classNames(
+            styles.indent,
+            styles.priority,
+          )}
+        >
           {Array.from(iteratePriorities(entity)).map(
             ({ key, value }) => (
-              <div key={key}>
-                <label>
-                  {capitalize(key)}
-                  <input
-                    type="range"
-                    min={0}
-                    max={1}
-                    step={0.01}
-                    value={value}
-                    onChange={(ev) => {
-                      setPriority(
-                        entity.id,
-                        key,
-                        parseFloat(ev.target.value),
-                      )
-                    }}
-                  ></input>
+              <Fragment key={key}>
+                <div>{capitalize(key)}</div>
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  value={value}
+                  onChange={(ev) => {
+                    setPriority(
+                      entity.id,
+                      key,
+                      parseFloat(ev.target.value),
+                    )
+                  }}
+                ></input>
+                <div>
                   {getFinalPriority(key, entity).toFixed(2)}
-                </label>
-              </div>
+                </div>
+              </Fragment>
             ),
           )}
         </div>

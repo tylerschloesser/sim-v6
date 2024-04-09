@@ -5,15 +5,20 @@
 .storage {
   display: grid;
   grid-template-columns: repeat(4, min-content);
-
   font-family: monospace;
-
   column-gap: 0.5em;
 
   text-align: right;
 
   --green: green;
   --red: red;
+}
+
+.priority {
+  display: grid;
+  grid-template-columns: repeat(3, min-content);
+  font-family: monospace;
+  column-gap: 0.5em;
 }
 
 .eta {
