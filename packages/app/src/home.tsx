@@ -553,5 +553,56 @@ interface BuildProgressProps {
 }
 
 function BuildProgress({ progress }: BuildProgressProps) {
-  return <span>{progress.toFixed(2)}</span>
+  const [eta, setEta] = useState<null | number>(null)
+
+  const now = self.performance.now()
+
+  const cache = useRef([{ time: now, value: progress }])
+
+  useEffect(() => {
+    cache.current.push({ time: now, value: progress })
+  }, [progress])
+
+  useEffect(() => {
+    const intervalId = self.setInterval(() => {
+      invariant(cache.current.length > 0)
+      const head = cache.current.at(0)
+      invariant(head !== undefined)
+      const tail = cache.current.at(-1)
+      invariant(tail !== undefined)
+
+      if (head === tail) {
+        setEta(null)
+      } else {
+        const elapsed = tail.time - head.time
+        const speed = (tail.value - head.value) / elapsed
+
+        setEta((1 - tail.value) / speed)
+
+        cache.current = [tail]
+      }
+    }, 1000)
+    return () => {
+      self.clearInterval(intervalId)
+    }
+  }, [])
+
+  return (
+    <span>
+      {progress.toFixed(2)} (ETA: {formatEta(eta)})
+    </span>
+  )
+}
+
+function formatEta(eta: null | number) {
+  if (eta === null) {
+    return <span></span>
+  }
+
+  const seconds = eta / 1000
+  if (seconds < 60) {
+    return <span>{Math.round(seconds)}s</span>
+  }
+  const minutes = seconds / 60
+  return <span>{Math.round(minutes)}m</span>
 }
