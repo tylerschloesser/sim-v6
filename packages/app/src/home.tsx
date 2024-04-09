@@ -15,6 +15,7 @@ import styles from './home.module.scss'
 import {
   BuildType,
   ConnectionBuild,
+  Entity,
   EntityId,
   EntityType,
   HouseBuild,
@@ -155,211 +156,194 @@ function useSetPriority(setWorld: Updater<World>) {
   )
 }
 
-export function Home() {
-  const { world, setWorld } = useContext(AppContext)
+interface ShowEntityProps {
+  entity: Entity
+}
+
+function ShowEntity({ entity }: ShowEntityProps) {
+  const { setWorld } = useContext(AppContext)
   const setPriority = useSetPriority(setWorld)
 
+  switch (entity.type) {
+    case EntityType.enum.Town: {
+      return (
+        <>
+          <div>Town</div>
+          <div className={styles.indent}>
+            <div>
+              Population: {entity.population}
+              <div className={styles.indent}>
+                Average Age: {entity.averageAge.toFixed(1)}
+              </div>
+            </div>
+            <div>
+              <div>
+                Houses: {entity.houses}{' '}
+                <BuildHouseButton entityId={entity.id} />
+              </div>
+              <div className={styles.indent}>
+                People/House (avg):{' '}
+                {entity.houses === 0
+                  ? 'n/a'
+                  : (
+                      entity.population / entity.houses
+                    ).toFixed(1)}
+              </div>
+            </div>
+            <div>Storage</div>
+            <div
+              className={classNames(
+                styles.indent,
+                styles.storage,
+              )}
+            >
+              <span>Food</span>
+              <DynamicValue value={entity.storage.food} />
+              <span>Wood</span>
+              <DynamicValue value={entity.storage.wood} />
+            </div>
+            <div>Priority</div>
+            <div className={styles.indent}>
+              {Array.from(iteratePriorities(entity)).map(
+                ({ key, value }) => (
+                  <div key={key}>
+                    <label>
+                      {capitalize(key)}
+                      <input
+                        type="range"
+                        min={0}
+                        max={1}
+                        step={0.01}
+                        value={value}
+                        onChange={(ev) => {
+                          setPriority(
+                            entity.id,
+                            key,
+                            parseFloat(ev.target.value),
+                          )
+                        }}
+                      ></input>
+                      {getFinalPriority(
+                        key,
+                        entity,
+                      ).toFixed(2)}
+                    </label>
+                  </div>
+                ),
+              )}
+            </div>
+            <div>Connections</div>
+            <div className={styles.indent}>
+              {Object.keys(entity.connections).length ===
+                0 && <>None</>}
+              {Object.keys(entity.connections).map(
+                (targetId) => (
+                  <ShowConnection
+                    key={targetId}
+                    sourceId={entity.id}
+                    targetId={targetId}
+                  />
+                ),
+              )}
+              <div>
+                <AddConnectionButton entity={entity} />
+              </div>
+            </div>
+            <div>Builds</div>
+            <div className={styles.indent}>
+              {Object.values(entity.builds).length ===
+                0 && <div>None</div>}
+              {Object.values(entity.builds).map(
+                (build, i) => (
+                  <Fragment key={i}>
+                    <div>
+                      {build.type}{' '}
+                      <CancelBuildButton
+                        entityId={entity.id}
+                        index={i}
+                      />
+                    </div>
+                    <div key={i} className={styles.indent}>
+                      {(() => {
+                        switch (build.type) {
+                          case BuildType.enum.Connection: {
+                            return (
+                              <>
+                                <div>
+                                  Source: {build.sourceId}
+                                </div>
+                                <div>
+                                  Target: {build.targetId}
+                                </div>
+                                <div>
+                                  Progress:{' '}
+                                  <BuildProgress
+                                    progress={
+                                      build.progress
+                                    }
+                                  />
+                                </div>
+                              </>
+                            )
+                          }
+                          case BuildType.enum.House: {
+                            return (
+                              <div>
+                                Progress:{' '}
+                                <BuildProgress
+                                  progress={build.progress}
+                                />
+                              </div>
+                            )
+                          }
+                        }
+                      })()}
+                    </div>
+                  </Fragment>
+                ),
+              )}
+            </div>
+          </div>
+        </>
+      )
+    }
+    case EntityType.enum.FoodSource:
+    case EntityType.enum.WoodSource: {
+      return (
+        <>
+          <div>{entity.type}</div>
+          <div className={styles.indent}>
+            <div>Connections</div>
+            <div className={styles.indent}>
+              {Object.keys(entity.connections).length ===
+                0 && <>None</>}
+              {Object.keys(entity.connections).map(
+                (targetId) => (
+                  <ShowConnection
+                    key={targetId}
+                    sourceId={entity.id}
+                    targetId={targetId}
+                  />
+                ),
+              )}
+            </div>
+            Yield: {getCurrentYield(entity).toFixed(2)}
+          </div>
+        </>
+      )
+    }
+  }
+}
+
+export function Home() {
+  const { world } = useContext(AppContext)
   return (
     <div>
       <div>Tick: {world.tick}</div>
       <div>Year: {Math.floor(world.tick / 3000)}</div>
       <div>Day: {Math.floor((world.tick % 3000) / 50)}</div>
       {Object.values(world.entities).map((entity) => (
-        <Fragment key={entity.id}>
-          {(() => {
-            switch (entity.type) {
-              case EntityType.enum.Town: {
-                return (
-                  <>
-                    <div>Town</div>
-                    <div className={styles.indent}>
-                      <div>
-                        Population: {entity.population}
-                        <div className={styles.indent}>
-                          Average Age:{' '}
-                          {entity.averageAge.toFixed(1)}
-                        </div>
-                      </div>
-                      <div>
-                        <div>
-                          Houses: {entity.houses}{' '}
-                          <BuildHouseButton
-                            entityId={entity.id}
-                          />
-                        </div>
-                        <div className={styles.indent}>
-                          People/House (avg):{' '}
-                          {entity.houses === 0
-                            ? 'n/a'
-                            : (
-                                entity.population /
-                                entity.houses
-                              ).toFixed(1)}
-                        </div>
-                      </div>
-                      <div>Storage</div>
-                      <div
-                        className={classNames(
-                          styles.indent,
-                          styles.storage,
-                        )}
-                      >
-                        <span>Food</span>
-                        <DynamicValue
-                          value={entity.storage.food}
-                        />
-                        <span>Wood</span>
-                        <DynamicValue
-                          value={entity.storage.wood}
-                        />
-                      </div>
-                      <div>Priority</div>
-                      <div className={styles.indent}>
-                        {Array.from(
-                          iteratePriorities(entity),
-                        ).map(({ key, value }) => (
-                          <div key={key}>
-                            <label>
-                              {capitalize(key)}
-                              <input
-                                type="range"
-                                min={0}
-                                max={1}
-                                step={0.01}
-                                value={value}
-                                onChange={(ev) => {
-                                  setPriority(
-                                    entity.id,
-                                    key,
-                                    parseFloat(
-                                      ev.target.value,
-                                    ),
-                                  )
-                                }}
-                              ></input>
-                              {getFinalPriority(
-                                key,
-                                entity,
-                              ).toFixed(2)}
-                            </label>
-                          </div>
-                        ))}
-                      </div>
-                      <div>Connections</div>
-                      <div className={styles.indent}>
-                        {Object.keys(entity.connections)
-                          .length === 0 && <>None</>}
-                        {Object.keys(
-                          entity.connections,
-                        ).map((targetId) => (
-                          <ShowConnection
-                            key={targetId}
-                            sourceId={entity.id}
-                            targetId={targetId}
-                          />
-                        ))}
-                        <div>
-                          <AddConnectionButton
-                            entity={entity}
-                          />
-                        </div>
-                      </div>
-                      <div>Builds</div>
-                      <div className={styles.indent}>
-                        {Object.values(entity.builds)
-                          .length === 0 && <div>None</div>}
-                        {Object.values(entity.builds).map(
-                          (build, i) => (
-                            <Fragment key={i}>
-                              <div>
-                                {build.type}{' '}
-                                <CancelBuildButton
-                                  entityId={entity.id}
-                                  index={i}
-                                />
-                              </div>
-                              <div
-                                key={i}
-                                className={styles.indent}
-                              >
-                                {(() => {
-                                  switch (build.type) {
-                                    case BuildType.enum
-                                      .Connection: {
-                                      return (
-                                        <>
-                                          <div>
-                                            Source:{' '}
-                                            {build.sourceId}
-                                          </div>
-                                          <div>
-                                            Target:{' '}
-                                            {build.targetId}
-                                          </div>
-                                          <div>
-                                            Progress:{' '}
-                                            <BuildProgress
-                                              progress={
-                                                build.progress
-                                              }
-                                            />
-                                          </div>
-                                        </>
-                                      )
-                                    }
-                                    case BuildType.enum
-                                      .House: {
-                                      return (
-                                        <div>
-                                          Progress:{' '}
-                                          <BuildProgress
-                                            progress={
-                                              build.progress
-                                            }
-                                          />
-                                        </div>
-                                      )
-                                    }
-                                  }
-                                })()}
-                              </div>
-                            </Fragment>
-                          ),
-                        )}
-                      </div>
-                    </div>
-                  </>
-                )
-              }
-              case EntityType.enum.FoodSource:
-              case EntityType.enum.WoodSource: {
-                return (
-                  <>
-                    <div>{entity.type}</div>
-                    <div className={styles.indent}>
-                      <div>Connections</div>
-                      <div className={styles.indent}>
-                        {Object.keys(entity.connections)
-                          .length === 0 && <>None</>}
-                        {Object.keys(
-                          entity.connections,
-                        ).map((targetId) => (
-                          <ShowConnection
-                            key={targetId}
-                            sourceId={entity.id}
-                            targetId={targetId}
-                          />
-                        ))}
-                      </div>
-                      Yield:{' '}
-                      {getCurrentYield(entity).toFixed(2)}
-                    </div>
-                  </>
-                )
-              }
-            }
-          })()}
-        </Fragment>
+        <ShowEntity key={entity.id} entity={entity} />
       ))}
     </div>
   )
