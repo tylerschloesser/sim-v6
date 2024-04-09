@@ -102,11 +102,11 @@ function Diff({ diff }: { diff: number }) {
   )
 }
 
-interface DynamicValueProps {
+interface StorageValueProps {
   value: number
 }
 
-function DynamicValue({ value }: DynamicValueProps) {
+function StorageValue({ value }: StorageValueProps) {
   const [diff, setDiff] = useState(0)
   const cache = useRef([value])
 
@@ -195,9 +195,9 @@ function ShowTownEntity({ entity }: ShowTownEntityProps) {
           )}
         >
           <span>Food</span>
-          <DynamicValue value={entity.storage.food} />
+          <StorageValue value={entity.storage.food} />
           <span>Wood</span>
-          <DynamicValue value={entity.storage.wood} />
+          <StorageValue value={entity.storage.wood} />
         </div>
         <div>Priority</div>
         <div className={styles.indent}>
