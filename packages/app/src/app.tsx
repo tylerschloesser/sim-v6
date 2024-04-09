@@ -28,8 +28,8 @@ export function App() {
   useTickWorld(tickRate, setWorld)
 
   const context: IAppContext = useMemo(
-    () => ({ world, setWorld }),
-    [world, setWorld],
+    () => ({ world, setWorld, tickRate, setTickRate }),
+    [world, setWorld, tickRate, setTickRate],
   )
 
   return (
