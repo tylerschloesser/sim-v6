@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -23,6 +24,7 @@ import {
   TownEntity,
   World,
 } from './types.js'
+import { Vec2 } from './vec2.js'
 import {
   HOUSE_BUILD_WOOD,
   canBuildHouse,
@@ -597,11 +599,6 @@ function AddConnectionButton({
   )
 }
 
-interface ShowConnectionProps {
-  sourceId: EntityId
-  targetId: EntityId
-}
-
 function deleteConnection(
   world: World,
   sourceId: EntityId,
@@ -620,6 +617,11 @@ function deleteConnection(
   delete target.connections[sourceId]
 }
 
+interface ShowConnectionProps {
+  sourceId: EntityId
+  targetId: EntityId
+}
+
 function ShowConnection({
   sourceId,
   targetId,
@@ -635,9 +637,17 @@ function ShowConnection({
   invariant(source.connections[targetId])
   invariant(target.connections[sourceId])
 
+  const distance = useMemo(
+    () =>
+      new Vec2(source.position)
+        .sub(new Vec2(target.position))
+        .len(),
+    [source.position, target.position],
+  )
+
   return (
     <div>
-      ID: {targetId}{' '}
+      {targetId} - {target.resourceType}{' '}
       <button
         onClick={() =>
           setWorld((draft) =>
@@ -647,6 +657,12 @@ function ShowConnection({
       >
         Delete
       </button>
+      <div className={styles.indent}>
+        <div>Distance {distance.toFixed(1)}km </div>
+        <div>
+          Yield: {getCurrentYield(target).toFixed(2)}
+        </div>
+      </div>
     </div>
   )
 }
