@@ -277,9 +277,11 @@ export function Home() {
                                           </div>
                                           <div>
                                             Progress:{' '}
-                                            {build.progress.toFixed(
-                                              2,
-                                            )}
+                                            <BuildProgress
+                                              progress={
+                                                build.progress
+                                              }
+                                            />
                                           </div>
                                         </>
                                       )
@@ -289,9 +291,11 @@ export function Home() {
                                       return (
                                         <div>
                                           Progress:{' '}
-                                          {build.progress.toFixed(
-                                            2,
-                                          )}
+                                          <BuildProgress
+                                            progress={
+                                              build.progress
+                                            }
+                                          />
                                         </div>
                                       )
                                     }
@@ -542,4 +546,12 @@ function ShowConnection({
       </button>
     </div>
   )
+}
+
+interface BuildProgressProps {
+  progress: number
+}
+
+function BuildProgress({ progress }: BuildProgressProps) {
+  return <span>{progress.toFixed(2)}</span>
 }
