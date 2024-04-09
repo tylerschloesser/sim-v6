@@ -92,19 +92,40 @@ interface DiffProps {
   diff: number
 }
 
-function Diff({ diff }: DiffProps) {
+function Diff({ value, diff }: DiffProps) {
   const fixed = Math.abs(diff).toFixed(2)
   if (fixed === '0.00') {
-    return <span></span>
+    return (
+      <>
+        <span />
+        <span />
+      </>
+    )
   }
 
   const color = `var(--${diff < 0 ? 'red' : 'green'})`
+
+  const eta = diff >= 0 ? null : value / diff
+
   return (
-    <span style={{ color }}>
-      {diff > 0 ? '+' : '-'}
-      {fixed}/s
-    </span>
+    <>
+      <span style={{ color }}>
+        {diff > 0 ? '+' : '-'}
+        {fixed}/s
+      </span>
+      <span className={styles.eta}>
+        {eta && <>ETA: {formatStorageEta(eta)}</>}
+      </span>
+    </>
   )
+}
+
+function formatStorageEta(eta: number) {
+  eta = Math.abs(eta)
+  if (eta > 60) {
+    return `${(eta / 60).toFixed(1)}m`
+  }
+  return `${eta.toFixed(0)}s`
 }
 
 interface StorageValueProps {
