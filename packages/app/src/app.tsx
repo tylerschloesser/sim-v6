@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   RouterProvider,
   createBrowserRouter,
@@ -23,8 +23,9 @@ const router = createBrowserRouter([
 ])
 
 export function App() {
+  const [tickRate, setTickRate] = useState(100)
   const [world, setWorld] = useWorld()
-  useTickWorld(setWorld)
+  useTickWorld(tickRate, setWorld)
 
   const context: IAppContext = useMemo(
     () => ({ world, setWorld }),
@@ -52,13 +53,16 @@ function useWorld(): [World, Updater<World>] {
   return [world, setWorld]
 }
 
-function useTickWorld(setWorld: Updater<World>): void {
+function useTickWorld(
+  tickRate: number,
+  setWorld: Updater<World>,
+): void {
   useEffect(() => {
     const intervalId = self.setInterval(() => {
       setWorld(tickWorld)
-    }, 100)
+    }, tickRate)
     return () => {
       self.clearInterval(intervalId)
     }
-  }, [])
+  }, [tickRate])
 }

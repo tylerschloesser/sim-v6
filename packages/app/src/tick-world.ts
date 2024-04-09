@@ -72,6 +72,8 @@ const INDIVIDUAL_BUILD_PRODUCTION_PER_TICK = convert(
 )
 
 function tickTown(entity: TownEntity, world: World): void {
+  entity.averageAge += 1 / 3000
+
   //
   // Food Consumption
   //
