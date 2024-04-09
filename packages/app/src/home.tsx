@@ -19,6 +19,7 @@ import {
   EntityId,
   EntityType,
   HouseBuild,
+  Technology,
   TownEntity,
   World,
 } from './types.js'
@@ -330,7 +331,7 @@ function ShowTownEntity({ entity }: ShowTownEntityProps) {
         <div>Research</div>
         <div className={styles.indent}>
           <div>
-            <QueueResearchButton />
+            <QueueResearchButton entity={entity} />
           </div>
         </div>
         <div>Technology</div>
@@ -343,7 +344,35 @@ function ShowTownEntity({ entity }: ShowTownEntityProps) {
   )
 }
 
-function QueueResearchButton() {
+function queueResearch(
+  draft: World,
+  entityId: EntityId,
+  technology: Technology,
+): void {
+  const entity = draft.entities[entityId]
+  invariant(entity?.type === EntityType.enum.Town)
+
+  invariant(!entity.technologies[technology])
+
+  invariant(
+    !entity.researchQueue.find(
+      (research) => research.technology === technology,
+    ),
+  )
+
+  entity.researchQueue.push({
+    technology,
+    progress: 0,
+  })
+}
+
+interface QueueResearchButtonProps {
+  entity: TownEntity
+}
+
+function QueueResearchButton({
+  entity,
+}: QueueResearchButtonProps) {
   const { world, setWorld } = useContext(AppContext)
   const dialog = useRef<HTMLDialogElement>(null)
   const onClick = useCallback(() => {
@@ -355,11 +384,40 @@ function QueueResearchButton() {
     dialog.current.close()
   }, [])
 
+  const available = Object.values(Technology.enum).filter(
+    (technology) => {
+      return (
+        !entity.technologies[technology] &&
+        !entity.researchQueue.find(
+          (research) => research.technology === technology,
+        )
+      )
+    },
+  )
+
   return (
     <>
       <button onClick={onClick}>Queue Research</button>
       <dialog ref={dialog}>
-        <div>TODO</div>
+        <div>
+          {available.map((technology) => (
+            <button
+              key={technology}
+              onClick={() => {
+                setWorld((draft) =>
+                  queueResearch(
+                    draft,
+                    entity.id,
+                    technology,
+                  ),
+                )
+                close()
+              }}
+            >
+              {technology}
+            </button>
+          ))}
+        </div>
         <div>
           <button onClick={close}>Close</button>
         </div>
