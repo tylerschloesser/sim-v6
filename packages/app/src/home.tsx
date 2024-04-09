@@ -330,6 +330,12 @@ function ShowTownEntity({ entity }: ShowTownEntityProps) {
         </div>
         <div>Research</div>
         <div className={styles.indent}>
+          {entity.researchQueue.map((research, i) => (
+            <div key={i}>
+              {research.technology}:{' '}
+              {formatProgress(research.progress)}
+            </div>
+          ))}
           <div>
             <QueueResearchButton entity={entity} />
           </div>
@@ -373,7 +379,7 @@ interface QueueResearchButtonProps {
 function QueueResearchButton({
   entity,
 }: QueueResearchButtonProps) {
-  const { world, setWorld } = useContext(AppContext)
+  const { setWorld } = useContext(AppContext)
   const dialog = useRef<HTMLDialogElement>(null)
   const onClick = useCallback(() => {
     invariant(dialog.current)
@@ -400,6 +406,9 @@ function QueueResearchButton({
       <button onClick={onClick}>Queue Research</button>
       <dialog ref={dialog}>
         <div>
+          {available.length === 0 && (
+            <>No Research Available</>
+          )}
           {available.map((technology) => (
             <button
               key={technology}
