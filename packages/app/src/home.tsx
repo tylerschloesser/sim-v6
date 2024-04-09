@@ -327,6 +327,11 @@ function ShowTownEntity({ entity }: ShowTownEntityProps) {
             </Fragment>
           ))}
         </div>
+        <div>Technology</div>
+        <div className={styles.indent}>
+          {Object.keys(entity.technologies).length ===
+            0 && <>None</>}
+        </div>
       </div>
     </>
   )
