@@ -327,12 +327,43 @@ function ShowTownEntity({ entity }: ShowTownEntityProps) {
             </Fragment>
           ))}
         </div>
+        <div>Research</div>
+        <div className={styles.indent}>
+          <div>
+            <QueueResearchButton />
+          </div>
+        </div>
         <div>Technology</div>
         <div className={styles.indent}>
           {Object.keys(entity.technologies).length ===
             0 && <>None</>}
         </div>
       </div>
+    </>
+  )
+}
+
+function QueueResearchButton() {
+  const { world, setWorld } = useContext(AppContext)
+  const dialog = useRef<HTMLDialogElement>(null)
+  const onClick = useCallback(() => {
+    invariant(dialog.current)
+    dialog.current.showModal()
+  }, [])
+  const close = useCallback(() => {
+    invariant(dialog.current)
+    dialog.current.close()
+  }, [])
+
+  return (
+    <>
+      <button onClick={onClick}>Queue Research</button>
+      <dialog ref={dialog}>
+        <div>TODO</div>
+        <div>
+          <button onClick={close}>Close</button>
+        </div>
+      </dialog>
     </>
   )
 }
