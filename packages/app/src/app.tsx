@@ -11,6 +11,14 @@ import { tickWorld } from './tick-world.js'
 import { World } from './types.js'
 import { initWorld, loadWorld, saveWorld } from './world.js'
 
+function Reset() {
+  useEffect(() => {
+    localStorage.setItem('reset', 'true')
+    self.location.href = '/'
+  }, [])
+  return <></>
+}
+
 const router = createBrowserRouter([
   {
     index: true,
@@ -19,6 +27,10 @@ const router = createBrowserRouter([
   {
     path: 'render-root',
     Component: RenderRoot,
+  },
+  {
+    path: 'reset',
+    Component: Reset,
   },
 ])
 

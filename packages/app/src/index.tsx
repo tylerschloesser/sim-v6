@@ -11,6 +11,10 @@ if (RESET_LOCAL_STORAGE) {
   console.debug('RESET_LOCAL_STORAGE is set')
   localStorage.clear()
 }
+if (localStorage.getItem('reset') === 'true') {
+  console.debug('localStorage.reset is set')
+  localStorage.clear()
+}
 
 await tryLoadWorld()
 
