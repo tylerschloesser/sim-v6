@@ -186,6 +186,29 @@ function tickTown(entity: TownEntity, world: World): void {
       }
     }
   }
+
+  //
+  // Research
+  //
+  if (
+    priority.research > 0 &&
+    entity.researchQueue.length > 0
+  ) {
+    const head = entity.researchQueue.at(0)
+    invariant(head)
+
+    head.progress +=
+      entity.population *
+      priority.research *
+      INDIVIDUAL_RESEARCH_PRODUCTION_PER_TICK
+
+    if (head.progress >= 1) {
+      entity.researchQueue.shift()
+
+      invariant(!entity.technologies[head.technology])
+      entity.technologies[head.technology] = true
+    }
+  }
 }
 
 function getFoodSource(
