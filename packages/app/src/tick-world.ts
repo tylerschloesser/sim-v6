@@ -87,8 +87,17 @@ function tickTown(entity: TownEntity, world: World): void {
   const foodConsumption =
     entity.population * INDIVIDUAL_FOOD_CONSUMPTION_PER_TICK
 
-  entity.storage.food -= foodConsumption
-  invariant(entity.storage.food >= 0)
+  if (foodConsumption > entity.storage.food) {
+    entity.storage.food = 0
+    entity.population = 0
+    entity.averageAge = 0
+  } else {
+    entity.storage.food -= foodConsumption
+  }
+
+  if (entity.population === 0) {
+    return
+  }
 
   const priority = getNormalizedPriority(entity.priority)
 
