@@ -1,3 +1,4 @@
+import { flow } from 'lodash-es'
 import invariant from 'tiny-invariant'
 import {
   BuildType,
@@ -97,6 +98,17 @@ function tickTown(entity: TownEntity, world: World): void {
 
   if (entity.population === 0) {
     return
+  }
+
+  invariant(entity.nextChildTicks > 0)
+  entity.nextChildTicks -= 1
+  if (entity.nextChildTicks === 0) {
+    entity.averageAge *=
+      entity.population / (entity.population + 1)
+    entity.population += 1
+    entity.nextChildTicks = Math.floor(
+      10 * 60 * (1 + Math.random()),
+    )
   }
 
   const priority = getNormalizedPriority(entity.priority)

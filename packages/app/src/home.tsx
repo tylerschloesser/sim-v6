@@ -202,7 +202,13 @@ function ShowTownEntity({ entity }: ShowTownEntityProps) {
         <div>
           Population: {entity.population}
           <div className={styles.indent}>
-            Average Age: {entity.averageAge.toFixed(1)}
+            <div>
+              Average Age: {entity.averageAge.toFixed(1)}
+            </div>
+            <div>
+              Next Child:{' '}
+              {Math.ceil(entity.nextChildTicks / 10)}s
+            </div>
           </div>
         </div>
         <div>

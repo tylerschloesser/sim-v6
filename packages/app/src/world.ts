@@ -49,6 +49,8 @@ export function initWorld(): World {
 
       population: 10,
       averageAge: 20,
+      nextChildTicks: 10 * 60,
+
       houses: 0,
       storage: {
         food: 100,

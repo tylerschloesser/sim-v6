@@ -115,6 +115,9 @@ export const TownEntity = z.strictObject({
 
   population: z.number().nonnegative(),
   averageAge: z.number().nonnegative(),
+
+  nextChildTicks: z.number().positive(),
+
   houses: z.number().int().nonnegative(),
   storage: z.strictObject({
     food: z.number().nonnegative(),
