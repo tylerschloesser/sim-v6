@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { useNavigate } from 'react-router-dom'
 import invariant from 'tiny-invariant'
 import { Updater } from 'use-immer'
 import { AppContext } from './app-context.js'
@@ -460,11 +461,30 @@ function EditTickRate() {
   )
 }
 
+function ResetButton() {
+  const navigate = useNavigate()
+  return (
+    <a
+      className={styles['reset-button']}
+      href="/reset"
+      onClick={(ev) => {
+        ev.preventDefault()
+        if (self.confirm('Are you sure?')) {
+          navigate('/reset')
+        }
+      }}
+    >
+      Reset
+    </a>
+  )
+}
+
 export function Home() {
   const { world } = useContext(AppContext)
   return (
     <>
       <EditTickRate />
+      <ResetButton />
       <div>
         <div>Tick: {world.tick}</div>
         <div>Year: {Math.floor(world.tick / 3000)}</div>
