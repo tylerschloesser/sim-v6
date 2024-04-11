@@ -86,6 +86,13 @@ export function initWorld(): World {
     ResourceType.enum.Wood,
   )
 
+  addResourceEntity(
+    entities,
+    `${nextEntityId++}`,
+    { x: 2, y: 3 },
+    ResourceType.enum.Stone,
+  )
+
   return {
     tick,
     nodes,
