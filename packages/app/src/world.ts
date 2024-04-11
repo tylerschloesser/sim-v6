@@ -2,6 +2,7 @@ import { sum } from 'lodash-es'
 import invariant from 'tiny-invariant'
 import {
   BranchNode,
+  EntityId,
   EntityType,
   NodeType,
   ResourceEntity,
@@ -9,7 +10,9 @@ import {
   RootNode,
   TownEntity,
   World,
+  ZodVec2,
 } from './types.js'
+import { Vec2 } from './vec2.js'
 
 export function initWorld(): World {
   const tick = 1
@@ -69,39 +72,19 @@ export function initWorld(): World {
     entities[entity.id] = entity
   }
 
-  {
-    const entity: ResourceEntity = {
-      id: `${nextEntityId++}`,
-      type: EntityType.enum.Resource,
-      connections: {},
-      position: { x: 1, y: 0 },
+  addResourceEntity(
+    entities,
+    `${nextEntityId++}`,
+    { x: 1, y: 0 },
+    ResourceType.enum.Food,
+  )
 
-      resourceType: ResourceType.enum.Food,
-
-      minYield: 0.5,
-      maxYield: 1,
-      maxYieldTicks: 10 * 60,
-      tick: 0,
-    }
-    entities[entity.id] = entity
-  }
-
-  {
-    const entity: ResourceEntity = {
-      id: `${nextEntityId++}`,
-      type: EntityType.enum.Resource,
-      connections: {},
-      position: { x: 1, y: 1 },
-
-      resourceType: ResourceType.enum.Wood,
-
-      minYield: 0.5,
-      maxYield: 1,
-      maxYieldTicks: 10 * 60,
-      tick: 0,
-    }
-    entities[entity.id] = entity
-  }
+  addResourceEntity(
+    entities,
+    `${nextEntityId++}`,
+    { x: 1, y: 1 },
+    ResourceType.enum.Wood,
+  )
 
   return {
     tick,
@@ -167,4 +150,26 @@ export const HOUSE_BUILD_WOOD = 8
 
 export function canBuildHouse(entity: TownEntity): boolean {
   return entity.storage.wood >= HOUSE_BUILD_WOOD
+}
+
+function addResourceEntity(
+  entities: World['entities'],
+  id: EntityId,
+  position: ZodVec2,
+  resourceType: ResourceType,
+): void {
+  const entity: ResourceEntity = {
+    id,
+    type: EntityType.enum.Resource,
+    connections: {},
+    position,
+
+    resourceType,
+
+    minYield: 0.5,
+    maxYield: 1,
+    maxYieldTicks: 10 * 60,
+    tick: 0,
+  }
+  entities[entity.id] = entity
 }
