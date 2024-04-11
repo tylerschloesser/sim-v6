@@ -62,6 +62,7 @@ export function initWorld(): World {
       priority: {
         food: 0,
         wood: 0,
+        stone: 0,
         build: 0,
         research: 0,
       },
