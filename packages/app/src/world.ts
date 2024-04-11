@@ -12,7 +12,6 @@ import {
   World,
   ZodVec2,
 } from './types.js'
-import { Vec2 } from './vec2.js'
 
 export function initWorld(): World {
   const tick = 1
@@ -58,6 +57,7 @@ export function initWorld(): World {
       storage: {
         food: 100,
         wood: 10,
+        stone: 0,
       },
       priority: {
         food: 0,

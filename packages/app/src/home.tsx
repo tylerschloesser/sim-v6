@@ -47,6 +47,20 @@ function* iteratePriorities(
   }
 }
 
+function* iterateStorage(
+  storage: TownEntity['storage'],
+): Generator<{
+  key: keyof TownEntity['storage']
+  value: number
+}> {
+  for (const [key, value] of Object.entries(storage)) {
+    yield {
+      key: key as keyof TownEntity['storage'],
+      value,
+    }
+  }
+}
+
 interface BuildHouseButtonProps {
   entityId: EntityId
 }
@@ -232,10 +246,14 @@ function ShowTownEntity({ entity }: ShowTownEntityProps) {
             styles.storage,
           )}
         >
-          <span>Food</span>
-          <StorageValue value={entity.storage.food} />
-          <span>Wood</span>
-          <StorageValue value={entity.storage.wood} />
+          {Array.from(iterateStorage(entity.storage)).map(
+            ({ key, value }) => (
+              <Fragment key={key}>
+                <span>{capitalize(key)}</span>
+                <StorageValue value={value} />
+              </Fragment>
+            ),
+          )}
         </div>
         <div>Priority</div>
         <div

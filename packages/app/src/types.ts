@@ -122,6 +122,7 @@ export const TownEntity = z.strictObject({
   storage: z.strictObject({
     food: z.number().nonnegative(),
     wood: z.number().nonnegative(),
+    stone: z.number().nonnegative(),
   }),
   priority: z.strictObject({
     food: z.number().min(0).max(1),
