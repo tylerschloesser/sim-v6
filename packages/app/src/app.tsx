@@ -14,7 +14,17 @@ export function App() {
         <span className="uppercase">Stone</span>
         <span className="text-2xl">{count}</span>
       </span>
-      <div className="text-center">Goal: Mine 20 Stone</div>
+      <div className="text-center border-2 rounded border-neutral-500 p-4 relative">
+        <span
+          className="absolute left-0 top-0 bottom-0 right-0 bg-green-900 origin-top-left transition-transform"
+          style={{
+            transform: `scaleX(${Math.min(count / 20, 1)})`,
+          }}
+        ></span>
+        <span className="relative">
+          Goal: Mine 20 Stone
+        </span>
+      </div>
     </div>
   )
 }
