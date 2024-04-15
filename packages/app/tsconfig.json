@@ -1,6 +1,3 @@
 {
-  "extends": "@tyle/tsconfig",
-  "compilerOptions": {
-    "plugins": [{ "name": "typescript-plugin-css-modules" }]
-  }
+  "extends": "@tyle/tsconfig"
 }
