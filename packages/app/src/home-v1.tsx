@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom'
 import invariant from 'tiny-invariant'
 import { Updater } from 'use-immer'
 import { AppContext } from './app-context.js'
-import styles from './home.module.scss'
+import styles from './home-v1.module.scss'
 import {
   BuildType,
   Entity,
@@ -503,7 +503,7 @@ function ResetButton() {
   )
 }
 
-export function Home() {
+export function HomeV1() {
   const { world } = useContext(AppContext)
   return (
     <>
