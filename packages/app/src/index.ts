@@ -2,9 +2,7 @@ import { html } from 'htm/preact'
 import { render } from 'preact'
 
 function App() {
-  return html`<h1 class="text-3xl font-bold underline">
-    TODO
-  </h1>`
+  return html`<div class="h-dvh">TODO<//>`
 }
 
 render(html`<${App} />`, document.body)

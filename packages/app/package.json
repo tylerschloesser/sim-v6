@@ -3,7 +3,7 @@
   "type": "module",
   "source": "src/index.html",
   "scripts": {
-    "start": "parcel",
+    "start": "parcel -p 8080",
     "build": "parcel build"
   },
   "devDependencies": {
