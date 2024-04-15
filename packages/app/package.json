@@ -1,4 +1,12 @@
 {
   "name": "@sim-v6/app",
-  "type": "module"
+  "type": "module",
+  "source": "src/index.html",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build"
+  },
+  "devDependencies": {
+    "parcel": "^2.12.0"
+  }
 }
