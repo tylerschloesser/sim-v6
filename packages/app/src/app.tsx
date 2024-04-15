@@ -6,6 +6,7 @@ import {
 import { Updater, useImmer } from 'use-immer'
 import { AppContext, IAppContext } from './app-context.js'
 import { HomeV1 } from './home-v1.js'
+import { HomeV2 } from './home-v2.js'
 import { RenderRoot } from './render-root.js'
 import { tickWorld } from './tick-world.js'
 import { World } from './types.js'
@@ -22,6 +23,10 @@ function Reset() {
 const router = createBrowserRouter([
   {
     index: true,
+    Component: HomeV2,
+  },
+  {
+    path: 'v1',
     Component: HomeV1,
   },
   {
