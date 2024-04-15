@@ -5,7 +5,7 @@
     "deploy": "cdk deploy --all"
   },
   "dependencies": {
-    "@tyle/cdk": "^1.0.6",
+    "@tyle/cdk": "^1.0.8",
     "aws-cdk": "^2.135.0",
     "aws-cdk-lib": "^2.135.0",
     "construct": "^1.0.0"
