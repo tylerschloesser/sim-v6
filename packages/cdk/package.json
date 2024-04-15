@@ -9,5 +9,8 @@
     "aws-cdk": "^2.135.0",
     "aws-cdk-lib": "^2.135.0",
     "construct": "^1.0.0"
+  },
+  "devDependencies": {
+    "preact": "^10.20.2"
   }
 }
