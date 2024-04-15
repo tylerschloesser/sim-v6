@@ -6,6 +6,7 @@
     "build": "NODE_NO_WARNINGS=1 NODE_OPTIONS=\"--loader ts-node/esm\" webpack --mode=production"
   },
   "dependencies": {
+    "@radix-ui/react-popover": "1.0.7",
     "@tyle/webpack-config": "^1.0.21",
     "@types/react": "^18.2.74",
     "@types/react-dom": "^18.2.24",
