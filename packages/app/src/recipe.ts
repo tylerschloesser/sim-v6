@@ -43,5 +43,13 @@ export const ITEM_RECIPE: Record<ItemType, ItemRecipe> = {
       [ItemType.Brick]: 1 * 0.1,
     },
   },
-  [ItemType.IronPlate]: { input: {}, output: {} },
+  [ItemType.IronPlate]: {
+    input: {
+      [ItemType.IronOre]: 2 * 0.1,
+      [ItemType.Coal]: 0.1 * 0.1,
+    },
+    output: {
+      [ItemType.IronPlate]: 1 * 0.1,
+    },
+  },
 }

@@ -1,24 +1,11 @@
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
+import { flexRender } from '@tanstack/react-table'
 import { clsx } from 'clsx'
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 import { MACHINE_RECIPES } from './recipe.js'
 import { ItemType, State } from './state.js'
 import { tick } from './tick.js'
-
-interface RowModel {
-  type: ItemType
-  count: number
-  rate: number
-  tbd: string
-  machines: number
-}
 
 export function App() {
   const [state, setState] = useImmer<State>({
@@ -59,42 +46,15 @@ export function App() {
   invariant(available !== Number.POSITIVE_INFINITY)
   invariant(available >= 0)
 
-  const columnHelper = createColumnHelper<RowModel>()
-
-  const columns = [
-    columnHelper.accessor('type', {
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('count', {
-      cell: (info) => Math.floor(info.getValue()),
-    }),
-    columnHelper.accessor('rate', {
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('tbd', {
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('machines', {
-      cell: (info) => info.getValue(),
-    }),
-  ]
-
-  const data = useMemo(
-    () =>
-      Object.entries(state.items).map(([type, item]) => ({
-        type: type as ItemType,
-        rate: 0,
-        tbd: 'tbd',
+  const rows = Object.entries(state.items).map(
+    ([key, item]) => {
+      const type = key as ItemType
+      return {
+        type,
         ...item,
-      })),
-    [state.items],
+      }
+    },
   )
-
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  })
 
   useEffect(() => {
     if (
@@ -140,32 +100,25 @@ export function App() {
             <col className="w-1/4" />
             <col className="w-1/4" />
             <col className="w-1/4" />
-            <col className="w-1/4" />
-            <col className="w-1/4" />
           </colgroup>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
+            {rows.map((row) => (
               <tr
-                key={row.id}
+                key={row.type}
                 className={clsx(
                   'hover:bg-slate-500',
-                  state.selected === row.original.type &&
+                  state.selected === row.type &&
                     'bg-slate-600',
                 )}
                 onClick={() => {
                   setState((draft) => {
-                    draft.selected = row.original.type
+                    draft.selected = row.type
                   })
                 }}
               >
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="p-2">
-                    {flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext(),
-                    )}
-                  </td>
-                ))}
+                <td className="p-2">{row.type}</td>
+                <td className="p-2">{row.count}</td>
+                <td className="p-2">{row.machines}</td>
               </tr>
             ))}
           </tbody>
