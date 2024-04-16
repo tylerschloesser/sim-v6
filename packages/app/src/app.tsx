@@ -12,6 +12,9 @@ enum ItemType {
   Stone = 'stone',
   Coal = 'coal',
   Brick = 'brick',
+
+  IronOre = 'iron-ore',
+  IronPlate = 'iron-plate',
 }
 
 interface Item {
@@ -33,6 +36,31 @@ interface RowModel {
   machines: number
 }
 
+const MACHINE_RECIPES: Record<
+  ItemType,
+  Partial<Record<ItemType, number>>
+> = {
+  [ItemType.Stone]: {
+    [ItemType.IronPlate]: 10,
+    [ItemType.Brick]: 10,
+  },
+  [ItemType.Coal]: {
+    [ItemType.IronPlate]: 10,
+    [ItemType.Brick]: 10,
+  },
+  [ItemType.IronOre]: {
+    [ItemType.IronPlate]: 10,
+    [ItemType.Brick]: 10,
+  },
+
+  [ItemType.Brick]: {
+    [ItemType.Stone]: 20,
+  },
+  [ItemType.IronPlate]: {
+    [ItemType.Stone]: 20,
+  },
+}
+
 export function App() {
   const [state, setState] = useImmer<State>({
     level: 0,
@@ -41,6 +69,8 @@ export function App() {
       [ItemType.Stone]: { count: 0, machines: 0 },
       [ItemType.Coal]: { count: 0, machines: 0 },
       [ItemType.Brick]: { count: 0, machines: 0 },
+      [ItemType.IronOre]: { count: 0, machines: 0 },
+      [ItemType.IronPlate]: { count: 0, machines: 0 },
     },
   })
 
@@ -102,11 +132,11 @@ export function App() {
         <div>Input: ?</div>
         <div>Output: ?</div>
       </div>
-      <div className="h-[33dvh]">
+      <div className="h-[33dvh] max-w-full overflow-auto">
         <table>
           <colgroup>
-            <col className="w-min" />
-            <col className="w-dvw" />
+            <col className="w-1/4" />
+            <col className="w-1/4" />
             <col className="w-1/4" />
             <col className="w-1/4" />
             <col className="w-1/4" />
