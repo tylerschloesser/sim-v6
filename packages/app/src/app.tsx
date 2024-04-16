@@ -67,15 +67,7 @@ export function App() {
             label="brick"
             value={state.inventory['brick']}
             modify={{
-              increment: {
-                disabled: true,
-                handle: () => {},
-              },
-
-              decrement: {
-                disabled: false,
-                handle: () => {},
-              },
+              increment: () => {},
             }}
           />
         )}
@@ -94,14 +86,8 @@ function Row({
   value: number
   mine?: () => void
   modify?: {
-    increment: {
-      disabled: boolean
-      handle: () => void
-    }
-    decrement: {
-      disabled: boolean
-      handle: () => void
-    }
+    increment?: () => void
+    decrement?: () => void
   }
 }) {
   return (
@@ -119,22 +105,15 @@ function Row({
       {modify && (
         <div className="flex gap-2">
           <button
-            disabled={true}
-            onClick={
-              modify.decrement.disabled
-                ? undefined
-                : modify.decrement.handle
-            }
+            disabled={modify.decrement === undefined}
+            onClick={modify.decrement}
             className="rounded bg-neutral-500 p-2 font-bold text-center disabled:opacity-50"
           >
             &#xFF0D;
           </button>
           <button
-            onClick={
-              modify.increment.disabled
-                ? undefined
-                : modify.increment.handle
-            }
+            disabled={modify.increment === undefined}
+            onClick={modify.increment}
             className="rounded bg-neutral-500 p-2 font-bold text-center disabled:opacity-50"
           >
             &#xFF0B;
