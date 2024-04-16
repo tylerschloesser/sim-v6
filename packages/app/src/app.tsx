@@ -188,7 +188,7 @@ export function App() {
                 }}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="p-0 py-2">
+                  <td key={cell.id} className="p-2">
                     {flexRender(
                       cell.column.columnDef.cell,
                       cell.getContext(),
