@@ -1,10 +1,18 @@
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
+type Inventory = {
+  stone: 0
+  brick: 0
+}
+
+type InventoryKey = keyof Inventory
+
 export function App() {
   const [state, setState] = useImmer({
     level: 0,
     stone: 0,
+    brick: 0,
   })
 
   useEffect(() => {
@@ -37,20 +45,40 @@ export function App() {
           </div>
         )}
       </div>
-      <div className="rounded border-neutral-500 border-2 p-2 flex flex-row justify-between items-center">
-        <span className="uppercase">Stone</span>
-        <span className="">{state.stone}</span>
+      <Row
+        label="stone"
+        value={state.stone}
+        mine={() =>
+          setState((draft) => {
+            draft.stone += 1
+          })
+        }
+      />
+    </div>
+  )
+}
+
+function Row({
+  label,
+  value,
+  mine,
+}: {
+  label: InventoryKey
+  value: number
+  mine?: () => void
+}) {
+  return (
+    <div className="rounded border-neutral-500 border-2 p-2 flex flex-row justify-between items-center">
+      <span className="uppercase">{label}</span>
+      <span className="">{value}</span>
+      {mine && (
         <button
-          onClick={() =>
-            setState((draft) => {
-              draft.stone += 1
-            })
-          }
+          onClick={mine}
           className="rounded bg-neutral-500 p-2 font-bold text-center"
         >
           Mine
         </button>
-      </div>
+      )}
     </div>
   )
 }
