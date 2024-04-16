@@ -8,6 +8,7 @@ import { clsx } from 'clsx'
 import { useEffect, useMemo } from 'react'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
+import { MACHINE_RECIPES } from './recipe.js'
 import { ItemType, State } from './state.js'
 import { tick } from './tick.js'
 
@@ -17,29 +18,6 @@ interface RowModel {
   rate: number
   tbd: string
   machines: number
-}
-
-type MachineRecipe = Partial<Record<ItemType, number>>
-
-const MINER_RECIPE: MachineRecipe = {
-  [ItemType.IronPlate]: 10,
-  [ItemType.Brick]: 10,
-}
-
-const FURNACE_RECIPE: MachineRecipe = {
-  [ItemType.Stone]: 20,
-}
-
-const MACHINE_RECIPES: Record<
-  ItemType,
-  Partial<Record<ItemType, number>>
-> = {
-  [ItemType.Stone]: MINER_RECIPE,
-  [ItemType.Coal]: MINER_RECIPE,
-  [ItemType.IronOre]: MINER_RECIPE,
-
-  [ItemType.Brick]: FURNACE_RECIPE,
-  [ItemType.IronPlate]: FURNACE_RECIPE,
 }
 
 export function App() {
