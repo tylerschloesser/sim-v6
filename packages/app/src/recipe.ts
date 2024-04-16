@@ -24,3 +24,25 @@ export const MACHINE_RECIPES: Record<
   [ItemType.Brick]: FURNACE_RECIPE,
   [ItemType.IronPlate]: FURNACE_RECIPE,
 }
+
+export const ITEM_RECIPE: Record<
+  ItemType,
+  {
+    input: Partial<Record<ItemType, number>>
+    output: Partial<Record<ItemType, number>>
+  }
+> = {
+  [ItemType.Stone]: { input: {}, output: {} },
+  [ItemType.Coal]: { input: {}, output: {} },
+  [ItemType.IronOre]: { input: {}, output: {} },
+  [ItemType.Brick]: {
+    input: {
+      [ItemType.Stone]: 2 * 0.1,
+      [ItemType.Coal]: 0.1 * 0.1,
+    },
+    output: {
+      [ItemType.Brick]: 1 * 0.1,
+    },
+  },
+  [ItemType.IronPlate]: { input: {}, output: {} },
+}
