@@ -1,3 +1,4 @@
+import { clsx } from 'clsx'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -52,15 +53,34 @@ export function App() {
           </div>
         )}
       </div>
-      <Row
-        label="stone"
-        value={state.inventory['stone']}
-        mine={() =>
-          setState((draft) => {
-            draft.inventory['stone'] += 1
-          })
-        }
-      />
+      <div>
+        <Row
+          label="stone"
+          value={state.inventory['stone']}
+          mine={() =>
+            setState((draft) => {
+              draft.inventory['stone'] += 1
+            })
+          }
+        />
+        {state.level > 0 && (
+          <Row
+            label="brick"
+            value={state.inventory['brick']}
+            modify={{
+              increment: {
+                disabled: true,
+                handle: () => {},
+              },
+
+              decrement: {
+                disabled: false,
+                handle: () => {},
+              },
+            }}
+          />
+        )}
+      </div>
     </div>
   )
 }
@@ -69,10 +89,21 @@ function Row({
   label,
   value,
   mine,
+  modify,
 }: {
   label: InventoryKey
   value: number
   mine?: () => void
+  modify?: {
+    increment: {
+      disabled: boolean
+      handle: () => void
+    }
+    decrement: {
+      disabled: boolean
+      handle: () => void
+    }
+  }
 }) {
   return (
     <div className="rounded border-neutral-500 border-2 p-2 flex flex-row justify-between items-center">
@@ -85,6 +116,39 @@ function Row({
         >
           Mine
         </button>
+      )}
+      {modify && (
+        <div className="flex gap-2">
+          <button
+            disabled={true}
+            onClick={
+              modify.decrement.disabled
+                ? undefined
+                : modify.decrement.handle
+            }
+            className={clsx(
+              'rounded bg-neutral-500 p-2 font-bold text-center',
+              modify.decrement.disabled &&
+                'disabled:opacity-50',
+            )}
+          >
+            &#xFF0D;
+          </button>
+          <button
+            onClick={
+              modify.increment.disabled
+                ? undefined
+                : modify.increment.handle
+            }
+            className={clsx(
+              'rounded bg-neutral-500 p-2 font-bold text-center',
+              modify.increment.disabled &&
+                'disabled:opacity-50',
+            )}
+          >
+            &#xFF0B;
+          </button>
+        </div>
       )}
     </div>
   )
