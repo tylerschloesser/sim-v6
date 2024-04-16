@@ -131,6 +131,12 @@ export function App() {
     }
   }, [state])
 
+  const mineable = [
+    ItemType.Stone,
+    ItemType.IronOre,
+    ItemType.Coal,
+  ].includes(state.selected)
+
   return (
     <div className="min-h-dvh p-2 flex flex-col justify-end">
       <div className="flex-1">
@@ -200,12 +206,17 @@ export function App() {
           </button>
         </div>
         <button
-          className="bg-green-800 w-full p-2 capitalize"
-          onClick={() => {
-            setState((draft) => {
-              draft.items[state.selected].count += 1
-            })
-          }}
+          disabled={!mineable}
+          className="bg-green-800 w-full p-2 capitalize disabled:opacity-50"
+          onClick={
+            mineable
+              ? () => {
+                  setState((draft) => {
+                    draft.items[state.selected].count += 1
+                  })
+                }
+              : undefined
+          }
         >
           Mine {state.selected}
         </button>
