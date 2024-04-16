@@ -139,16 +139,27 @@ export function App() {
           </tbody>
         </table>
       </div>
-      <button
-        className="bg-green-800 w-full p-2 capitalize"
-        onClick={() => {
-          setState((draft) => {
-            draft.items[state.selected].count += 1
-          })
-        }}
-      >
-        Mine {state.selected}
-      </button>
+      <div>
+        <div className="flex">
+          <button className="flex-1 p-2 bg-slate-800">
+            &#xFF0D;
+          </button>
+          <div className="flex-1 text-center">0</div>
+          <button className="flex-1 p-2 bg-slate-700">
+            &#xFF0B;
+          </button>
+        </div>
+        <button
+          className="bg-green-800 w-full p-2 capitalize"
+          onClick={() => {
+            setState((draft) => {
+              draft.items[state.selected].count += 1
+            })
+          }}
+        >
+          Mine {state.selected}
+        </button>
+      </div>
     </div>
   )
 }
