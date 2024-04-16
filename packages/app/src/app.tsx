@@ -116,7 +116,11 @@ export function App() {
                 }}
               >
                 <td className="p-2">{row.type}</td>
-                <td className="p-2">{row.count}</td>
+                <td className="p-2">
+                  {row.count > 0 && row.count < 1
+                    ? '<1'
+                    : Math.floor(row.count)}
+                </td>
                 <td className="p-2">{row.machines}</td>
               </tr>
             ))}
