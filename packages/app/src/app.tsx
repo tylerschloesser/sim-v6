@@ -1,4 +1,3 @@
-import { flexRender } from '@tanstack/react-table'
 import { clsx } from 'clsx'
 import { useEffect } from 'react'
 import invariant from 'tiny-invariant'
