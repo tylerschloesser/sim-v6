@@ -9,5 +9,5 @@ export default {
   future: {
     // https://github.com/tailwindlabs/tailwindcss/discussions/1739#discussioncomment-3630717
     hoverOnlyWhenSupported: true,
-  }
+  },
 }
