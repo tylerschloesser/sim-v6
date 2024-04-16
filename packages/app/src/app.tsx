@@ -15,6 +15,7 @@ export function App() {
       [ItemType.Stone]: { count: 0, machines: 0 },
       [ItemType.Coal]: { count: 0, machines: 0 },
       [ItemType.Brick]: { count: 0, machines: 0 },
+      [ItemType.Power]: { count: 0, machines: 0 },
       [ItemType.IronOre]: { count: 0, machines: 0 },
       [ItemType.IronPlate]: { count: 0, machines: 0 },
     },

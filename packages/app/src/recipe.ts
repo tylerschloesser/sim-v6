@@ -9,6 +9,11 @@ export const MINER_RECIPE: MachineRecipe = {
   [ItemType.Brick]: 10,
 }
 
+export const GENERATOR_RECIPE: MachineRecipe = {
+  [ItemType.Brick]: 20,
+  [ItemType.IronPlate]: 20,
+}
+
 export const FURNACE_RECIPE: MachineRecipe = {
   [ItemType.Stone]: 20,
 }
@@ -20,6 +25,8 @@ export const MACHINE_RECIPES: Record<
   [ItemType.Stone]: MINER_RECIPE,
   [ItemType.Coal]: MINER_RECIPE,
   [ItemType.IronOre]: MINER_RECIPE,
+
+  [ItemType.Power]: GENERATOR_RECIPE,
 
   [ItemType.Brick]: FURNACE_RECIPE,
   [ItemType.IronPlate]: FURNACE_RECIPE,
@@ -47,6 +54,14 @@ export const ITEM_RECIPE: Record<ItemType, ItemRecipe> = {
     input: {},
     output: {
       [ItemType.IronOre]: 1 * 0.1,
+    },
+  },
+  [ItemType.Power]: {
+    input: {
+      [ItemType.Coal]: 1 * 0.1,
+    },
+    output: {
+      [ItemType.Power]: 10 * 0.1,
     },
   },
   [ItemType.Brick]: {

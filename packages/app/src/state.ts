@@ -3,6 +3,8 @@ export enum ItemType {
   Coal = 'coal',
   Brick = 'brick',
 
+  Power = 'power',
+
   IronOre = 'iron-ore',
   IronPlate = 'iron-plate',
 }
