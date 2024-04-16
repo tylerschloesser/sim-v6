@@ -8,26 +8,7 @@ import { clsx } from 'clsx'
 import { useEffect, useMemo } from 'react'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
-
-enum ItemType {
-  Stone = 'stone',
-  Coal = 'coal',
-  Brick = 'brick',
-
-  IronOre = 'iron-ore',
-  IronPlate = 'iron-plate',
-}
-
-interface Item {
-  count: number
-  machines: number
-}
-
-interface State {
-  level: number
-  selected: ItemType
-  items: Record<ItemType, Item>
-}
+import { ItemType, State } from './state.js'
 
 interface RowModel {
   type: ItemType
