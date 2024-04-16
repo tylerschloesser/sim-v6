@@ -2,7 +2,7 @@ import { clsx } from 'clsx'
 import { useEffect } from 'react'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
-import { MACHINE_RECIPES } from './recipe.js'
+import { ITEM_RECIPE, MACHINE_RECIPES } from './recipe.js'
 import { ItemType, State } from './state.js'
 import { tick } from './tick.js'
 
@@ -32,9 +32,14 @@ export function App() {
   }, [])
 
   const machines = state.items[state.selected].machines
-  const recipe = MACHINE_RECIPES[state.selected]
+
+  const machineRecipe = MACHINE_RECIPES[state.selected]
+  const itemRecipe = ITEM_RECIPE[state.selected]
+
   let available = Number.POSITIVE_INFINITY
-  for (const [key, value] of Object.entries(recipe)) {
+  for (const [key, value] of Object.entries(
+    machineRecipe,
+  )) {
     available = Math.min(
       available,
       Math.floor(
@@ -79,20 +84,46 @@ export function App() {
         <h2 className="capitalize text-4xl text-center">
           {state.selected}
         </h2>
-        <div>Machine</div>
-        <div className="px-2">
-          Recipe:
-          <div className="px-2">
-            {Object.entries(recipe).map(([key, value]) => (
-              <div key={key}>
-                {key}: {value}
-              </div>
-            ))}
+        <div className="flex">
+          <div className="flex-1">
+            <div>
+              <div>Input:</div>
+              {Object.entries(itemRecipe.input).map(
+                ([key, value]) => (
+                  <div key={key} className="px-2">
+                    {`${key}: ${formatRate(value * 10)}/s`}
+                  </div>
+                ),
+              )}
+            </div>
+            <div>
+              <div>Output:</div>
+              {Object.entries(itemRecipe.output).map(
+                ([key, value]) => (
+                  <div key={key} className="px-2">
+                    {`${key}: ${formatRate(value * 10)}/s`}
+                  </div>
+                ),
+              )}
+            </div>
           </div>
-          Available: {available}
+          <div className="flex-1">
+            <div>Machine</div>
+            <div className="px-2">
+              Recipe:
+              <div className="px-2">
+                {Object.entries(machineRecipe).map(
+                  ([key, value]) => (
+                    <div key={key}>
+                      {key}: {value}
+                    </div>
+                  ),
+                )}
+              </div>
+              Available: {available}
+            </div>
+          </div>
         </div>
-        <div>Input: ?</div>
-        <div>Output: ?</div>
       </div>
       <div className="h-[33dvh] max-w-full overflow-auto">
         <table>
@@ -140,7 +171,7 @@ export function App() {
                       for (const [
                         key,
                         value,
-                      ] of Object.entries(recipe)) {
+                      ] of Object.entries(machineRecipe)) {
                         draft.items[
                           key as ItemType
                         ].count += value
@@ -169,7 +200,7 @@ export function App() {
                       for (const [
                         key,
                         value,
-                      ] of Object.entries(recipe)) {
+                      ] of Object.entries(machineRecipe)) {
                         invariant(
                           draft.items[key as ItemType]
                             .count >= value,
@@ -207,4 +238,11 @@ export function App() {
       </div>
     </div>
   )
+}
+
+function formatRate(rate: number): string {
+  if (rate === Math.floor(rate)) {
+    return `${rate}`
+  }
+  return rate.toFixed(1)
 }
