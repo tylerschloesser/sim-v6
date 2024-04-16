@@ -86,6 +86,15 @@ export function App() {
             label={ItemType.Brick}
             item={state.items.brick}
             modify={{
+              decrement:
+                state.items.brick.machines > 0
+                  ? () => {
+                      setState((draft) => {
+                        draft.items.stone.count += 20
+                        draft.items.brick.machines -= 1
+                      })
+                    }
+                  : undefined,
               increment:
                 state.items.stone.count >= 20
                   ? () => {
@@ -140,7 +149,7 @@ function Row({
               >
                 &#xFF0D;
               </button>
-              <div>0</div>
+              <div>{item.machines}</div>
               <button
                 disabled={modify.increment === undefined}
                 onClick={modify.increment}
