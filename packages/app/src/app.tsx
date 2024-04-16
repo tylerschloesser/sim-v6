@@ -205,6 +205,25 @@ export function App() {
           <button
             disabled={machines === 0}
             className="flex-1 p-2 bg-slate-700 disabled:bg-slate-800"
+            onClick={
+              machines > 0
+                ? () => {
+                    setState((draft) => {
+                      for (const [
+                        key,
+                        value,
+                      ] of Object.entries(recipe)) {
+                        draft.items[
+                          key as ItemType
+                        ].count += value
+                      }
+                      draft.items[
+                        state.selected
+                      ].machines -= 1
+                    })
+                  }
+                : undefined
+            }
           >
             &#xFF0D;
           </button>
@@ -215,6 +234,29 @@ export function App() {
           <button
             className="flex-1 p-2 bg-slate-700 disabled:bg-slate-800"
             disabled={available === 0}
+            onClick={
+              available > 0
+                ? () => {
+                    setState((draft) => {
+                      for (const [
+                        key,
+                        value,
+                      ] of Object.entries(recipe)) {
+                        invariant(
+                          draft.items[key as ItemType]
+                            .count >= value,
+                        )
+                        draft.items[
+                          key as ItemType
+                        ].count -= value
+                      }
+                      draft.items[
+                        state.selected
+                      ].machines += 1
+                    })
+                  }
+                : undefined
+            }
           >
             &#xFF0B;
           </button>
