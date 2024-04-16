@@ -25,13 +25,12 @@ export const MACHINE_RECIPES: Record<
   [ItemType.IronPlate]: FURNACE_RECIPE,
 }
 
-export const ITEM_RECIPE: Record<
-  ItemType,
-  {
-    input: Partial<Record<ItemType, number>>
-    output: Partial<Record<ItemType, number>>
-  }
-> = {
+export type ItemRecipe = {
+  input: Partial<Record<ItemType, number>>
+  output: Partial<Record<ItemType, number>>
+}
+
+export const ITEM_RECIPE: Record<ItemType, ItemRecipe> = {
   [ItemType.Stone]: { input: {}, output: {} },
   [ItemType.Coal]: { input: {}, output: {} },
   [ItemType.IronOre]: { input: {}, output: {} },
