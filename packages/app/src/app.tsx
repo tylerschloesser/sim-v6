@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-table'
 import { clsx } from 'clsx'
 import { useEffect, useMemo } from 'react'
+import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 
 enum ItemType {
@@ -82,6 +83,9 @@ export function App() {
       ),
     )
   }
+
+  invariant(available !== Number.POSITIVE_INFINITY)
+  invariant(available >= 0)
 
   const columnHelper = createColumnHelper<RowModel>()
 
