@@ -1,37 +1,31 @@
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-enum ItemType {
-  Stone = 'stone',
-  Coal = 'coal',
-  Brick = 'brick',
+type Inventory = {
+  stone: number
+  coal: number
+  brick: number
 }
 
-interface Item {
-  count: number
-  machines: number
-}
+type InventoryKey = keyof Inventory
 
 interface State {
   level: number
-  items: Record<ItemType, Item>
+  inventory: Inventory
 }
 
 export function App() {
   const [state, setState] = useImmer<State>({
     level: 0,
-    items: {
-      [ItemType.Stone]: { count: 0, machines: 0 },
-      [ItemType.Coal]: { count: 0, machines: 0 },
-      [ItemType.Brick]: { count: 0, machines: 0 },
+    inventory: {
+      stone: 0,
+      coal: 0,
+      brick: 0,
     },
   })
 
   useEffect(() => {
-    if (
-      state.level === 0 &&
-      state.items.stone.count >= 20
-    ) {
+    if (state.level === 0 && state.inventory.stone >= 20) {
       setState((draft) => {
         draft.level = 1
       })
@@ -46,7 +40,7 @@ export function App() {
             <span
               className="absolute w-full h-full top-0 left-0 bg-green-900 origin-top-left transition-transform"
               style={{
-                transform: `scaleX(${Math.min(state.items.stone.count / 20, 1)})`,
+                transform: `scaleX(${Math.min(state.inventory.stone / 20, 1)})`,
               }}
             ></span>
             <span className="relative flex flex-col">
@@ -62,39 +56,31 @@ export function App() {
       </div>
       <div>
         <Row
-          label={ItemType.Stone}
-          item={state.items.stone}
+          label="stone"
+          value={state.inventory['stone']}
           mine={() =>
             setState((draft) => {
-              draft.items.stone.count += 1
+              draft.inventory['stone'] += 1
             })
           }
         />
         {state.level > 0 && (
           <Row
-            label={ItemType.Coal}
-            item={state.items.coal}
+            label="coal"
+            value={state.inventory['coal']}
             mine={() =>
               setState((draft) => {
-                draft.items.coal.count += 1
+                draft.inventory['coal'] += 1
               })
             }
           />
         )}
         {state.level > 0 && (
           <Row
-            label={ItemType.Brick}
-            item={state.items.brick}
+            label="brick"
+            value={state.inventory['brick']}
             modify={{
-              increment:
-                state.items.stone.count >= 20
-                  ? () => {
-                      setState((draft) => {
-                        draft.items.stone.count -= 20
-                        draft.items.brick.machines += 1
-                      })
-                    }
-                  : undefined,
+              increment: () => {},
             }}
           />
         )}
@@ -105,12 +91,12 @@ export function App() {
 
 function Row({
   label,
-  item,
+  value,
   mine,
   modify,
 }: {
-  label: ItemType
-  item: Item
+  label: InventoryKey
+  value: number
   mine?: () => void
   modify?: {
     increment?: () => void
@@ -118,10 +104,10 @@ function Row({
   }
 }) {
   return (
-    <div className="p-2 border-b-2 border-neutral-500 last:border-b-0">
+    <div className=" p-2 border-b-2 border-neutral-500 ">
       <div className="flex flex-row justify-between items-center">
         <span className="uppercase">{label}</span>
-        <span className="">{item.count}</span>
+        <span className="">{value}</span>
         <div>
           {mine && (
             <button
