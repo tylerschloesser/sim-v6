@@ -1,4 +1,3 @@
-import { clsx } from 'clsx'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -126,11 +125,7 @@ function Row({
                 ? undefined
                 : modify.decrement.handle
             }
-            className={clsx(
-              'rounded bg-neutral-500 p-2 font-bold text-center',
-              modify.decrement.disabled &&
-                'disabled:opacity-50',
-            )}
+            className="rounded bg-neutral-500 p-2 font-bold text-center disabled:opacity-50"
           >
             &#xFF0D;
           </button>
@@ -140,11 +135,7 @@ function Row({
                 ? undefined
                 : modify.increment.handle
             }
-            className={clsx(
-              'rounded bg-neutral-500 p-2 font-bold text-center',
-              modify.increment.disabled &&
-                'disabled:opacity-50',
-            )}
+            className="rounded bg-neutral-500 p-2 font-bold text-center disabled:opacity-50"
           >
             &#xFF0B;
           </button>
