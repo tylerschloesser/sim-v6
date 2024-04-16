@@ -36,29 +36,27 @@ interface RowModel {
   machines: number
 }
 
+type MachineRecipe = Partial<Record<ItemType, number>>
+
+const MINER_RECIPE: MachineRecipe = {
+  [ItemType.IronPlate]: 10,
+  [ItemType.Brick]: 10,
+}
+
+const FURNACE_RECIPE: MachineRecipe = {
+  [ItemType.Stone]: 20,
+}
+
 const MACHINE_RECIPES: Record<
   ItemType,
   Partial<Record<ItemType, number>>
 > = {
-  [ItemType.Stone]: {
-    [ItemType.IronPlate]: 10,
-    [ItemType.Brick]: 10,
-  },
-  [ItemType.Coal]: {
-    [ItemType.IronPlate]: 10,
-    [ItemType.Brick]: 10,
-  },
-  [ItemType.IronOre]: {
-    [ItemType.IronPlate]: 10,
-    [ItemType.Brick]: 10,
-  },
+  [ItemType.Stone]: MINER_RECIPE,
+  [ItemType.Coal]: MINER_RECIPE,
+  [ItemType.IronOre]: MINER_RECIPE,
 
-  [ItemType.Brick]: {
-    [ItemType.Stone]: 20,
-  },
-  [ItemType.IronPlate]: {
-    [ItemType.Stone]: 20,
-  },
+  [ItemType.Brick]: FURNACE_RECIPE,
+  [ItemType.IronPlate]: FURNACE_RECIPE,
 }
 
 export function App() {
@@ -73,6 +71,17 @@ export function App() {
       [ItemType.IronPlate]: { count: 0, machines: 0 },
     },
   })
+
+  const recipe = MACHINE_RECIPES[state.selected]
+  let available = Number.POSITIVE_INFINITY
+  for (const [key, value] of Object.entries(recipe)) {
+    available = Math.min(
+      available,
+      Math.floor(
+        state.items[key as ItemType].count / value,
+      ),
+    )
+  }
 
   const columnHelper = createColumnHelper<RowModel>()
 
@@ -128,7 +137,18 @@ export function App() {
         <h2 className="capitalize text-4xl text-center">
           {state.selected}
         </h2>
-        <div>Production: ?</div>
+        <div>Machine</div>
+        <div className="px-2">
+          Recipe:
+          <div className="px-2">
+            {Object.entries(recipe).map(([key, value]) => (
+              <div key={key}>
+                {key}: {value}
+              </div>
+            ))}
+          </div>
+          Available: {available}
+        </div>
         <div>Input: ?</div>
         <div>Output: ?</div>
       </div>
