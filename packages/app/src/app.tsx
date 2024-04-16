@@ -2,21 +2,28 @@ import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 type Inventory = {
-  stone: 0
-  brick: 0
+  stone: number
+  brick: number
 }
 
 type InventoryKey = keyof Inventory
 
+interface State {
+  level: number
+  inventory: Inventory
+}
+
 export function App() {
-  const [state, setState] = useImmer({
+  const [state, setState] = useImmer<State>({
     level: 0,
-    stone: 0,
-    brick: 0,
+    inventory: {
+      stone: 0,
+      brick: 0,
+    },
   })
 
   useEffect(() => {
-    if (state.level === 0 && state.stone >= 20) {
+    if (state.level === 0 && state.inventory.stone >= 20) {
       setState((draft) => {
         draft.level = 1
       })
@@ -31,7 +38,7 @@ export function App() {
             <span
               className="absolute w-full h-full top-0 left-0 bg-green-900 origin-top-left transition-transform"
               style={{
-                transform: `scaleX(${Math.min(state.stone / 20, 1)})`,
+                transform: `scaleX(${Math.min(state.inventory.stone / 20, 1)})`,
               }}
             ></span>
             <span className="relative flex flex-col">
@@ -47,10 +54,10 @@ export function App() {
       </div>
       <Row
         label="stone"
-        value={state.stone}
+        value={state.inventory['stone']}
         mine={() =>
           setState((draft) => {
-            draft.stone += 1
+            draft.inventory['stone'] += 1
           })
         }
       />
