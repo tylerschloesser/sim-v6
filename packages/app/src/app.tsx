@@ -4,6 +4,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { clsx } from 'clsx'
 import { useEffect, useMemo } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -20,12 +21,22 @@ interface Item {
 
 interface State {
   level: number
+  selected: ItemType
   items: Record<ItemType, Item>
+}
+
+interface RowModel {
+  type: ItemType
+  count: number
+  rate: number
+  tbd: string
+  machines: number
 }
 
 export function App() {
   const [state, setState] = useImmer<State>({
     level: 0,
+    selected: ItemType.Stone,
     items: {
       [ItemType.Stone]: { count: 0, machines: 0 },
       [ItemType.Coal]: { count: 0, machines: 0 },
@@ -33,10 +44,19 @@ export function App() {
     },
   })
 
-  const columnHelper = createColumnHelper<Item>()
+  const columnHelper = createColumnHelper<RowModel>()
 
   const columns = [
+    columnHelper.accessor('type', {
+      cell: (info) => info.getValue(),
+    }),
     columnHelper.accessor('count', {
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('rate', {
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('tbd', {
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('machines', {
@@ -45,7 +65,13 @@ export function App() {
   ]
 
   const data = useMemo(
-    () => Object.values(state.items),
+    () =>
+      Object.entries(state.items).map(([type, item]) => ({
+        type: type as ItemType,
+        rate: 0,
+        tbd: 'tbd',
+        ...item,
+      })),
     [state.items],
   )
 
@@ -67,23 +93,44 @@ export function App() {
   }, [state])
 
   return (
-    <div className="h-dvh">
-      <table>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
-                  {flexRender(
-                    cell.column.columnDef.cell,
-                    cell.getContext(),
-                  )}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="h-dvh text-base">
+      <div className="p-2">
+        <table>
+          <colgroup>
+            <col className="w-min" />
+            <col className="w-dvw" />
+            <col className="w-1/4" />
+            <col className="w-1/4" />
+            <col className="w-1/4" />
+          </colgroup>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr
+                key={row.id}
+                className={clsx(
+                  'hover:bg-slate-500',
+                  state.selected === row.original.type &&
+                    'bg-slate-400',
+                )}
+                onClick={() => {
+                  setState((draft) => {
+                    draft.selected = row.original.type
+                  })
+                }}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className="p-0 py-2">
+                    {flexRender(
+                      cell.column.columnDef.cell,
+                      cell.getContext(),
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
