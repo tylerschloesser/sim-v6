@@ -9,6 +9,7 @@ import { useEffect, useMemo } from 'react'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 import { ItemType, State } from './state.js'
+import { tick } from './tick.js'
 
 interface RowModel {
   type: ItemType
@@ -43,6 +44,7 @@ const MACHINE_RECIPES: Record<
 
 export function App() {
   const [state, setState] = useImmer<State>({
+    tick: 0,
     level: 0,
     selected: ItemType.Stone,
     items: {
@@ -53,6 +55,16 @@ export function App() {
       [ItemType.IronPlate]: { count: 0, machines: 0 },
     },
   })
+
+  useEffect(() => {
+    const handle = self.setInterval(
+      () => setState(tick),
+      100,
+    )
+    return () => {
+      self.clearInterval(handle)
+    }
+  }, [])
 
   const machines = state.items[state.selected].machines
   const recipe = MACHINE_RECIPES[state.selected]

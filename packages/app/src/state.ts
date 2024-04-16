@@ -13,6 +13,7 @@ export interface Item {
 }
 
 export interface State {
+  tick: number
   level: number
   selected: ItemType
   items: Record<ItemType, Item>
