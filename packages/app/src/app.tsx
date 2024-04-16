@@ -93,8 +93,16 @@ export function App() {
   }, [state])
 
   return (
-    <div className="h-dvh text-base">
-      <div className="p-2">
+    <div className="min-h-dvh p-2 flex flex-col justify-end">
+      <div className="flex-1">
+        <h2 className="capitalize text-4xl text-center">
+          {state.selected}
+        </h2>
+        <div>Production: ?</div>
+        <div>Input: ?</div>
+        <div>Output: ?</div>
+      </div>
+      <div className="h-[33dvh]">
         <table>
           <colgroup>
             <col className="w-min" />
@@ -110,7 +118,7 @@ export function App() {
                 className={clsx(
                   'hover:bg-slate-500',
                   state.selected === row.original.type &&
-                    'bg-slate-400',
+                    'bg-slate-600',
                 )}
                 onClick={() => {
                   setState((draft) => {
@@ -131,6 +139,16 @@ export function App() {
           </tbody>
         </table>
       </div>
+      <button
+        className="bg-green-800 w-full p-2 capitalize"
+        onClick={() => {
+          setState((draft) => {
+            draft.items[state.selected].count += 1
+          })
+        }}
+      >
+        Mine {state.selected}
+      </button>
     </div>
   )
 }
