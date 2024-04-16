@@ -66,7 +66,7 @@ export function App() {
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('count', {
-      cell: (info) => info.getValue(),
+      cell: (info) => Math.floor(info.getValue()),
     }),
     columnHelper.accessor('rate', {
       cell: (info) => info.getValue(),
