@@ -208,7 +208,10 @@ export function App() {
           >
             &#xFF0D;
           </button>
-          <div className="flex-1 text-center">0</div>
+          <div className="flex-1 text-center">
+            <div className="text-xs">Machines</div>
+            <div>{machines}</div>
+          </div>
           <button
             className="flex-1 p-2 bg-slate-700 disabled:bg-slate-800"
             disabled={available === 0}
