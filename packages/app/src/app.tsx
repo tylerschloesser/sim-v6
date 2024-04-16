@@ -73,6 +73,7 @@ export function App() {
     },
   })
 
+  const machines = state.items[state.selected].machines
   const recipe = MACHINE_RECIPES[state.selected]
   let available = Number.POSITIVE_INFINITY
   for (const [key, value] of Object.entries(recipe)) {
@@ -201,11 +202,17 @@ export function App() {
       </div>
       <div>
         <div className="flex">
-          <button className="flex-1 p-2 bg-slate-800">
+          <button
+            disabled={machines === 0}
+            className="flex-1 p-2 bg-slate-700 disabled:bg-slate-800"
+          >
             &#xFF0D;
           </button>
           <div className="flex-1 text-center">0</div>
-          <button className="flex-1 p-2 bg-slate-700">
+          <button
+            className="flex-1 p-2 bg-slate-700 disabled:bg-slate-800"
+            disabled={available === 0}
+          >
             &#xFF0B;
           </button>
         </div>
