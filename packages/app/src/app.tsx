@@ -3,8 +3,15 @@ import { useEffect } from 'react'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 import { ITEM_RECIPE, MACHINE_RECIPES } from './recipe.js'
-import { ItemType, State } from './state.js'
+import { Item, ItemType, State } from './state.js'
 import { tick } from './tick.js'
+
+const EMPTY_ITEM: Item = {
+  count: 0,
+  machines: 0,
+  production: 0,
+  satisfaction: 0,
+}
 
 export function App() {
   const [state, setState] = useImmer<State>({
@@ -12,12 +19,12 @@ export function App() {
     level: 0,
     selected: ItemType.Stone,
     items: {
-      [ItemType.Stone]: { count: 0, machines: 0 },
-      [ItemType.Coal]: { count: 0, machines: 0 },
-      [ItemType.Brick]: { count: 0, machines: 0 },
-      [ItemType.Power]: { count: 0, machines: 0 },
-      [ItemType.IronOre]: { count: 0, machines: 0 },
-      [ItemType.IronPlate]: { count: 0, machines: 0 },
+      [ItemType.Stone]: EMPTY_ITEM,
+      [ItemType.Coal]: EMPTY_ITEM,
+      [ItemType.Brick]: EMPTY_ITEM,
+      [ItemType.Power]: EMPTY_ITEM,
+      [ItemType.IronOre]: EMPTY_ITEM,
+      [ItemType.IronPlate]: EMPTY_ITEM,
     },
   })
 

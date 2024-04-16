@@ -12,6 +12,10 @@ export enum ItemType {
 export interface Item {
   count: number
   machines: number
+
+  // per tick
+  production: number
+  satisfaction: number
 }
 
 export interface State {
