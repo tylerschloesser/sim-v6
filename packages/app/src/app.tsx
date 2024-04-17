@@ -109,7 +109,7 @@ export function App() {
               {Object.entries(itemRecipe.input).map(
                 ([key, value]) => (
                   <div key={key} className="px-2">
-                    {`${key}: ${formatRate(value * 10)}/s`}
+                    {`${key}: ${formatRate(value)}`}
                   </div>
                 ),
               )}
@@ -119,7 +119,7 @@ export function App() {
               {Object.entries(itemRecipe.output).map(
                 ([key, value]) => (
                   <div key={key} className="px-2">
-                    {`${key}: ${formatRate(value * 10)}/s`}
+                    {`${key}: ${formatRate(value)}`}
                   </div>
                 ),
               )}
@@ -162,16 +162,14 @@ export function App() {
               >
                 <td className="p-2">{row.type}</td>
                 <td className="p-2">
-                  {row.count > 0 && row.count < 1
-                    ? '<1'
-                    : Math.floor(row.count)}
+                  {formatCount(row.count)}
                 </td>
                 <td className="p-2">{row.machines}</td>
                 <td className="p-2">
-                  {row.production.toFixed(2)}/t
+                  {formatRate(row.production)}
                 </td>
                 <td className="p-2">
-                  {row.consumption.toFixed(2)}/t
+                  {formatRate(row.consumption)}
                 </td>
               </tr>
             ))}
@@ -260,8 +258,16 @@ export function App() {
 }
 
 function formatRate(rate: number): string {
-  if (rate === Math.floor(rate)) {
-    return `${rate}`
+  return `${(rate * 10).toFixed(2)}/s`
+}
+
+function formatCount(count: number): string {
+  invariant(count >= 0)
+  if (count < Number.EPSILON * 1e10) {
+    return '0'
   }
-  return rate.toFixed(1)
+  if (count > 0 && count < 1) {
+    return '<1'
+  }
+  return `${Math.floor(count)}`
 }
