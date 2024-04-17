@@ -3,16 +3,24 @@ import { useEffect } from 'react'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 import { ITEM_RECIPE, MACHINE_RECIPES } from './recipe.js'
-import { Item, ItemType, State } from './state.js'
+import { ItemType, State } from './state.js'
 import { tick } from './tick.js'
 
-const EMPTY_ITEM: Item = {
-  count: 0,
-  machines: 0,
-  production: 0,
-  consumption: 0,
-  satisfaction: 0,
-  buffer: {},
+function initItem(type: ItemType) {
+  const recipe = ITEM_RECIPE[type]
+  const buffer: Partial<Record<ItemType, number>> = {}
+  for (const key of Object.keys(recipe)) {
+    buffer[key as ItemType] = 0
+  }
+
+  return {
+    count: 0,
+    machines: 0,
+    production: 0,
+    consumption: 0,
+    satisfaction: 0,
+    buffer: {},
+  }
 }
 
 export function App() {
@@ -21,12 +29,12 @@ export function App() {
     level: 0,
     selected: ItemType.Stone,
     items: {
-      [ItemType.Stone]: EMPTY_ITEM,
-      [ItemType.Coal]: EMPTY_ITEM,
-      [ItemType.Brick]: EMPTY_ITEM,
-      [ItemType.Power]: EMPTY_ITEM,
-      [ItemType.IronOre]: EMPTY_ITEM,
-      [ItemType.IronPlate]: EMPTY_ITEM,
+      [ItemType.Stone]: initItem(ItemType.Stone),
+      [ItemType.Coal]: initItem(ItemType.Coal),
+      [ItemType.Brick]: initItem(ItemType.Brick),
+      [ItemType.Power]: initItem(ItemType.Power),
+      [ItemType.IronOre]: initItem(ItemType.IronOre),
+      [ItemType.IronPlate]: initItem(ItemType.IronPlate),
     },
   })
 
