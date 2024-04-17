@@ -19,7 +19,7 @@ function initItem(type: ItemType) {
     production: 0,
     consumption: 0,
     satisfaction: 0,
-    buffer: {},
+    buffer,
   }
 }
 
