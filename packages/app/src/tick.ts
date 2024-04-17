@@ -18,11 +18,15 @@ export function tick(state: State): void {
       invariant(
         typeof item.buffer[ingredient.type] === 'number',
       )
-      satisfaction = Math.min(
-        satisfaction,
-        (ingredient.count * item.machines) /
-          item.buffer[ingredient.type]!,
-      )
+      if (item.buffer[ingredient.type] === 0) {
+        satisfaction = 0
+      } else {
+        satisfaction = Math.min(
+          satisfaction,
+          (ingredient.count * item.machines) /
+            item.buffer[ingredient.type]!,
+        )
+      }
     }
 
     if (satisfaction === 0) {
@@ -86,10 +90,10 @@ export function tick(state: State): void {
     [ItemType.IronPlate]: 1,
   }
   for (const { item, type } of items) {
-    satisfaction[type] = Math.min(
-      1,
-      consumption[type] / item.count,
-    )
+    if (consumption[type] === 0) {
+      continue
+    }
+    satisfaction[type] = item.count / consumption[type]
   }
 
   for (const { item, recipe } of items) {

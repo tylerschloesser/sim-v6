@@ -9,7 +9,7 @@ import { tick } from './tick.js'
 function initItem(type: ItemType) {
   const recipe = ITEM_RECIPE[type]
   const buffer: Partial<Record<ItemType, number>> = {}
-  for (const key of Object.keys(recipe)) {
+  for (const key of Object.keys(recipe.input)) {
     buffer[key as ItemType] = 0
   }
 
@@ -57,6 +57,7 @@ export function App() {
   for (const [key, value] of Object.entries(
     machineRecipe,
   )) {
+    invariant(value !== 0)
     available = Math.min(
       available,
       Math.floor(
