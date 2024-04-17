@@ -149,6 +149,7 @@ export function App() {
             <col className="w-1/4" />
             <col className="w-1/4" />
             <col className="w-1/4" />
+            <col className="w-1/4" />
           </colgroup>
           <tbody>
             {rows.map((row) => (
@@ -172,6 +173,9 @@ export function App() {
                     : Math.floor(row.count)}
                 </td>
                 <td className="p-2">{row.machines}</td>
+                <td className="p-2">
+                  {row.production.toFixed(2)}/t
+                </td>
               </tr>
             ))}
           </tbody>
