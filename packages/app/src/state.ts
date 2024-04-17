@@ -12,6 +12,7 @@ export enum ItemType {
 export interface Item {
   count: number
   machines: number
+  buffer: Partial<Record<ItemType, number>>
 
   // per tick
   production: number

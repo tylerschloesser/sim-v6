@@ -12,6 +12,7 @@ const EMPTY_ITEM: Item = {
   production: 0,
   consumption: 0,
   satisfaction: 0,
+  buffer: {},
 }
 
 export function App() {
