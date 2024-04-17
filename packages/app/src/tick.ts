@@ -7,6 +7,12 @@ export function tick(state: State): void {
 
   const items = new Array(...iterateItems(state))
 
+  for (const { item } of items) {
+    item.production = 0
+    item.consumption = 0
+    item.satisfaction = 0
+  }
+
   // production
   //
   for (const { item, recipe } of items) {
@@ -18,13 +24,16 @@ export function tick(state: State): void {
       invariant(
         typeof item.buffer[ingredient.type] === 'number',
       )
-      if (item.buffer[ingredient.type] === 0) {
+
+      if (item.machines === 0) {
         satisfaction = 0
+        break
       } else {
+        invariant(ingredient.count > 0)
         satisfaction = Math.min(
           satisfaction,
-          (ingredient.count * item.machines) /
-            item.buffer[ingredient.type]!,
+          item.buffer[ingredient.type]! /
+            (ingredient.count * item.machines),
         )
       }
     }
@@ -49,6 +58,7 @@ export function tick(state: State): void {
     )) {
       const production =
         ingredient.count * item.machines * satisfaction
+      invariant(production > 0)
       state.items[ingredient.type].count += production
       state.items[ingredient.type].production = production
     }
@@ -93,7 +103,10 @@ export function tick(state: State): void {
     if (consumption[type] === 0) {
       continue
     }
-    satisfaction[type] = item.count / consumption[type]
+    satisfaction[type] = Math.min(
+      1,
+      item.count / consumption[type],
+    )
   }
 
   for (const { item, recipe } of items) {
@@ -101,6 +114,10 @@ export function tick(state: State): void {
       recipe.input,
       state,
     )) {
+      invariant(
+        typeof item.buffer[ingredient.type] === 'number',
+      )
+
       const desired = Math.max(
         item.machines * ingredient.count -
           item.buffer[ingredient.type]!,
@@ -109,9 +126,13 @@ export function tick(state: State): void {
       const actual = desired * satisfaction[ingredient.type]
 
       ingredient.item.count -= actual
+
       invariant(
-        typeof item.buffer[ingredient.type] === 'number',
+        ingredient.item.count > Number.EPSILON * -1e10,
       )
+      // prettier-ignore
+      ingredient.item.count = Math.max(ingredient.item.count, 0)
+
       item.buffer[ingredient.type]! += actual
     }
   }
