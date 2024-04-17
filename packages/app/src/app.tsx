@@ -143,14 +143,8 @@ export function App() {
           </div>
         </div>
       </div>
-      <div className="h-[33dvh] max-w-full overflow-auto">
+      <div className="h-[33dvh] w-full overflow-auto">
         <table>
-          <colgroup>
-            <col className="w-1/4" />
-            <col className="w-1/4" />
-            <col className="w-1/4" />
-            <col className="w-1/4" />
-          </colgroup>
           <tbody>
             {rows.map((row) => (
               <tr
@@ -175,6 +169,9 @@ export function App() {
                 <td className="p-2">{row.machines}</td>
                 <td className="p-2">
                   {row.production.toFixed(2)}/t
+                </td>
+                <td className="p-2">
+                  {row.consumption.toFixed(2)}/t
                 </td>
               </tr>
             ))}

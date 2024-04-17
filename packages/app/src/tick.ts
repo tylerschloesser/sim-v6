@@ -46,11 +46,13 @@ export function tick(state: State): void {
       recipe.input,
       state,
     )) {
+      const consumption =
+        ingredient.count * item.machines * satisfaction
       invariant(
         typeof item.buffer[ingredient.type] === 'number',
       )
-      item.buffer[ingredient.type]! -=
-        ingredient.count * item.machines * satisfaction
+      item.buffer[ingredient.type]! -= consumption
+      ingredient.item.consumption += consumption
     }
     for (const ingredient of iterateRecipe(
       recipe.output,
