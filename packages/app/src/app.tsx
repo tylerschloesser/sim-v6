@@ -10,6 +10,7 @@ const EMPTY_ITEM: Item = {
   count: 0,
   machines: 0,
   production: 0,
+  consumption: 0,
   satisfaction: 0,
 }
 

@@ -15,6 +15,7 @@ export interface Item {
 
   // per tick
   production: number
+  consumption: number
   satisfaction: number
 }
 
