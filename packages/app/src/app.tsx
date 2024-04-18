@@ -147,22 +147,22 @@ export function App() {
         <table>
           <thead>
             <tr>
-              <th className="p-2 sticky top-0 bg-gray-900">
+              <th className="p-2 sticky top-0 left-0 bg-gray-900 z-20">
                 Item
               </th>
-              <th className="p-2 sticky top-0 bg-gray-900">
+              <th className="p-2 sticky top-0 bg-gray-900 z-10">
                 #
               </th>
-              <th className="p-2 sticky top-0 bg-gray-900">
+              <th className="p-2 sticky top-0 bg-gray-900 z-10">
                 M
               </th>
-              <th className="p-2 sticky top-0 bg-gray-900">
+              <th className="p-2 sticky top-0 bg-gray-900 z-10">
                 P
               </th>
-              <th className="p-2 sticky top-0 bg-gray-900">
+              <th className="p-2 sticky top-0 bg-gray-900 z-10">
                 C
               </th>
-              <th className="p-2 sticky top-0 bg-gray-900">
+              <th className="p-2 sticky top-0 bg-gray-900 z-10">
                 P-C
               </th>
             </tr>
@@ -182,7 +182,9 @@ export function App() {
                   })
                 }}
               >
-                <td className="p-2">{row.type}</td>
+                <td className="p-2 sticky left-0 bg-gray-900">
+                  {row.type}
+                </td>
                 <td className="p-2 text-right">
                   {formatCount(row.count)}
                 </td>
