@@ -16,7 +16,7 @@ export function tick(state: State): void {
   // production
   //
   for (const { item, recipe } of items) {
-    let satisfaction = 1
+    let satisfaction = Number.POSITIVE_INFINITY
     for (const ingredient of iterateRecipe(
       recipe.input,
       state,
@@ -37,6 +37,11 @@ export function tick(state: State): void {
         )
       }
     }
+
+    invariant(satisfaction >= 0)
+    invariant(satisfaction !== Number.POSITIVE_INFINITY)
+
+    item.satisfaction = satisfaction
 
     if (satisfaction === 0) {
       continue

@@ -147,12 +147,24 @@ export function App() {
         <table>
           <thead>
             <tr>
-              <th className="p-2">Item</th>
-              <th className="p-2">Count</th>
-              <th className="p-2">Machines</th>
-              <th className="p-2">P</th>
-              <th className="p-2">C</th>
-              <th className="p-2">S</th>
+              <th className="p-2 sticky top-0 bg-gray-900">
+                Item
+              </th>
+              <th className="p-2 sticky top-0 bg-gray-900">
+                #
+              </th>
+              <th className="p-2 sticky top-0 bg-gray-900">
+                M
+              </th>
+              <th className="p-2 sticky top-0 bg-gray-900">
+                P
+              </th>
+              <th className="p-2 sticky top-0 bg-gray-900">
+                C
+              </th>
+              <th className="p-2 sticky top-0 bg-gray-900">
+                P-C
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -171,10 +183,12 @@ export function App() {
                 }}
               >
                 <td className="p-2">{row.type}</td>
-                <td className="p-2">
+                <td className="p-2 text-right">
                   {formatCount(row.count)}
                 </td>
-                <td className="p-2">{row.machines}</td>
+                <td className="p-2 text-right font-mono">
+                  {row.machines}
+                </td>
                 <td className="p-2">
                   {formatRate(row.production)}
                 </td>
@@ -182,7 +196,10 @@ export function App() {
                   {formatRate(row.consumption)}
                 </td>
                 <td className="p-2">
-                  {formatSatisfaction(row.satisfaction)}
+                  {formatDiff(
+                    row.production,
+                    row.consumption,
+                  )}
                 </td>
               </tr>
             ))}
@@ -270,21 +287,45 @@ export function App() {
   )
 }
 
-function formatRate(rate: number): string {
-  return `${(rate * 10).toFixed(2)}/s`
+function formatRate(rate: number): JSX.Element {
+  return (
+    <span
+      className={clsx(
+        'font-mono',
+        rate === 0 && 'text-gray-600',
+      )}
+    >
+      {`${(rate * 10).toFixed(2)}/s`}
+    </span>
+  )
 }
 
-function formatCount(count: number): string {
+function formatCount(count: number): JSX.Element {
   invariant(count >= 0)
+  let formatted: string
   if (count < Number.EPSILON * 1e10) {
-    return '0'
+    formatted = '0'
+  } else if (count > 0 && count < 1) {
+    formatted = '<1'
+  } else {
+    formatted = `${Math.floor(count)}`
   }
-  if (count > 0 && count < 1) {
-    return '<1'
-  }
-  return `${Math.floor(count)}`
+  return <span className="font-mono">{formatted}</span>
 }
 
-function formatSatisfaction(satisfaction: number): string {
-  return `${Math.floor(satisfaction * 100)}%`
+function formatDiff(
+  production: number,
+  consumption: number,
+): JSX.Element {
+  const diff = production - consumption
+  return (
+    <span
+      className={clsx(
+        diff < 0 ? 'text-red-400' : 'text-green-400',
+        'font-mono',
+      )}
+    >
+      {formatRate(diff)}
+    </span>
+  )
 }
