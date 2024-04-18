@@ -97,7 +97,7 @@ export function App() {
   ].includes(state.selected)
 
   return (
-    <div className="min-h-dvh p-2 flex flex-col justify-end">
+    <div className="min-h-dvh flex flex-col justify-end">
       <div className="flex-1">
         <h2 className="capitalize text-4xl text-center">
           {state.selected}
@@ -109,7 +109,7 @@ export function App() {
               {Object.entries(itemRecipe.input).map(
                 ([key, value]) => (
                   <div key={key} className="px-2">
-                    {`${key}: ${formatRate(value)}`}
+                    {key}: {formatRate(value)}
                   </div>
                 ),
               )}
@@ -119,7 +119,7 @@ export function App() {
               {Object.entries(itemRecipe.output).map(
                 ([key, value]) => (
                   <div key={key} className="px-2">
-                    {`${key}: ${formatRate(value)}`}
+                    {key}: {formatRate(value)}
                   </div>
                 ),
               )}
@@ -143,7 +143,7 @@ export function App() {
           </div>
         </div>
       </div>
-      <div className="h-[33dvh] w-full overflow-auto">
+      <div className="h-[40dvh] w-full overflow-auto">
         <table>
           <thead>
             <tr>
@@ -189,13 +189,13 @@ export function App() {
                 <td className="p-2 text-right font-mono">
                   {row.machines}
                 </td>
-                <td className="p-2">
+                <td className="p-2 text-right">
                   {formatRate(row.production)}
                 </td>
-                <td className="p-2">
+                <td className="p-2 text-right">
                   {formatRate(row.consumption)}
                 </td>
-                <td className="p-2">
+                <td className="p-2 text-right">
                   {formatDiff(
                     row.production,
                     row.consumption,
