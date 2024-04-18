@@ -1,5 +1,5 @@
 import { clsx } from 'clsx'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 import { ITEM_RECIPE, MACHINE_RECIPES } from './recipe.js'
@@ -24,23 +24,41 @@ function initItem(type: ItemType) {
 }
 
 export function App() {
-  const [state, setState] = useImmer<State>({
-    tick: 0,
-    level: 0,
-    selected: ItemType.enum.Stone,
-    items: {
-      [ItemType.enum.Stone]: initItem(ItemType.enum.Stone),
-      [ItemType.enum.Coal]: initItem(ItemType.enum.Coal),
-      [ItemType.enum.Brick]: initItem(ItemType.enum.Brick),
-      [ItemType.enum.Power]: initItem(ItemType.enum.Power),
-      [ItemType.enum.IronOre]: initItem(
-        ItemType.enum.IronOre,
-      ),
-      [ItemType.enum.IronPlate]: initItem(
-        ItemType.enum.IronPlate,
-      ),
-    },
-  })
+  const initialState = useMemo<State>(() => {
+    const json = localStorage.getItem('state')
+    if (json) {
+      return State.parse(JSON.parse(json))
+    }
+    return {
+      tick: 0,
+      level: 0,
+      selected: ItemType.enum.Stone,
+      items: {
+        [ItemType.enum.Stone]: initItem(
+          ItemType.enum.Stone,
+        ),
+        [ItemType.enum.Coal]: initItem(ItemType.enum.Coal),
+        [ItemType.enum.Brick]: initItem(
+          ItemType.enum.Brick,
+        ),
+        [ItemType.enum.Power]: initItem(
+          ItemType.enum.Power,
+        ),
+        [ItemType.enum.IronOre]: initItem(
+          ItemType.enum.IronOre,
+        ),
+        [ItemType.enum.IronPlate]: initItem(
+          ItemType.enum.IronPlate,
+        ),
+      },
+    }
+  }, [])
+
+  const [state, setState] = useImmer<State>(initialState)
+
+  useEffect(() => {
+    localStorage.setItem('state', JSON.stringify(state))
+  }, [state])
 
   useEffect(() => {
     const handle = self.setInterval(
