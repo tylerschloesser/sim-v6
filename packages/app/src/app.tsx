@@ -147,12 +147,12 @@ export function App() {
         <table>
           <thead>
             <tr>
-              <th>Item</th>
-              <th>Count</th>
-              <th>Machines</th>
-              <th>P</th>
-              <th>C</th>
-              <th>S</th>
+              <th className="p-2">Item</th>
+              <th className="p-2">Count</th>
+              <th className="p-2">Machines</th>
+              <th className="p-2">P</th>
+              <th className="p-2">C</th>
+              <th className="p-2">S</th>
             </tr>
           </thead>
           <tbody>
@@ -182,7 +182,7 @@ export function App() {
                   {formatRate(row.consumption)}
                 </td>
                 <td className="p-2">
-                  {formatRate(row.satisfaction)}
+                  {formatSatisfaction(row.satisfaction)}
                 </td>
               </tr>
             ))}
@@ -283,4 +283,8 @@ function formatCount(count: number): string {
     return '<1'
   }
   return `${Math.floor(count)}`
+}
+
+function formatSatisfaction(satisfaction: number): string {
+  return `${Math.floor(satisfaction * 100)}%`
 }
