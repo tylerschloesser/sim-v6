@@ -10,7 +10,7 @@ function initItem(type: ItemType) {
   const recipe = ITEM_RECIPE[type]
   const buffer: Partial<Record<ItemType, number>> = {}
   for (const key of Object.keys(recipe.input)) {
-    buffer[key as ItemType] = 0
+    buffer[ItemType.parse(key)] = 0
   }
 
   return {
@@ -27,14 +27,18 @@ export function App() {
   const [state, setState] = useImmer<State>({
     tick: 0,
     level: 0,
-    selected: ItemType.Stone,
+    selected: ItemType.enum.Stone,
     items: {
-      [ItemType.Stone]: initItem(ItemType.Stone),
-      [ItemType.Coal]: initItem(ItemType.Coal),
-      [ItemType.Brick]: initItem(ItemType.Brick),
-      [ItemType.Power]: initItem(ItemType.Power),
-      [ItemType.IronOre]: initItem(ItemType.IronOre),
-      [ItemType.IronPlate]: initItem(ItemType.IronPlate),
+      [ItemType.enum.Stone]: initItem(ItemType.enum.Stone),
+      [ItemType.enum.Coal]: initItem(ItemType.enum.Coal),
+      [ItemType.enum.Brick]: initItem(ItemType.enum.Brick),
+      [ItemType.enum.Power]: initItem(ItemType.enum.Power),
+      [ItemType.enum.IronOre]: initItem(
+        ItemType.enum.IronOre,
+      ),
+      [ItemType.enum.IronPlate]: initItem(
+        ItemType.enum.IronPlate,
+      ),
     },
   })
 
@@ -82,7 +86,7 @@ export function App() {
   useEffect(() => {
     if (
       state.level === 0 &&
-      state.items.stone.count >= 20
+      state.items[ItemType.enum.Stone].count >= 20
     ) {
       setState((draft) => {
         draft.level = 1
@@ -90,11 +94,7 @@ export function App() {
     }
   }, [state])
 
-  const mineable = [
-    ItemType.Stone,
-    ItemType.IronOre,
-    ItemType.Coal,
-  ].includes(state.selected)
+  const mineable = isMineable(state.selected)
 
   return (
     <div className="min-h-dvh flex flex-col justify-end">
@@ -330,4 +330,14 @@ function formatDiff(
       {formatRate(diff)}
     </span>
   )
+}
+
+function isMineable(type: ItemType): boolean {
+  switch (type) {
+    case ItemType.enum.Stone:
+    case ItemType.enum.IronOre:
+    case ItemType.enum.Coal:
+      return true
+  }
+  return false
 }

@@ -74,12 +74,12 @@ export function tick(state: State): void {
   // consumption
   //
   const consumption: Record<ItemType, number> = {
-    [ItemType.Brick]: 0,
-    [ItemType.Coal]: 0,
-    [ItemType.Stone]: 0,
-    [ItemType.Power]: 0,
-    [ItemType.IronOre]: 0,
-    [ItemType.IronPlate]: 0,
+    [ItemType.enum.Brick]: 0,
+    [ItemType.enum.Coal]: 0,
+    [ItemType.enum.Stone]: 0,
+    [ItemType.enum.Power]: 0,
+    [ItemType.enum.IronOre]: 0,
+    [ItemType.enum.IronPlate]: 0,
   }
   for (const { item, recipe } of items) {
     for (const ingredient of iterateRecipe(
@@ -99,12 +99,12 @@ export function tick(state: State): void {
     }
   }
   const satisfaction: Record<ItemType, number> = {
-    [ItemType.Brick]: 1,
-    [ItemType.Coal]: 1,
-    [ItemType.Stone]: 1,
-    [ItemType.Power]: 1,
-    [ItemType.IronOre]: 1,
-    [ItemType.IronPlate]: 1,
+    [ItemType.enum.Brick]: 1,
+    [ItemType.enum.Coal]: 1,
+    [ItemType.enum.Stone]: 1,
+    [ItemType.enum.Power]: 1,
+    [ItemType.enum.IronOre]: 1,
+    [ItemType.enum.IronPlate]: 1,
   }
   for (const { item, type } of items) {
     if (consumption[type] === 0) {

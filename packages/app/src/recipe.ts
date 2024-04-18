@@ -5,31 +5,31 @@ export type MachineRecipe = Partial<
 >
 
 export const MINER_RECIPE: MachineRecipe = {
-  [ItemType.IronPlate]: 10,
-  [ItemType.Brick]: 10,
+  [ItemType.enum.IronPlate]: 10,
+  [ItemType.enum.Brick]: 10,
 }
 
 export const GENERATOR_RECIPE: MachineRecipe = {
-  [ItemType.Brick]: 20,
-  [ItemType.IronPlate]: 20,
+  [ItemType.enum.Brick]: 20,
+  [ItemType.enum.IronPlate]: 20,
 }
 
 export const FURNACE_RECIPE: MachineRecipe = {
-  [ItemType.Stone]: 20,
+  [ItemType.enum.Stone]: 20,
 }
 
 export const MACHINE_RECIPES: Record<
   ItemType,
   Partial<Record<ItemType, number>>
 > = {
-  [ItemType.Stone]: MINER_RECIPE,
-  [ItemType.Coal]: MINER_RECIPE,
-  [ItemType.IronOre]: MINER_RECIPE,
+  [ItemType.enum.Stone]: MINER_RECIPE,
+  [ItemType.enum.Coal]: MINER_RECIPE,
+  [ItemType.enum.IronOre]: MINER_RECIPE,
 
-  [ItemType.Power]: GENERATOR_RECIPE,
+  [ItemType.enum.Power]: GENERATOR_RECIPE,
 
-  [ItemType.Brick]: FURNACE_RECIPE,
-  [ItemType.IronPlate]: FURNACE_RECIPE,
+  [ItemType.enum.Brick]: FURNACE_RECIPE,
+  [ItemType.enum.IronPlate]: FURNACE_RECIPE,
 }
 
 export type ItemRecipe = {
@@ -38,54 +38,54 @@ export type ItemRecipe = {
 }
 
 export const ITEM_RECIPE: Record<ItemType, ItemRecipe> = {
-  [ItemType.Stone]: {
+  [ItemType.enum.Stone]: {
     input: {
-      [ItemType.Power]: 1 * 0.1,
+      [ItemType.enum.Power]: 1 * 0.1,
     },
     output: {
-      [ItemType.Stone]: 1 * 0.1,
+      [ItemType.enum.Stone]: 1 * 0.1,
     },
   },
-  [ItemType.Coal]: {
+  [ItemType.enum.Coal]: {
     input: {
-      [ItemType.Power]: 1 * 0.1,
+      [ItemType.enum.Power]: 1 * 0.1,
     },
     output: {
-      [ItemType.Coal]: 1 * 0.1,
+      [ItemType.enum.Coal]: 1 * 0.1,
     },
   },
-  [ItemType.IronOre]: {
+  [ItemType.enum.IronOre]: {
     input: {
-      [ItemType.Power]: 1 * 0.1,
+      [ItemType.enum.Power]: 1 * 0.1,
     },
     output: {
-      [ItemType.IronOre]: 1 * 0.1,
+      [ItemType.enum.IronOre]: 1 * 0.1,
     },
   },
-  [ItemType.Power]: {
+  [ItemType.enum.Power]: {
     input: {
-      [ItemType.Coal]: 1 * 0.1,
+      [ItemType.enum.Coal]: 1 * 0.1,
     },
     output: {
-      [ItemType.Power]: 10 * 0.1,
+      [ItemType.enum.Power]: 10 * 0.1,
     },
   },
-  [ItemType.Brick]: {
+  [ItemType.enum.Brick]: {
     input: {
-      [ItemType.Stone]: 2 * 0.1,
-      [ItemType.Coal]: 0.1 * 0.1,
+      [ItemType.enum.Stone]: 2 * 0.1,
+      [ItemType.enum.Coal]: 0.1 * 0.1,
     },
     output: {
-      [ItemType.Brick]: 1 * 0.1,
+      [ItemType.enum.Brick]: 1 * 0.1,
     },
   },
-  [ItemType.IronPlate]: {
+  [ItemType.enum.IronPlate]: {
     input: {
-      [ItemType.IronOre]: 2 * 0.1,
-      [ItemType.Coal]: 0.1 * 0.1,
+      [ItemType.enum.IronOre]: 2 * 0.1,
+      [ItemType.enum.Coal]: 0.1 * 0.1,
     },
     output: {
-      [ItemType.IronPlate]: 1 * 0.1,
+      [ItemType.enum.IronPlate]: 1 * 0.1,
     },
   },
 }
