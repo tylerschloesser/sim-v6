@@ -2,11 +2,12 @@ import { clsx } from 'clsx'
 import { useEffect, useMemo } from 'react'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
+import { ZodError } from 'zod'
 import { ITEM_RECIPE, MACHINE_RECIPES } from './recipe.js'
-import { ItemType, State } from './state.js'
+import { Item, ItemType, State } from './state.js'
 import { tick } from './tick.js'
 
-function initItem(type: ItemType) {
+function initItem(type: ItemType): Item {
   const recipe = ITEM_RECIPE[type]
   const buffer: Partial<Record<ItemType, number>> = {}
   for (const key of Object.keys(recipe.input)) {
@@ -19,6 +20,7 @@ function initItem(type: ItemType) {
     production: 0,
     consumption: 0,
     satisfaction: 0,
+    efficiency: 0,
     buffer,
   }
 }
@@ -27,7 +29,18 @@ export function App() {
   const initialState = useMemo<State>(() => {
     const json = localStorage.getItem('state')
     if (json) {
-      return State.parse(JSON.parse(json))
+      try {
+        return State.parse(JSON.parse(json))
+      } catch (e) {
+        if (
+          !(
+            e instanceof ZodError &&
+            self.confirm('Failed to parse state, reset?')
+          )
+        ) {
+          throw e
+        }
+      }
     }
     return {
       tick: 0,

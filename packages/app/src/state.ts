@@ -19,6 +19,7 @@ export const Item = z.strictObject({
   production: z.number().nonnegative(),
   consumption: z.number().nonnegative(),
   satisfaction: z.number().nonnegative(),
+  efficiency: z.number().nonnegative(),
 })
 export type Item = z.infer<typeof Item>
 
