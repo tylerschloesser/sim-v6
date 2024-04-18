@@ -145,6 +145,16 @@ export function App() {
       </div>
       <div className="h-[33dvh] w-full overflow-auto">
         <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Count</th>
+              <th>Machines</th>
+              <th>P</th>
+              <th>C</th>
+              <th>S</th>
+            </tr>
+          </thead>
           <tbody>
             {rows.map((row) => (
               <tr
@@ -170,6 +180,9 @@ export function App() {
                 </td>
                 <td className="p-2">
                   {formatRate(row.consumption)}
+                </td>
+                <td className="p-2">
+                  {formatRate(row.satisfaction)}
                 </td>
               </tr>
             ))}
