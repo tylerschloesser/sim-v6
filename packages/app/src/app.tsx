@@ -196,6 +196,9 @@ export function App() {
               <th className="p-2 sticky top-0 bg-gray-900 z-10">
                 P-C
               </th>
+              <th className="p-2 sticky top-0 bg-gray-900 z-10">
+                S
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -233,6 +236,9 @@ export function App() {
                     row.production,
                     row.consumption,
                   )}
+                </td>
+                <td className="p-2 text-right">
+                  {formatSatisfaction(row.satisfaction)}
                 </td>
               </tr>
             ))}
@@ -359,6 +365,20 @@ function formatDiff(
       )}
     >
       {formatRate(diff)}
+    </span>
+  )
+}
+
+function formatSatisfaction(
+  satisfaction: number,
+): JSX.Element {
+  return (
+    <span
+      className={clsx(
+        satisfaction === 0 && 'text-gray-600',
+      )}
+    >
+      {Math.floor(satisfaction * 100)}%
     </span>
   )
 }

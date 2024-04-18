@@ -5,6 +5,9 @@ import { Item, ItemType, State } from './state.js'
 export function tick(state: State): void {
   state.tick += 1
 
+  // reset power each tick
+  state.items[ItemType.enum.Power].count = 0
+
   const items = new Array(...iterateItems(state))
 
   for (const { item } of items) {
